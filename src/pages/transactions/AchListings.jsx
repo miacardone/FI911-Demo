@@ -49,6 +49,7 @@ export function AchListings() {
       summaryRows={ACH_SUMMARY}
       detailColumns={detailColumns}
       detailRows={ACH_DETAILS}
+      summaryTotals={['creditCount', 'creditValue', 'debitCount', 'debitValue', 'transactions', 'net']}
       detailNote="Showing all available detail records. Click an Auth Date in Summary to apply its scoped merchant group."
       exportName="ach-listings"
     />

@@ -48,20 +48,44 @@ export function TabStrip({ tabs, value, onChange }) {
 }
 
 /* ---------- Scope strip ----------
-   "Search By: Status Change Date   Start Date: 2026/07/21   End Date: 2026/08/20"
-   The reference shows several shapes of this line — some name a date field,
-   some add "Last calculated data", some are just a bare range — so it takes
-   free-form items rather than a fixed start/end pair. */
+   The active filters, as chips.
 
-export function ScopeStrip({ items = [] }) {
-  if (!items.length) return null;
+   This began as a static line of text ("Search By: Status Change Date  Start
+   Date: …"), which told you the scope but gave you no way to change it. Chips
+   are the better function: a chip that can be lifted carries an ×, so you can
+   widen the range without opening Advanced Search, and "Clear All" resets in
+   one click. Chips that merely describe the scope (the field being searched,
+   "Last calculated") have no × because there is nothing to remove.
+
+   An item is `{ label, value, onRemove? }`. */
+
+export function ScopeStrip({ items = [], onClearAll }) {
+  const live = items.filter(Boolean);
+  if (!live.length) return null;
+
+  const removable = live.filter((i) => i.onRemove);
+
   return (
     <div className="fi-scope">
-      {items.map((it) => (
-        <span key={it.label} className="fi-scope__item">
-          <span className="fi-scope__label">{it.label}:</span> <span className="fi-scope__value">{it.value}</span>
-        </span>
-      ))}
+      <div className="fi-scope__chips">
+        {live.map((it) => (
+          <span key={it.label} className={`fi-chip ${it.onRemove ? 'fi-chip--removable' : ''}`.trim()}>
+            <span className="fi-chip__label">{it.label} :</span>
+            <span className="fi-chip__value">{it.value}</span>
+            {it.onRemove && (
+              <button type="button" className="fi-chip__x" aria-label={`Remove ${it.label} filter`} onClick={it.onRemove}>
+                <Icon name="close" size={11} strokeWidth={2.6} />
+              </button>
+            )}
+          </span>
+        ))}
+      </div>
+
+      {removable.length > 0 && onClearAll && (
+        <Button variant="danger" size="sm" icon="trash" className="fi-scope__clear" onClick={onClearAll}>
+          Clear All
+        </Button>
+      )}
     </div>
   );
 }
@@ -189,6 +213,8 @@ export function ListTable({
   showToolbar = true,
   note,
   selectable = true,
+  /** Column keys to sum into a footer row. */
+  totals,
 }) {
   /* Every header carries an explanation of what the column holds. Declaring
      that on several hundred column definitions would guarantee drift, so it is
@@ -307,6 +333,7 @@ export function ListTable({
           selection={selection}
           onRowClick={onRowClick}
           empty={empty}
+          totals={totals}
         />
       </div>
 
@@ -333,6 +360,7 @@ export function ListPage({
   tab,
   onTabChange,
   scope,
+  onClearScope,
   children,
   ...tableProps
 }) {
@@ -341,7 +369,7 @@ export function ListPage({
       <PageHeader title={title} description={description} actions={headerActions} />
 
       {tabs && <TabStrip tabs={tabs} value={tab} onChange={onTabChange} />}
-      {scope && <ScopeStrip items={scope} />}
+      {scope && <ScopeStrip items={scope} onClearAll={onClearScope} />}
 
       <div className="fi-panel">
         {children ?? <ListTable {...tableProps} />}

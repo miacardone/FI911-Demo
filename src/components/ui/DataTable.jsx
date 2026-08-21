@@ -169,6 +169,11 @@ export function DataTable({
   rowDrag,
   onRowClick,
   empty,
+  /** Columns to sum into a footer row, e.g. `['salesValue','netValue']`.
+   *  Totals are computed from the rows actually passed in, so they describe
+   *  the current view rather than the whole dataset — a total that ignores
+   *  the active filter is worse than no total. */
+  totals,
 }) {
   const [hint, setHint] = useState(null);
   const [invalidId, setInvalidId] = useState(null);
@@ -388,6 +393,27 @@ export function DataTable({
             );
           })}
         </tbody>
+
+        {totals?.length > 0 && rows.length > 0 && (
+          <tfoot>
+            <tr className="dt__totals">
+              {rowDrag && <td className="dt__lead" />}
+              {selection && <td className="dt__lead" />}
+              {expansion && <td className="dt__lead" />}
+              {columns.map((c, i) => {
+                if (!totals.includes(c.key)) {
+                  return <td key={c.key} style={{ textAlign: c.align ?? 'left' }}>{i === 0 ? 'Totals' : ''}</td>;
+                }
+                const sum = rows.reduce((acc, r) => acc + (Number(r[c.key]) || 0), 0);
+                return (
+                  <td key={c.key} style={{ textAlign: c.align ?? 'right' }}>
+                    {c.totalCell ? c.totalCell(sum) : formatNumber(Math.round(sum * 100) / 100)}
+                  </td>
+                );
+              })}
+            </tr>
+          </tfoot>
+        )}
       </table>
     </div>
   );

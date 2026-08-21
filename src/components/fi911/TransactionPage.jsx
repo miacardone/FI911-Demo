@@ -42,6 +42,7 @@ export function TransactionPage({
 
   exportName,
   historicalNote,
+  summaryTotals,
 }) {
   const hasSummary = Boolean(summaryColumns && summaryRows);
   const hasDetails = Boolean(detailColumns && detailRows);
@@ -136,6 +137,7 @@ export function TransactionPage({
           columns={tab === 'summary' ? summaryColumns : detailColumns}
           rows={tab === 'summary' ? filteredSummary : filteredDetails}
           note={tab === 'summary' ? summaryNote : detailNote}
+          totals={tab === 'summary' ? summaryTotals : undefined}
           searchPlaceholder={tab === 'summary' ? 'Search records' : 'Search detail records'}
           exportName={`${exportName}-${tab}`}
           onAdvanced={() => setAdvancedOpen((v) => !v)}

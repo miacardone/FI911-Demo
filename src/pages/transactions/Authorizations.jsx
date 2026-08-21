@@ -48,6 +48,7 @@ export function Authorizations() {
       summaryRows={AUTH_SUMMARY}
       detailColumns={detailColumns}
       detailRows={AUTH_DETAILS}
+      summaryTotals={['authCount', 'authValue', 'refundCount', 'refundValue', 'netCount', 'netValue']}
       exportName="authorizations"
     />
   );

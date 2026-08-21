@@ -121,9 +121,13 @@ export function ApplicationDetail() {
           { icon: 'mail', label: 'Email participant', onSelect: () => toast.notify('Draft email opened.') },
           { icon: 'edit', label: 'Edit', onSelect: () => {} },
         ]}
+        values={form.values}
         steps={[
           {
             label: 'Business Information',
+            required: ['agentName', 'agentEmail', 'type', 'legalName', 'participant', 'website',
+              'contact', 'phone', 'email', 'taxId', 'businessType', 'businessDescription',
+              'physicalAddress', 'physicalCity', 'physicalZip', 'mailingAddress', 'mailingCity', 'mailingZip'],
             render: () => (
               <>
                 <BusinessInformationSection form={form} variant="application" />
@@ -134,6 +138,8 @@ export function ApplicationDetail() {
           },
           {
             label: 'Trading Profile',
+            required: ['averageTicket', 'highestTicket', 'monthlyVolume', 'retailSwipe',
+              'keyEntered', 'moto', 'internet', 'advertise', 'soldHow', 'refundPolicy', 'cardEntry'],
             render: () => (
               <>
                 <TransactionInformationSection form={form} />
@@ -144,6 +150,7 @@ export function ApplicationDetail() {
           },
           {
             label: 'Banking & Individuals',
+            required: ['bankAccounts', 'individuals'],
             render: () => (
               <>
                 <BankAccountsSection form={form} />
@@ -153,6 +160,8 @@ export function ApplicationDetail() {
           },
           {
             label: 'Terminals & Pricing',
+            required: ['pricingType', 'authFee', 'mcVisaDiscoverPct', 'amexPct', 'joining',
+              'annual', 'admin', 'chargebackFee', 'shipping'],
             render: () => (
               <>
                 <PaymentTerminalsSection form={form} />

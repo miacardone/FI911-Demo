@@ -26,6 +26,10 @@ import ParticipantMerchants from '@/pages/participants/ParticipantMerchants';
 // Customer Services
 import Ert from '@/pages/customer-services/Ert';
 
+// Reports
+import MerchantGlobal from '@/pages/reports/MerchantGlobal';
+import ProductivityReport from '@/pages/reports/ProductivityReport';
+
 // Residuals
 import GeneralLedger from '@/pages/residuals/GeneralLedger';
 import FeeAdjustments from '@/pages/residuals/FeeAdjustments';
@@ -39,6 +43,7 @@ import PortfolioPayoutDetails from '@/pages/residuals/PortfolioPayoutDetails';
 // Disputes
 import Disputes from '@/pages/disputes/Disputes';
 import DisputeDetail from '@/pages/disputes/DisputeDetail';
+import ChargebacksAlerts from '@/pages/disputes/ChargebacksAlerts';
 
 // Risk Management
 import RiskDashboard from '@/pages/risk/RiskDashboard';
@@ -61,6 +66,10 @@ import MerchantReserves from '@/pages/transactions/MerchantReserves';
 
 // Billing
 import Statements from '@/pages/billing/Statements';
+
+// Admin
+import DocumentCenter from '@/pages/documents/DocumentCenter';
+import Setup from '@/pages/setup/Setup';
 
 /**
  * One flat authenticated route tree under AppLayout.
@@ -117,8 +126,15 @@ export function App() {
                   <Route path="portfolio-payout-details" element={<PortfolioPayoutDetails />} />
                 </Route>
 
+                <Route path="reports">
+                  <Route index element={<Navigate to={routes.merchantGlobal} replace />} />
+                  <Route path="merchant-global" element={<MerchantGlobal />} />
+                  <Route path="productivity" element={<ProductivityReport />} />
+                </Route>
+
                 <Route path="disputes">
                   <Route index element={<Disputes />} />
+                  <Route path="alerts" element={<ChargebacksAlerts />} />
                   <Route path=":id" element={<DisputeDetail />} />
                 </Route>
 
@@ -149,6 +165,9 @@ export function App() {
                   <Route index element={<Navigate to={routes.statements} replace />} />
                   <Route path="statements" element={<Statements />} />
                 </Route>
+
+                <Route path="document-center" element={<DocumentCenter />} />
+                <Route path="setup" element={<Setup />} />
 
                 <Route path="*" element={<Navigate to={routes.dashboard} replace />} />
               </Route>

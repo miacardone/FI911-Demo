@@ -4,6 +4,7 @@ import Icon from '@/components/ui/Icon';
 import { Badge, Button } from '@/components/ui/Surface';
 import { CheckboxRow, RadioRow, SelectField, TextAreaField, TextField, ToggleField } from '@/components/ui/Form';
 import { useToast } from '@/context/ToastContext';
+import StepProgress, { overallProgress } from '@/components/fi911/StepProgress';
 
 /**
  * THE DETAIL PAGE SHELL.
@@ -267,8 +268,11 @@ export function DetailPage({
   onSave,
   onDiscard,
   children,
-  /** `[{ label, render: () => JSX }]` — turns the page into a wizard. */
+  /** `[{ label, render, fields?, required? }]` — turns the page into a wizard.
+   *  Declaring `fields`/`required` also enables per-section completion. */
   steps,
+  /** The form's live values, so completion is measured rather than stored. */
+  values,
   summary,
 }) {
   const navigate = useNavigate();
@@ -280,6 +284,28 @@ export function DetailPage({
     /* Land at the top of the new step rather than mid-form. */
     document.querySelector('.shell__content')?.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  /* Focus the first unfilled field of the current step. Fields are matched by
+     their label text because the form primitives generate their own ids —
+     tagging every input with a data attribute just for this would be a lot of
+     plumbing for one affordance. */
+  const jumpToField = (key) => {
+    const label = String(key)
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, (c) => c.toUpperCase())
+      .trim()
+      .toLowerCase();
+
+    const nodes = Array.from(document.querySelectorAll('.fi-detail__body .field'));
+    const hit = nodes.find((n) => n.querySelector('.field__label')?.textContent?.toLowerCase().startsWith(label.slice(0, 12)));
+    const input = hit?.querySelector('input, select, textarea');
+    if (input) {
+      input.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      input.focus({ preventScroll: true });
+    }
+  };
+
+  const progress = steps && values ? overallProgress(steps, values) : null;
 
   const save = () => {
     onSave?.();
@@ -298,6 +324,11 @@ export function DetailPage({
           {badge && <Badge tone={badge.tone ?? 'success'}>{badge.label}</Badge>}
           <h1 className="fi-detail__title">{title}</h1>
           {subtitle && <p className="fi-detail__sub">{subtitle}</p>}
+          {progress && progress.total > 0 && (
+            <p className="fi-detail__progress">
+              <strong>{progress.done}</strong> of <strong>{progress.total}</strong> required fields complete
+            </p>
+          )}
         </div>
 
         <div className="fi-detail__actions">
@@ -315,7 +346,17 @@ export function DetailPage({
 
       {steps ? (
         <>
-          <WizardSteps steps={steps} current={step} onSelect={goToStep} />
+          {values
+            ? (
+              <StepProgress
+                steps={steps}
+                values={values}
+                current={step}
+                onSelect={goToStep}
+                onJumpToField={jumpToField}
+              />
+            )
+            : <WizardSteps steps={steps} current={step} onSelect={goToStep} />}
           <div className="fi-detail__body">{steps[step]?.render()}</div>
           <WizardNav steps={steps} current={step} onChange={goToStep} />
         </>

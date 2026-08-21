@@ -95,9 +95,13 @@ export function OnboardingDetail() {
           { icon: 'paperclip', label: 'Attachments', onSelect: () => setModal({ kind: 'attachments' }) },
           { icon: 'userCheck', label: 'Assign participant', onSelect: () => {} },
         ]}
+        values={form.values}
         steps={[
           {
             label: 'Business Information',
+            required: ['agentName', 'agentEmail', 'type', 'legalName', 'participant', 'website',
+              'contact', 'phone', 'email', 'taxId', 'businessType', 'businessDescription',
+              'physicalAddress', 'physicalCity', 'physicalZip', 'mcc'],
             render: () => (
               <>
                 <BusinessInformationSection form={form} variant="onboarding" />
@@ -113,6 +117,8 @@ export function OnboardingDetail() {
           },
           {
             label: 'Trading Profile',
+            required: ['averageTicket', 'highestTicket', 'monthlyVolume', 'retailSwipe',
+              'keyEntered', 'moto', 'internet', 'advertise', 'soldHow', 'refundPolicy'],
             render: () => (
               <>
                 <TransactionInformationSection form={form} underline />
@@ -120,8 +126,17 @@ export function OnboardingDetail() {
               </>
             ),
           },
-          { label: 'Risk Rules', render: () => <ParticipantRiskRulesSection form={form} /> },
-          { label: 'Compliance', render: () => <ComplianceSection form={form} long /> },
+          {
+            label: 'Risk Rules',
+            required: ['volumeHourly', 'volumeDaily', 'volumeMonthly', 'valueHourly', 'valueDaily',
+              'valueMonthly', 'chargebackRatio', 'chargebackVolume'],
+            render: () => <ParticipantRiskRulesSection form={form} />,
+          },
+          {
+            label: 'Compliance',
+            required: ['storesCardData', 'storesTrack', 'storesCvv', 'accessLimited', 'noUnencrypted'],
+            render: () => <ComplianceSection form={form} long />,
+          },
         ]}
       >
       </DetailPage>

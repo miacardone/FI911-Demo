@@ -51,6 +51,9 @@ export function Money({ value, currency = brand.currency, muteZero = false }) {
   return <span className="money">{formatCurrency(n, currency)}</span>;
 }
 
+/** Footer renderer for a summed money column. */
+export const moneyTotal = (sum) => <Money value={sum} />;
+
 export const moneyText = (value, currency = brand.currency) => {
   const n = Number(value ?? 0);
   return n < 0 ? `(${formatCurrency(Math.abs(n), currency)})` : formatCurrency(n, currency);

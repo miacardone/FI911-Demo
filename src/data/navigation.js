@@ -36,6 +36,10 @@ export const routes = {
   /* Customer Services */
   ert: '/customer-services/ert',
 
+  /* Reports */
+  merchantGlobal: '/reports/merchant-global',
+  productivityReport: '/reports/productivity',
+
   /* Residuals */
   generalLedger: '/residuals/general-ledger',
   feeAdjustments: '/residuals/fee-adjustments',
@@ -49,6 +53,7 @@ export const routes = {
   /* Disputes */
   disputes: '/disputes',
   disputeDetail: (id = ':id') => `/disputes/${id}`,
+  chargebacksAlerts: '/disputes/alerts',
 
   /* Risk Management */
   riskDashboard: '/risk-management/dashboard',
@@ -71,6 +76,10 @@ export const routes = {
 
   /* Billing */
   statements: '/billing/statements',
+
+  /* Admin */
+  documentCenter: '/document-center',
+  setup: '/setup',
 };
 
 /**
@@ -125,12 +134,23 @@ export const nav = [
     ],
   },
   {
+    label: 'Reports',
+    path: '/reports',
+    icon: 'chart',
+    crumb: 'Reports',
+    children: [
+      { label: 'Merchant - Global', path: routes.merchantGlobal, permission: 'Merchant Global', area: 'Reports', crumb: 'Merchant - Global' },
+      { label: 'Productivity Report', path: routes.productivityReport, permission: 'Productivity Report', area: 'Reports', crumb: 'Productivity Report' },
+    ],
+  },
+  {
     label: 'Disputes',
     path: '/disputes',
     icon: 'alert',
     crumb: 'Disputes',
     children: [
       { label: 'Disputes', path: routes.disputes, permission: 'Disputes', area: 'Disputes', crumb: 'Disputes', end: true },
+      { label: 'Chargebacks & Alerts', path: routes.chargebacksAlerts, permission: 'Chargebacks & Alerts', area: 'Disputes', crumb: 'Chargebacks & Alerts' },
     ],
   },
   {
@@ -172,6 +192,22 @@ export const nav = [
     children: [
       { label: 'Statements', path: routes.statements, permission: 'Statements', area: 'Billing', crumb: 'Statements' },
     ],
+  },
+  {
+    label: 'Document Center',
+    path: routes.documentCenter,
+    icon: 'folder',
+    permission: 'Document Center',
+    area: 'Administration',
+    crumb: 'Document Center',
+  },
+  {
+    label: 'Setup',
+    path: routes.setup,
+    icon: 'wrench',
+    permission: 'Setup',
+    area: 'Administration',
+    crumb: 'Setup',
   },
 ];
 

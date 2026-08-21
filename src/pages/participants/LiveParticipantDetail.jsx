@@ -140,9 +140,13 @@ export function LiveParticipantDetail() {
             </div>
           </section>
         )}
+        values={form.values}
         steps={[
           {
             label: 'Business Information',
+            required: ['agentName', 'agentEmail', 'type', 'legalName', 'participant', 'website',
+              'contact', 'phone', 'email', 'taxId', 'businessDescription',
+              'physicalAddress', 'physicalCity', 'physicalZip', 'averageTicket', 'monthlyVolume'],
             render: () => (
               <>
                 <BusinessInformationSection form={form} variant="onboarding" />
@@ -157,6 +161,7 @@ export function LiveParticipantDetail() {
           },
           {
             label: 'Banking & Individual Information',
+            required: ['bankAccounts', 'individuals'],
             render: () => (
               <>
                 <BankAccountsSection form={form} />
@@ -166,6 +171,7 @@ export function LiveParticipantDetail() {
           },
           {
             label: 'Terminals',
+            required: ['terminals', 'shipping'],
             render: () => (
               <>
                 <PaymentTerminalsSection form={form} />
@@ -174,7 +180,11 @@ export function LiveParticipantDetail() {
               </>
             ),
           },
-          { label: 'Pricing', render: () => <PricingSection form={form} /> },
+          {
+            label: 'Pricing',
+            required: ['pricingType'],
+            render: () => <PricingSection form={form} />,
+          },
         ]}
       />
 

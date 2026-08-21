@@ -1,4 +1,4 @@
-import { CardBrand, LinkCell, Money, Muted, StatusBadge, TwoLine, moneyText } from '@/components/fi911/cells';
+import { CardBrand, LinkCell, Money, Muted, StatusBadge, TwoLine, moneyText, moneyTotal } from '@/components/fi911/cells';
 import { formatNumber, formatPercent } from '@/utils/format';
 
 /**
@@ -14,6 +14,7 @@ export const money = (key, header, fw = 9) => ({
   sortValue: (r) => r[key],
   text: (r) => moneyText(r[key]),
   cell: (r) => <Money value={r[key]} />,
+  totalCell: moneyTotal,
 });
 
 export const count = (key, header, fw = 7) => ({

@@ -55,6 +55,7 @@ export function Settlements() {
       summaryRows={SETTLEMENT_SUMMARY}
       detailColumns={detailColumns}
       detailRows={SETTLEMENT_DETAILS}
+      summaryTotals={['salesCount', 'salesValue', 'refundCount', 'refundValue', 'netCount', 'netValue']}
       detailNote="Showing all available detail records. Click a Settle Date in Summary to apply its scoped settlement group."
       exportName="settlements"
     />

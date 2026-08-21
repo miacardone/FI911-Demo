@@ -38,6 +38,7 @@ export function FundingDeposits() {
       description="View and manage funding deposit transactions"
       summaryColumns={columns}
       summaryRows={FUNDING_DEPOSITS}
+      summaryTotals={['settleBankcards', 'chargebacks', 'refunds', 'netDeposit']}
       customFields={CUSTOM_FIELDS}
       advancedFields={CUSTOM_FIELDS}
       exportName="funding-deposits"
