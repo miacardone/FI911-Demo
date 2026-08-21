@@ -126,7 +126,7 @@ function FlaggedTab() {
     { key: 'partner', header: 'Partner', fw: 13, sortable: true, cell: (r) => <TwoLine primary={r.partner} secondary={r.partnerCode} />, text: (r) => `${r.partner} ${r.partnerCode}` },
     { key: 'merchantStatus', header: 'Merchant Status', fw: 10, align: 'center', sortable: true, cell: (r) => <StatusBadge value={r.merchantStatus} /> },
     { key: 'tier', header: 'Risk', fw: 5, align: 'center', sortable: true, cell: (r) => <RiskTriangle tier={r.tier} />, text: (r) => TIER_LABEL[r.tier] ?? r.tier },
-    { key: 'mcc', header: 'MCC', fw: 5, align: 'center', sortable: true },
+    { hiddenByDefault: true, key: 'mcc', header: 'MCC', fw: 5, align: 'center', sortable: true },
     { key: 'riskAlerts', header: 'Risk Alerts', fw: 14, align: 'center', cell: (r) => <AlertBadges codes={r.riskAlerts} max={2} />, text: (r) => r.riskAlerts.join(' '), searchable: true, description: 'Batch-level rules this merchant tripped — hover a code for its meaning' },
     { key: 'flaggedSettlement', header: 'Flagged Settlement', fw: 10, align: 'right', sortable: true, cell: (r) => <Money value={r.flaggedSettlement} />, text: (r) => moneyText(r.flaggedSettlement), totalCell: moneyTotal },
     { key: 'totalSettlement', header: 'Total Settlement', fw: 10, align: 'right', sortable: true, cell: (r) => <Money value={r.totalSettlement} />, text: (r) => moneyText(r.totalSettlement), totalCell: moneyTotal },
@@ -141,7 +141,7 @@ function FlaggedTab() {
     { key: 'mcbCountRatio', header: 'CB Ratio (count)', fw: 8, align: 'center', sortable: true, cell: (r) => <Ratio value={r.mcbCountRatio} />, text: (r) => `${r.mcbCountRatio}%`, description: 'Chargeback count as a share of transaction count' },
     { key: 'cbAlerts', header: 'CB Alerts', fw: 9, align: 'center', cell: (r) => <AlertBadges codes={r.cbAlerts} max={2} empty={<Muted>—</Muted>} />, text: (r) => r.cbAlerts.join(' ') },
     { key: 'assignedUser', header: 'Assigned User', fw: 11, sortable: true, cell: (r) => (r.assignedUser ? r.assignedUser : <Badge tone="warning">Unassigned</Badge>), text: (r) => r.assignedUser || 'Unassigned' },
-    { key: 'transactionDate', header: 'Transaction Date', fw: 9, align: 'center', sortable: true },
+    { hiddenByDefault: true, key: 'transactionDate', header: 'Transaction Date', fw: 9, align: 'center', sortable: true },
   ];
 
   return (

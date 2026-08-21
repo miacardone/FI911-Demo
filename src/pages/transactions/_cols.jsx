@@ -24,6 +24,9 @@ export const count = (key, header, fw = 7) => ({
 
 export const text = (key, header, fw = 10) => ({ key, header, fw, sortable: true });
 
+/** Ship a column hidden — still in the Columns menu, just not on by default. */
+export const secondary = (col) => ({ ...col, hiddenByDefault: true });
+
 export const twoLine = (key, header, primary, secondary, fw = 14) => ({
   key, header, fw, sortable: true,
   cell: (r) => <TwoLine primary={primary(r)} secondary={secondary(r)} />,

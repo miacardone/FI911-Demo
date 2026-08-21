@@ -216,17 +216,15 @@ export function DataTable({
   const numericCol = (c) => c.numeric ?? (c.align === 'right' || Boolean(c.totalCell) || Boolean(c.mono));
 
   /**
-   * PROSE columns are the ones that compress, and therefore the ones that
-   * ellipsize. Centring them clips the FIRST character as well as the last —
-   * "Ashton & Partners Ltd" becomes "shton & Partner" — which is strictly
-   * worse than an end-ellipsis, so they stay left-aligned under a left-aligned
-   * heading.
+   * Every value centres under its heading.
    *
-   * Everything that fits its cell — numbers, dates, codes, badges, ratios —
-   * centres under its heading.
+   * Centring used to clip both ends of an overflowing cell, which is why the
+   * prose columns were excluded. That is now handled where it belongs — a
+   * value that overflows switches itself to left-aligned so the ellipsis
+   * lands at the end (see TruncatedText and .cell-2l) — so alignment no
+   * longer has to be traded against readability.
    */
-  const prose = (c) => !numericCol(c) && (c.fw ?? 8) >= 11 && c.align !== 'center';
-  const alignOf = (c) => (c.align === 'left' || prose(c) ? 'left' : 'center');
+  const alignOf = (c) => (c.align === 'left' ? 'left' : 'center');
 
   const widthFor = (c) => {
     if (!fit) return c.width;

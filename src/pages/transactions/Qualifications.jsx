@@ -1,5 +1,5 @@
 import { TransactionPage } from '@/components/fi911/TransactionPage';
-import { money, percent, text } from './_cols';
+import { money, percent, secondary, text } from './_cols';
 import { QUALIFICATION_ROWS } from '@/data/transactions';
 
 /** Qualifications — the interchange band each transaction qualified into, and
@@ -9,9 +9,10 @@ const columns = [
   text('merchant', 'Merchant', 14),
   text('partner', 'Partner', 13),
   { key: 'transactionId', header: 'Transaction ID', fw: 12, sortable: true, cell: (r) => <span className="cell-link">{r.transactionId}</span> },
-  text('trn', 'TRN', 14),
-  text('bankName', 'Bank Name', 10),
+  secondary(text('trn', 'TRN', 14)),
+  secondary(text('bankName', 'Bank Name', 10)),
   {
+    hiddenByDefault: true,
     key: 'accountNumber', header: 'Account Number / Sort Code', fw: 12, sortable: true,
     cell: (r) => (
       <span className="cell-2l">
@@ -23,11 +24,11 @@ const columns = [
   },
   text('qualification', 'Qualification', 12),
   percent('feePercent', 'Fee Percen...', 9),
-  money('baseFee', 'Base Fee', 8),
+  secondary(money('baseFee', 'Base Fee', 8)),
   money('amount', 'Amount', 8),
   money('interchange', 'Interchange', 9),
   money('netAmount', 'Net Amount', 9),
-  text('authDate', 'Auth Date', 9),
+  secondary(text('authDate', 'Auth Date', 9)),
   text('settleDate', 'Settle Date', 9),
   text('transactionDate', 'Transaction Date', 10),
   text('processor', 'Processor', 8),

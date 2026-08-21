@@ -224,11 +224,19 @@ export function TruncatedText({ value, className = '', tooltip, always = false }
   const ref = useRef(null);
   const [overflowing, setOverflowing] = useState(false);
 
+  /* One measurement, only to decide whether a tooltip is warranted. It must
+     not drive layout: an effect that changes the element's own width feeds
+     back into whatever measured it. Alignment is handled in CSS instead. */
   useLayoutEffect(() => {
     const el = ref.current;
     if (el) setOverflowing(el.scrollWidth > el.clientWidth + 1);
   }, [value]);
 
+  /* Centre what fits, left-align what does not.
+     A centred cell clips BOTH ends when its text overflows, so "Ashton &
+     Partners Ltd" loses its A as well as its d. Marking the element only once
+     it actually overflows keeps every value centred under its heading while
+     guaranteeing the ellipsis is always at the end. */
   const content = <span ref={ref} className={`truncate ${className}`.trim()}>{value}</span>;
 
   const label = tooltip ?? value;

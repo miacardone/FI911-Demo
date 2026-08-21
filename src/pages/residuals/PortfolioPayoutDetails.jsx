@@ -21,7 +21,7 @@ export function PortfolioPayoutDetails() {
 
   const columns = [
     { key: 'residualMonth', header: 'Residual Month', fw: 9, sortable: true },
-    { key: 'payoutMonth', header: 'Payout Month', fw: 9, sortable: true },
+    { hiddenByDefault: true, key: 'payoutMonth', header: 'Payout Month', fw: 9, sortable: true },
     {
       key: 'participant', header: 'Participant Name', fw: 14, sortable: true,
       cell: (r) => (
@@ -40,7 +40,7 @@ export function PortfolioPayoutDetails() {
     money('income', 'Income'),
     money('expense', 'Expense'),
     money('grossProfit', 'Gross Profit'),
-    money('payoutToOthers', 'Payout to Others', 10),
+    { ...money('payoutToOthers', 'Payout to Others', 10), hiddenByDefault: true },
     money('grossPayout', 'Gross Payout', 10),
     money('adjustments', 'Adjustments'),
     money('payout', 'Payout', 8),

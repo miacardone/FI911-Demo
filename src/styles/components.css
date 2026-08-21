@@ -2169,3 +2169,35 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 
 .doc-cat { display: inline-flex; align-items: center; gap: 5px; }
 .doc-name { display: inline-flex; align-items: center; gap: 7px; min-width: 0; }
+
+/* ---------- Centred cells that outgrow their column ----------
+   A centred box clips text at BOTH ends: "Ashton & Partners Ltd" loses its A
+   as well as its d. The fix needs no measurement at all —
+
+     width: fit-content   the box hugs its text …
+     max-width: 100%      … until the text is wider than the cell, then it
+                          stops at the cell edge
+     margin-inline: auto  centres the box while it is narrower than the cell
+     text-align: left     so once clamped, the text starts at the left and the
+                          ellipsis lands at the end
+
+   Short values therefore appear centred and long values truncate from the
+   right, with no JS, no observers, and none of the feedback loop that comes
+   from measuring an element whose own width you then change. */
+
+.dt tbody td .truncate,
+.dt tbody td .cell-2l__main,
+.dt tbody td .cell-2l__sub {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+  text-align: left;
+}
+.dt tbody td[style*="left"] .truncate,
+.dt tbody td[style*="left"] .cell-2l__main,
+.dt tbody td[style*="left"] .cell-2l__sub { margin-inline: 0; }
+
+/* The flex container must stretch, or its children are sized as flex items
+   and `fit-content` never gets the chance to clamp. */
+.dt tbody td .cell-2l { align-items: stretch; }
