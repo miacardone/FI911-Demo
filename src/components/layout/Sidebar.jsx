@@ -112,7 +112,7 @@ export function Sidebar({ collapsed, onToggle }) {
   return (
     <aside className={`rail ${collapsed ? 'rail--collapsed' : ''}`.trim()} aria-label="Main navigation">
       <div className="rail__head">
-        <Wordmark inverse size={collapsed ? 22 : 28} showText={false} />
+        <Wordmark inverse markOnly={collapsed} size={collapsed ? 30 : 30} showText={false} />
         <Tooltip label={collapsed ? 'Expand navigation' : 'Collapse navigation'} side="right">
           <button
             type="button"

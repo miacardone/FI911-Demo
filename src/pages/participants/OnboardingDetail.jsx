@@ -95,21 +95,35 @@ export function OnboardingDetail() {
           { icon: 'paperclip', label: 'Attachments', onSelect: () => setModal({ kind: 'attachments' }) },
           { icon: 'userCheck', label: 'Assign participant', onSelect: () => {} },
         ]}
+        steps={[
+          {
+            label: 'Business Information',
+            render: () => (
+              <>
+                <BusinessInformationSection form={form} variant="onboarding" />
+                <AddressSection form={form} title="Physical Address" prefix="physical" />
+                <AddressSection form={form} title="Mailing Address" prefix="mailing" />
+                <Section title="MCC">
+                  <FieldGrid>
+                    <TextField {...form.field('mcc', 'MCC')} placeholder="MCC code" />
+                  </FieldGrid>
+                </Section>
+              </>
+            ),
+          },
+          {
+            label: 'Trading Profile',
+            render: () => (
+              <>
+                <TransactionInformationSection form={form} underline />
+                <NatureOfBusinessSection form={form} />
+              </>
+            ),
+          },
+          { label: 'Risk Rules', render: () => <ParticipantRiskRulesSection form={form} /> },
+          { label: 'Compliance', render: () => <ComplianceSection form={form} long /> },
+        ]}
       >
-        <BusinessInformationSection form={form} variant="onboarding" />
-        <AddressSection form={form} title="Physical Address" prefix="physical" />
-        <AddressSection form={form} title="Mailing Address" prefix="mailing" />
-
-        <Section title="MCC">
-          <FieldGrid>
-            <TextField {...form.field('mcc', 'MCC')} placeholder="MCC code" />
-          </FieldGrid>
-        </Section>
-
-        <TransactionInformationSection form={form} underline />
-        <NatureOfBusinessSection form={form} />
-        <ParticipantRiskRulesSection form={form} />
-        <ComplianceSection form={form} long />
       </DetailPage>
 
       <ChangeStatusModal

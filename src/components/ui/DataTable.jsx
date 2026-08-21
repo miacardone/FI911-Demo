@@ -234,8 +234,14 @@ export function DataTable({
             {columns.map((c, i) => {
               const active = sort?.key === c.key;
               const draggableCol = i >= pinnedCount;
+              const justify = c.align === 'right' ? 'flex-end' : c.align === 'center' ? 'center' : 'flex-start';
               const header = c.sortable && onSort ? (
-                <button type="button" className="dt__sort-btn" onClick={() => onSort(c.key)}>
+                <button
+                  type="button"
+                  className="dt__sort-btn"
+                  style={{ justifyContent: justify, width: '100%' }}
+                  onClick={() => onSort(c.key)}
+                >
                   <span className="truncate">{c.header}</span>
                   <Icon
                     name={active ? (sort.dir === 'asc' ? 'arrowUp' : 'arrowDown') : 'chevronsUpDown'}
@@ -244,14 +250,14 @@ export function DataTable({
                   />
                 </button>
               ) : (
-                <span className="truncate">{c.header}</span>
+                <span className="truncate" style={{ justifyContent: justify, width: '100%' }}>{c.header}</span>
               );
 
               // Fit mode truncates headers, so they always get a tooltip; a
               // column with a `description` gets one in comfortable mode too.
               const headerTooltip = c.description
-                ? (fit ? `${c.header} — ${c.description}` : c.description)
-                : (fit ? c.header : null);
+                ? `${c.header} — ${c.description}`
+                : (typeof c.header === 'string' && c.header ? c.header : null);
 
               return (
                 <th
@@ -355,11 +361,20 @@ export function DataTable({
                     </td>
                   )}
 
-                  {columns.map((c) => (
-                    <td key={c.key} style={{ textAlign: c.align ?? 'left' }} className={c.mono ? 'mono' : undefined}>
-                      {c.cell ? c.cell(row) : <TruncatedText value={String(row[c.key] ?? '—')} />}
-                    </td>
-                  ))}
+                  {columns.map((c) => {
+                    const plain = c.text ? c.text(row) : row[c.key];
+                    const title = c.cell && plain != null && typeof plain !== 'object' ? String(plain) : undefined;
+                    return (
+                      <td
+                        key={c.key}
+                        style={{ textAlign: c.align ?? 'left' }}
+                        className={c.mono ? 'mono' : undefined}
+                        title={title}
+                      >
+                        {c.cell ? c.cell(row) : <TruncatedText value={String(row[c.key] ?? '—')} />}
+                      </td>
+                    );
+                  })}
                 </tr>
 
                 {expanded && (

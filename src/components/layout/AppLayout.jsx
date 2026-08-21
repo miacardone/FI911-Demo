@@ -5,6 +5,7 @@ import DirectorySearch, { useTrackRecentPages } from '@/components/layout/Direct
 import Icon from '@/components/ui/Icon';
 import { Popover } from '@/components/ui/Overlay';
 import { useAuth } from '@/context/AuthContext';
+import { THEMES, usePreferences } from '@/context/PreferencesContext';
 import { crumbsFor } from '@/data/navigation';
 import { readPref, writePref } from '@/utils/storage';
 
@@ -29,9 +30,82 @@ export function useDetailCrumb(label) {
   }, [label, setLabel]);
 }
 
-function Topbar() {
+/**
+ * The account menu doubles as the preferences panel.
+ *
+ * Theme lives here rather than in a Settings page because it is a per-session
+ * comfort control, not configuration — you change it when the light in the
+ * room changes, and hunting through a settings tree for that is friction.
+ */
+function ProfilePanel({ onClose }) {
   const { user, signOut } = useAuth();
+  const { theme, resolved, setTheme, density, setDensity } = usePreferences();
   const navigate = useNavigate();
+
+  return (
+    <>
+      <div className="profile__head">
+        <span className="profile__avatar">{user?.initials ?? 'MC'}</span>
+        <span className="profile__id">
+          <span className="profile__name">{user?.name}</span>
+          <span className="profile__email">{user?.email}</span>
+          <span className="profile__role">{user?.roleLabel}</span>
+        </span>
+      </div>
+
+      <div className="profile__group">
+        <span className="profile__label">Appearance</span>
+        <div className="profile__seg" role="radiogroup" aria-label="Theme">
+          {THEMES.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              role="radio"
+              aria-checked={theme === t.id}
+              className={`profile__seg-btn ${theme === t.id ? 'is-active' : ''}`.trim()}
+              onClick={() => setTheme(t.id)}
+            >
+              <Icon name={t.icon} size={13} /> {t.label}
+            </button>
+          ))}
+        </div>
+        {theme === 'system' && (
+          <span className="profile__hint">Following your device — currently {resolved}.</span>
+        )}
+      </div>
+
+      <div className="profile__group">
+        <span className="profile__label">Default table density</span>
+        <div className="profile__seg" role="radiogroup" aria-label="Density">
+          {[{ id: 'fit', label: 'Fit to width' }, { id: 'comfortable', label: 'Comfortable' }].map((d) => (
+            <button
+              key={d.id}
+              type="button"
+              role="radio"
+              aria-checked={density === d.id}
+              className={`profile__seg-btn ${density === d.id ? 'is-active' : ''}`.trim()}
+              onClick={() => setDensity(d.id)}
+            >
+              {d.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="profile__actions">
+        <button type="button" className="popover__item" onClick={() => { onClose(); navigate('/dashboard'); }}>
+          <Icon name="dashboard" size={14} className="subtle" /> Dashboard
+        </button>
+        <button type="button" className="popover__item" onClick={signOut}>
+          <Icon name="logout" size={14} className="subtle" /> Log out
+        </button>
+      </div>
+    </>
+  );
+}
+
+function Topbar() {
+  const { user } = useAuth();
 
   return (
     <header className="topbar">
@@ -39,7 +113,7 @@ function Topbar() {
 
       <Popover
         align="right"
-        width={220}
+        width={280}
         trigger={({ toggle }) => (
           <button type="button" className="topbar__chip" onClick={toggle} aria-label="Account menu">
             <span className="topbar__chip-avatar"><Icon name="userCircle" size={19} /></span>
@@ -51,20 +125,7 @@ function Topbar() {
           </button>
         )}
       >
-        {() => (
-          <>
-            <div style={{ padding: 'var(--s-2)', borderBottom: '1px solid var(--c-line)' }}>
-              <div className="small strong">{user?.name}</div>
-              <div className="micro subtle">{user?.email}</div>
-            </div>
-            <button type="button" className="popover__item" onClick={() => navigate('/dashboard')}>
-              <Icon name="dashboard" size={14} className="subtle" /> Dashboard
-            </button>
-            <button type="button" className="popover__item" onClick={signOut}>
-              <Icon name="logout" size={14} className="subtle" /> Log out
-            </button>
-          </>
-        )}
+        {({ close }) => <ProfilePanel onClose={close} />}
       </Popover>
     </header>
   );

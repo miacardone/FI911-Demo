@@ -1,5 +1,5 @@
 /**
- * ERT — Emergency Response Team notifications.
+ * ERT — Error Risk Threat notifications.
  *
  * Tickets and alerts routed between operations desks, the risk engine and
  * participants.

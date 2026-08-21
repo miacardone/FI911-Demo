@@ -4,6 +4,7 @@ import { Button, PageHeader } from '@/components/ui/Surface';
 import { ColumnToggle, DataTable, DensityToggle, ExportButtons } from '@/components/ui/DataTable';
 import { useToast } from '@/context/ToastContext';
 import { useAutoPageSize } from '@/hooks/useAutoPageSize';
+import { withColumnHelp } from '@/domain/columnHelp';
 
 /**
  * THE LIST PAGE SHELL.
@@ -170,7 +171,7 @@ export function ListPager({ total, page, pageSize, onPageChange, onPageSizeChang
    so the table + its toolbar + its pager is separable from the page chrome. */
 
 export function ListTable({
-  columns,
+  columns: columnsProp,
   rows,
   rowKey = (r) => r.id,
   search: searchProp,
@@ -189,6 +190,11 @@ export function ListTable({
   note,
   selectable = true,
 }) {
+  /* Every header carries an explanation of what the column holds. Declaring
+     that on several hundred column definitions would guarantee drift, so it is
+     looked up centrally and a page can still override per column. */
+  const columns = useMemo(() => withColumnHelp(columnsProp), [columnsProp]);
+
   const [innerSearch, setInnerSearch] = useState('');
   const [selected, setSelected] = useState(() => new Set());
   const bodyRef = useRef(null);

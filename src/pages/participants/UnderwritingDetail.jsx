@@ -111,8 +111,12 @@ export function UnderwritingDetail() {
           { icon: 'message', label: 'Notes', onSelect: () => setModal({ kind: 'notes' }) },
           { icon: 'menu', label: 'More actions', onSelect: () => {} },
         ]}
-      >
-        <Section title="Participant Details">
+        steps={[
+          {
+            label: 'Participant & General',
+            render: () => (
+              <>
+                <Section title="Participant Details">
           <FieldGrid>
             <TextField {...field('sortCode', 'Sort Code')} required />
             <SelectField {...field('businessType', 'Business Type')} options={opts(brand.businessTypes)} />
@@ -128,8 +132,7 @@ export function UnderwritingDetail() {
             <TextField {...field('swipe', 'Swipe %')} />
           </FieldGrid>
         </Section>
-
-        <Section title="General Information">
+                <Section title="General Information">
           <FieldGrid>
             <TextField {...field('mid', 'MID')} required />
             <SelectField {...field('processor', 'Processor')} options={opts(['First Data Omaha', ...brand.processors])} />
@@ -142,8 +145,14 @@ export function UnderwritingDetail() {
             <SelectField {...field('currency', 'Currency')} options={opts(['GBP', 'EUR', 'USD'])} />
           </FieldGrid>
         </Section>
-
-        <Section title="Business Information">
+              </>
+            ),
+          },
+          {
+            label: 'Business & Banking',
+            render: () => (
+              <>
+                <Section title="Business Information">
           <FieldGrid>
             <TextField {...field('productSold', 'Product Sold')} />
             <TextField {...field('cardAcceptance', 'Card Acceptance')} />
@@ -154,8 +163,7 @@ export function UnderwritingDetail() {
             <FullRow><TextField {...field('advertiseBusiness', 'Advertise Business')} /></FullRow>
           </FieldGrid>
         </Section>
-
-        <Section title="Banking Information">
+                <Section title="Banking Information">
           <div>
             <span className="fi-checkgroup__label">Deposit Account</span>
             <FieldGrid>
@@ -177,8 +185,14 @@ export function UnderwritingDetail() {
           <ToggleRow label="Direct Credit Authority" checked={Boolean(values.directCredit)} onChange={(v) => set('directCredit', v)} />
           <ToggleRow label="Direct Debit Authority" checked={Boolean(values.directDebit)} onChange={(v) => set('directDebit', v)} />
         </Section>
-
-        <Section title="Owners" actions={<AddButton onClick={() => set('owners', [...owners, {}])}>Add Owner</AddButton>}>
+              </>
+            ),
+          },
+          {
+            label: 'Owners, Equipment & Fees',
+            render: () => (
+              <>
+                <Section title="Owners" actions={<AddButton onClick={() => set('owners', [...owners, {}])}>Add Owner</AddButton>}>
           {owners.map((o, i) => (
             <RepeatBlock key={i} title={`Owner ${i + 1}`} onRemove={() => set('owners', owners.filter((_, idx) => idx !== i))}>
               <FieldGrid>
@@ -194,8 +208,7 @@ export function UnderwritingDetail() {
             </RepeatBlock>
           ))}
         </Section>
-
-        <Section title="Equipment" actions={<AddButton onClick={() => set('equipment', [...equipment, {}])}>Add Equipment</AddButton>}>
+                <Section title="Equipment" actions={<AddButton onClick={() => set('equipment', [...equipment, {}])}>Add Equipment</AddButton>}>
           {equipment.map((k, i) => (
             <RepeatBlock key={i} title={`Equipment ${i + 1}`} onRemove={() => set('equipment', equipment.filter((_, idx) => idx !== i))}>
               <FieldGrid>
@@ -210,8 +223,13 @@ export function UnderwritingDetail() {
             </RepeatBlock>
           ))}
         </Section>
+                <FeeScheduleSection form={form} />
+              </>
+            ),
+          },
+        ]}
+      >
 
-        <FeeScheduleSection form={form} />
       </DetailPage>
 
       <AttachmentsModal open={modal?.kind === 'attachments'} onClose={() => setModal(null)} attachments={attachmentsFor(record.id)} />

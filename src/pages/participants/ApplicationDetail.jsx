@@ -118,23 +118,52 @@ export function ApplicationDetail() {
         headerIcons={[
           { icon: 'paperclip', label: 'Attachments', onSelect: () => setModal({ kind: 'attachments' }) },
           { icon: 'message', label: 'Notes', onSelect: () => setModal({ kind: 'notes' }) },
-          { icon: 'menu', label: 'More actions', onSelect: () => {} },
           { icon: 'mail', label: 'Email participant', onSelect: () => toast.notify('Draft email opened.') },
           { icon: 'edit', label: 'Edit', onSelect: () => {} },
         ]}
+        steps={[
+          {
+            label: 'Business Information',
+            render: () => (
+              <>
+                <BusinessInformationSection form={form} variant="application" />
+                <AddressSection form={form} title="Physical Address" prefix="physical" />
+                <AddressSection form={form} title="Mailing Address" prefix="mailing" />
+              </>
+            ),
+          },
+          {
+            label: 'Trading Profile',
+            render: () => (
+              <>
+                <TransactionInformationSection form={form} />
+                <NatureOfBusinessSection form={form} />
+                <ComplianceSection form={form} />
+              </>
+            ),
+          },
+          {
+            label: 'Banking & Individuals',
+            render: () => (
+              <>
+                <BankAccountsSection form={form} />
+                <IndividualsSection form={form} />
+              </>
+            ),
+          },
+          {
+            label: 'Terminals & Pricing',
+            render: () => (
+              <>
+                <PaymentTerminalsSection form={form} />
+                <DefaultTerminalSettingsSection form={form} />
+                <ShippingMethodSection form={form} />
+                <PricingSection form={form} />
+              </>
+            ),
+          },
+        ]}
       >
-        <BusinessInformationSection form={form} variant="application" />
-        <AddressSection form={form} title="Physical Address" prefix="physical" />
-        <AddressSection form={form} title="Mailing Address" prefix="mailing" />
-        <TransactionInformationSection form={form} />
-        <NatureOfBusinessSection form={form} />
-        <ComplianceSection form={form} />
-        <BankAccountsSection form={form} />
-        <IndividualsSection form={form} />
-        <PaymentTerminalsSection form={form} />
-        <DefaultTerminalSettingsSection form={form} />
-        <ShippingMethodSection form={form} />
-        <PricingSection form={form} />
       </DetailPage>
 
       <ChangeStatusModal

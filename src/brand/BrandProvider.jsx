@@ -12,22 +12,35 @@ const toVar = (key) => `--c-${key.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`
  * This is the mechanism that lets every component stay color-free — they
  * reference var(--c-primary), never a hex. tokens.css carries the same values
  * as static fallbacks so nothing flashes unstyled if this is delayed a frame.
+ *
+ * INJECTED AS A STYLESHEET RULE, NOT INLINE STYLES. An inline custom property
+ * on <html> beats every stylesheet rule regardless of specificity, which
+ * silently made the dark theme in tokens.css unreachable — the attribute
+ * flipped, the variables did not. Emitting a real `:root { … }` rule keeps the
+ * tenant palette as the base layer that `:root[data-theme='dark']` can override
+ * on specificity, which is how both features coexist.
  */
+const STYLE_ID = 'tenant-palette';
+
 export function BrandProvider({ brand = brandConfig, children }) {
   useEffect(() => {
-    const root = document.documentElement;
+    const declarations = [
+      ...Object.entries(brand.colors).map(([key, value]) => `${toVar(key)}: ${value};`),
+      ...(brand.chartSeries ?? []).map((value, i) => `--c-series-${i}: ${value};`),
+      `--c-series-neutral: ${brand.chartNeutral};`,
+      `--c-series-contrast: ${brand.chartContrast};`,
+    ].join('\n  ');
 
-    Object.entries(brand.colors).forEach(([key, value]) => {
-      root.style.setProperty(toVar(key), value);
-    });
+    let el = document.getElementById(STYLE_ID);
+    if (!el) {
+      el = document.createElement('style');
+      el.id = STYLE_ID;
+      /* First in <head> so tokens.css — and its dark block — come after. */
+      document.head.prepend(el);
+    }
+    el.textContent = `:root {\n  ${declarations}\n}`;
 
-    (brand.chartSeries ?? []).forEach((value, i) => {
-      root.style.setProperty(`--c-series-${i}`, value);
-    });
-    root.style.setProperty('--c-series-neutral', brand.chartNeutral);
-    root.style.setProperty('--c-series-contrast', brand.chartContrast);
-
-    root.dataset.tenant = brand.id;
+    document.documentElement.dataset.tenant = brand.id;
     document.title = `${brand.name} ${brand.productName}`;
   }, [brand]);
 

@@ -124,3 +124,79 @@
     transition-duration: 0.001ms !important;
   }
 }
+
+/* ============================================================
+   DARK THEME
+   Every colour in this console is a custom property, so a dark
+   palette is this block and nothing else — no component changes.
+
+   Not a mechanical inversion: the rail stays dark (it already was,
+   so the layout keeps its spine), surfaces lift to near-black
+   greys rather than pure black, and the semantic tints are
+   re-mixed against a dark ground so a "success" badge still reads
+   as green rather than glowing.
+   ============================================================ */
+
+:root[data-theme='dark'] {
+  --c-primary: #22C3CE;
+  --c-primary-deep: #7FE0E7;
+  --c-primary-tint: #0E3A40;
+  --c-primary-wash: #12272B;
+
+  --c-accent: #FFD34D;
+  --c-accent-deep: #FFC300;
+  --c-accent-tint: #3A2F0A;
+
+  --c-topbar: #1A2024;
+  --c-topbar-ink: #E7ECEF;
+  --c-topbar-chip: #262D32;
+  --c-topbar-field: #262D32;
+  --c-crumbbar: #171C20;
+  --c-crumbbar-ink: #8B939B;
+  --c-crumbbar-ink-active: #F2F5F6;
+
+  --c-nav-rail: #14191E;
+  --c-nav-rail-deep: #0E1216;
+  --c-nav-active: #22C3CE;
+  --c-nav-ink: #C9CFD3;
+  --c-nav-ink-muted: #7E878F;
+
+  --c-ink: #E7ECEF;
+  --c-ink-muted: #A7B0B7;
+  --c-ink-subtle: #7E878F;
+  --c-canvas: #0F1417;
+  --c-surface: #1A2024;
+  --c-surface-sunken: #232A2F;
+  --c-line: #2E363C;
+  --c-line-strong: #414B52;
+
+  --c-success: #4ECB8B;
+  --c-success-tint: #12301F;
+  --c-warning: #E8B33C;
+  --c-warning-tint: #32270D;
+  --c-danger: #F0736A;
+  --c-danger-tint: #351A18;
+  --c-info: #8A9BF0;
+  --c-info-tint: #1C2140;
+
+  --c-series-0: #22C3CE;
+  --c-series-1: #8A939B;
+  --c-series-2: #FFD34D;
+  --c-series-3: #1C7A82;
+  --c-series-4: #5A646C;
+  --c-series-contrast: #F0736A;
+  --c-series-neutral: #8A939B;
+
+  --c-login-panel: #14191E;
+  --c-login-panel-ink: #A8AFB6;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-raised: 0 8px 28px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.4);
+  --shadow-popover: 0 12px 32px rgba(0, 0, 0, 0.6), 0 3px 8px rgba(0, 0, 0, 0.45);
+}
+
+/* The white badge inside the bull mark needs no change, but form controls
+   and the browser's own widgets do. */
+:root[data-theme='dark'] input,
+:root[data-theme='dark'] select,
+:root[data-theme='dark'] textarea { color-scheme: dark; }

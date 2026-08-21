@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/Surface';
 import { SelectField, TextAreaField, TextField } from '@/components/ui/Form';
 import { RowMenu } from '@/components/fi911/cells';
 import { useToast } from '@/context/ToastContext';
-import { CURRENT_USER } from '@/data/people';
+import { CURRENT_USER, initialsFor } from '@/data/people';
 import { todayStamp } from '@/utils/format';
 
 /**
@@ -213,44 +213,60 @@ export function NotesModal({ open, onClose, notes = [], onChange, title = 'View 
       </div>
 
       {adding && (
-        <div className="fi-inline-form">
-          <SelectField
-            label="Type"
-            value={draft.type}
-            onChange={(e) => setDraft((d) => ({ ...d, type: e.target.value }))}
-            options={NOTE_TYPES.map((t) => ({ value: t, label: t }))}
-          />
-          <TextAreaField
-            label="Description"
-            rows={3}
-            value={draft.description}
-            placeholder="Add a note…"
-            onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
-          />
-          <div className="fi-inline-form__actions">
-            <Button variant="secondary" size="sm" onClick={() => setAdding(false)}>Cancel</Button>
-            <Button variant="primary" size="sm" disabled={!draft.description.trim()} onClick={add}>Add</Button>
+        <div className="note-composer">
+          <span className="note__avatar note__avatar--me" aria-hidden>{initialsFor(CURRENT_USER.name)}</span>
+          <div className="note-composer__body">
+            <TextAreaField
+              label="Note"
+              rows={3}
+              value={draft.description}
+              placeholder={`Add a note as ${CURRENT_USER.name}…`}
+              onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
+            />
+            <div className="note-composer__foot">
+              <div className="note-composer__types" role="radiogroup" aria-label="Note visibility">
+                {NOTE_TYPES.map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    role="radio"
+                    aria-checked={draft.type === t}
+                    className={`note-type-pick ${draft.type === t ? 'is-active' : ''}`.trim()}
+                    onClick={() => setDraft((d) => ({ ...d, type: t }))}
+                  >
+                    {t.replace(' Notes', '')}
+                  </button>
+                ))}
+              </div>
+              <div className="row row--tight row--nowrap">
+                <Button variant="secondary" size="sm" onClick={() => setAdding(false)}>Cancel</Button>
+                <Button variant="primary" size="sm" icon="send" disabled={!draft.description.trim()} onClick={add}>Post note</Button>
+              </div>
+            </div>
           </div>
         </div>
       )}
 
-      <table className="fi-mini-table">
-        <thead><tr><th style={{ width: '32%' }}>User</th><th>Description</th></tr></thead>
-        <tbody>
-          {items.length === 0 && (
-            <tr><td colSpan={2} className="subtle small" style={{ padding: 'var(--s-6)', textAlign: 'center' }}>No notes yet.</td></tr>
-          )}
+      {items.length === 0 ? (
+        <div className="empty">
+          <span className="empty__glyph"><Icon name="message" size={20} /></span>
+          <p className="empty__title">No notes yet</p>
+          <p className="empty__hint">Add the first note to start the thread.</p>
+        </div>
+      ) : (
+        <ol className="note-thread">
           {items.map((n) => (
-            <tr key={n.id}>
-              <td>
-                <span className="cell-2l">
-                  <span className="cell-2l__main">{n.user}</span>
-                  <span className="cell-2l__sub">Type: {n.type}</span>
-                  <span className="cell-2l__sub">Date: {n.date}</span>
-                </span>
-              </td>
-              <td>
-                <p className="small">{n.description}</p>
+            <li key={n.id} className="note">
+              <span className="note__avatar" aria-hidden>{initialsFor(n.user)}</span>
+              <div className="note__body">
+                <header className="note__head">
+                  <span className="note__author">{n.user}</span>
+                  <span className={`note__type note__type--${n.type.toLowerCase().includes('secure') ? 'secure' : n.type.toLowerCase().includes('underwriting') ? 'risk' : 'public'}`}>
+                    {n.type}
+                  </span>
+                  <span className="note__date">{n.date}</span>
+                </header>
+                <p className="note__text">{n.description}</p>
                 {n.attachments?.length > 0 && (
                   <div className="note-chips">
                     {n.attachments.map((f) => (
@@ -258,11 +274,11 @@ export function NotesModal({ open, onClose, notes = [], onChange, title = 'View 
                     ))}
                   </div>
                 )}
-              </td>
-            </tr>
+              </div>
+            </li>
           ))}
-        </tbody>
-      </table>
+        </ol>
+      )}
     </Modal>
   );
 }

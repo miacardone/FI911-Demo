@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '@/components/ui/Icon';
 import { Card, PageHeader } from '@/components/ui/Surface';
+import ChartCard from '@/components/charts/ChartCard';
 import { AreaChart, BarChart, BarRows, Donut, LineChart } from '@/components/charts/Charts';
 import {
   ACTIVE_PSPS, CLAIM_KPIS, CLAIM_TURNOVER, DAILY_AMOUNT_SPARK, DAILY_TRANSACTION_AMOUNT,
@@ -45,16 +46,16 @@ function RangeToggle({ value, onChange }) {
   );
 }
 
+/* The list icon that used to live here is now owned by ChartCard, which
+   actually swaps the chart for its figures. */
 function CardTools({ range, onRange }) {
-  return (
-    <span className="row row--tight row--nowrap">
-      {range && <RangeToggle value={range} onChange={onRange} />}
-      <button type="button" className="row-menu__btn" aria-label="Show as table">
-        <Icon name="checklist" size={16} />
-      </button>
-    </span>
-  );
+  if (!range) return null;
+  return <RangeToggle value={range} onChange={onRange} />;
 }
+
+const gbp = (v) => formatCurrency(v);
+const num = (v) => formatNumber(v);
+const pct = (v) => `${v}%`;
 
 /** A figure with a sparkline underneath — the Transaction / Claim tiles. */
 function SparkTile({ title, value, count, spark, meta, formatter = formatCurrency }) {
@@ -88,17 +89,28 @@ export function Dashboard() {
       {/* ---------- Band 1: the participant funnel ---------- */}
       <section className="dash-band">
         <div className="dash-grid dash-grid--2">
-          <Card title="Active PSPs" action={<CardTools range={pspRange} onRange={setPspRange} />}>
+          <ChartCard
+            title="Active PSPs"
+            action={<CardTools range={pspRange} onRange={setPspRange} />}
+            table={{ columns: [{ key: 'period', label: 'Date' }, { key: 'value', label: 'Active PSPs', format: num }], rows: pspSeries }}
+          >
             <div className="spark-tile__head">
               <span className="dash-figure">{formatNumber(ACTIVE_PSPS)}</span>
               <span className="spark-tile__meta">(Last calculated on {LAST_CALCULATED})</span>
             </div>
             <AreaChart data={pspSeries} height={190} formatValue={formatNumber} />
-          </Card>
+          </ChartCard>
 
-          <Card title="PSP Onboarding Summary" action={<CardTools range={funnelRange} onRange={setFunnelRange} />}>
+          <ChartCard
+            title="PSP Onboarding Summary"
+            action={<CardTools range={funnelRange} onRange={setFunnelRange} />}
+            table={{
+              columns: [{ key: 'period', label: 'Stage' }, ...FUNNEL_SERIES.map((x) => ({ key: x.key, label: x.label, format: num }))],
+              rows: ONBOARDING_STAGES,
+            }}
+          >
             <BarChart data={ONBOARDING_STAGES} series={FUNNEL_SERIES} height={250} grouped formatValue={formatNumber} />
-          </Card>
+          </ChartCard>
         </div>
 
         <div className="dash-grid dash-grid--5" style={{ marginTop: 'var(--s-4)' }}>
@@ -127,12 +139,22 @@ export function Dashboard() {
         </div>
 
         <div className="dash-grid dash-grid--2" style={{ marginTop: 'var(--s-4)' }}>
-          <Card title="Transactions YTD & YOY" action={<CardTools />}>
+          <ChartCard
+            title="Transactions YTD & YOY"
+            table={{
+              columns: [{ key: 'period', label: 'Months' }, ...YOY_SERIES.map((x) => ({ key: x.key, label: x.label, format: gbp }))],
+              rows: YOY_DATA,
+              height: 280,
+            }}
+          >
             <BarChart data={YOY_DATA} series={YOY_SERIES} height={280} grouped formatValue={formatCompactCurrency} />
-          </Card>
-          <Card title="Transactions by Top Five Sort Codes" action={<CardTools />}>
+          </ChartCard>
+          <ChartCard
+            title="Transactions by Top Five Sort Codes"
+            table={{ columns: [{ key: 'label', label: 'Sort Code' }, { key: 'value', label: 'Share', format: pct }], rows: TOP_SORT_CODE_SPLIT }}
+          >
             <Donut data={TOP_SORT_CODE_SPLIT} size={230} thickness={58} arcLabels formatValue={(v) => `${v}%`} />
-          </Card>
+          </ChartCard>
         </div>
       </section>
 
@@ -148,12 +170,22 @@ export function Dashboard() {
         </div>
 
         <div className="dash-grid dash-grid--2" style={{ marginTop: 'var(--s-4)' }}>
-          <Card title="Dispute Claims by Reason Category" action={<CardTools />}>
+          <ChartCard
+            title="Dispute Claims by Reason Category"
+            table={{ columns: [{ key: 'label', label: 'Reason' }, { key: 'value', label: 'Share', format: pct }], rows: REASON_SPLIT }}
+          >
             <Donut data={REASON_SPLIT} size={220} thickness={56} arcLabels formatValue={(v) => `${v}%`} />
-          </Card>
-          <Card title="Dispute Funding by Sending and Receiving PSP" action={<span className="date-chip">Last 6 Months</span>}>
+          </ChartCard>
+          <ChartCard
+            title="Dispute Funding by Sending and Receiving PSP"
+            action={<span className="date-chip">Last 6 Months</span>}
+            table={{
+              columns: [{ key: 'period', label: 'Month' }, ...DISPUTE_FUNDING_SERIES.map((x) => ({ key: x.key, label: x.label, format: gbp }))],
+              rows: DISPUTE_FUNDING,
+            }}
+          >
             <BarChart data={DISPUTE_FUNDING} series={DISPUTE_FUNDING_SERIES} height={260} grouped formatValue={formatCompactCurrency} />
-          </Card>
+          </ChartCard>
         </div>
       </section>
 
@@ -163,24 +195,40 @@ export function Dashboard() {
         <p className="dash-band__desc">Settlement split, PSP turnover, and ERT escalation visibility.</p>
 
         <div className="dash-grid dash-grid--2">
-          <Card title="Financial Split Summary" action={<CardTools range={splitRange} onRange={setSplitRange} />}>
+          <ChartCard
+            title="Financial Split Summary"
+            action={<CardTools range={splitRange} onRange={setSplitRange} />}
+            table={{
+              columns: [{ key: 'period', label: 'Date' }, ...SPLIT_SERIES.map((x) => ({ key: x.key, label: x.label, format: gbp }))],
+              rows: splitSeries,
+            }}
+          >
             <LineChart data={splitSeries} series={SPLIT_SERIES} height={250} formatValue={formatNumber} />
-          </Card>
+          </ChartCard>
 
-          <Card title="Claim Turnover - PSP" action={<span className="date-chip">Last calculated on {LAST_CALCULATED}</span>}>
+          <ChartCard
+            title="Claim Turnover - PSP"
+            action={<span className="date-chip">Last calculated on {LAST_CALCULATED}</span>}
+            table={{ columns: [{ key: 'label', label: 'PSP' }, { key: 'value', label: 'Turnover', format: gbp }], rows: CLAIM_TURNOVER }}
+          >
             <BarRows rows={CLAIM_TURNOVER.map((r) => ({ ...r, color: 'var(--c-series-0)' }))} formatValue={formatCompactCurrency} />
-          </Card>
+          </ChartCard>
         </div>
 
         <div style={{ marginTop: 'var(--s-4)' }}>
-          <Card
+          <ChartCard
             title="ERT Notifications by Type"
             description="Created notifications by type, last 12 months"
             action={<Link to={routes.ert} className="cell-link">{ERT_ACTIVE} Active</Link>}
+            table={{
+              columns: [{ key: 'period', label: 'Month' }, ...ERT_SERIES.map((x) => ({ key: x.key, label: x.label, format: num }))],
+              rows: ERT_TREND,
+              height: 300,
+            }}
           >
             <p className="dash-figure__hint">Created notifications by type, last 12 months</p>
             <LineChart data={ERT_TREND} series={ERT_SERIES} height={260} formatValue={formatNumber} />
-          </Card>
+          </ChartCard>
         </div>
       </section>
     </>

@@ -62,8 +62,10 @@ export const fi911Brand = {
   /** Paths only — never imported into a component. Served from /public.
    *  The lockup already spells out "Fi911", so no text renders beside it. */
   logo: '/tenant-wordmark-blue.svg',
+  /** Badge only — the collapsed rail has no room for the wordmark. */
+  logoMark: '/tenant-mark-blue.svg',
   logoInverse: '/tenant-wordmark-white.svg',
-  logoAspectRatio: 340 / 96,
+  logoAspectRatio: 420 / 116,
 
   wordmark: { text: '', accent: '', weight: 700 },
 
@@ -216,7 +218,7 @@ export const fi911Brand = {
     { id: 'unionpay', label: 'UnionPay', short: 'UP', colorKey: 'schemeVisa', binPrefix: '62' },
   ],
 
-  /* --- ERT (Emergency Response Team) --------------------------------------- */
+  /* --- ERT (Error Risk Threat) --------------------------------------- */
   ertTypes: [
     { id: 'internal_alert', label: 'Internal Alert' },
     { id: 'risk_alert', label: 'Risk Alert' },

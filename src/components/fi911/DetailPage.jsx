@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { Fragment, createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Icon from '@/components/ui/Icon';
 import { Badge, Button } from '@/components/ui/Surface';
@@ -186,6 +186,57 @@ export function AddButton({ children, onClick }) {
   return <Button variant="secondary" size="sm" icon="plus" onClick={onClick}>{children}</Button>;
 }
 
+/* ---------- Wizard ---------- *
+ * The long agreement forms are 8–12 sections and ~3,000px of scroll. Splitting
+ * them into steps is what makes them usable — but the reference shows only a
+ * numbered strip, which leaves no obvious way forward. Real Previous / Next
+ * controls carry you through; the strip stays clickable so you can still jump
+ * straight to Pricing without walking the whole form.
+ *
+ * The steps are NAVIGATION, not a submission flow: the record already exists,
+ * so nothing gates on completing the previous step. */
+
+export function WizardSteps({ steps, current, onSelect }) {
+  return (
+    <nav className="fi-steps" aria-label="Form sections">
+      {steps.map((step, i) => (
+        <Fragment key={step.label}>
+          <button
+            type="button"
+            className={`fi-step ${i === current ? 'is-active' : i < current ? 'is-done' : ''}`.trim()}
+            onClick={() => onSelect(i)}
+            aria-current={i === current ? 'step' : undefined}
+          >
+            <span className="fi-step__dot">{i < current ? <Icon name="check" size={12} strokeWidth={3} /> : i + 1}</span>
+            <span className="fi-step__label">{step.label}</span>
+          </button>
+          {i < steps.length - 1 && <span className="fi-step__line" />}
+        </Fragment>
+      ))}
+    </nav>
+  );
+}
+
+export function WizardNav({ steps, current, onChange }) {
+  const atStart = current === 0;
+  const atEnd = current === steps.length - 1;
+
+  return (
+    <div className="fi-wizard-nav">
+      <Button variant="secondary" icon="arrowLeft" disabled={atStart} onClick={() => onChange(current - 1)}>
+        Previous
+      </Button>
+      <span className="fi-wizard-nav__pos">
+        Step <strong>{current + 1}</strong> of <strong>{steps.length}</strong>
+        <span className="fi-wizard-nav__name">{steps[current]?.label}</span>
+      </span>
+      <Button variant="primary" iconAfter="arrowRight" disabled={atEnd} onClick={() => onChange(current + 1)}>
+        Next
+      </Button>
+    </div>
+  );
+}
+
 /* ---------- Page shell ---------- */
 
 function ExpandAllButton() {
@@ -216,9 +267,19 @@ export function DetailPage({
   onSave,
   onDiscard,
   children,
+  /** `[{ label, render: () => JSX }]` — turns the page into a wizard. */
+  steps,
+  summary,
 }) {
   const navigate = useNavigate();
   const toast = useToast();
+  const [step, setStep] = useState(0);
+
+  const goToStep = (i) => {
+    setStep(i);
+    /* Land at the top of the new step rather than mid-form. */
+    document.querySelector('.shell__content')?.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const save = () => {
     onSave?.();
@@ -240,7 +301,7 @@ export function DetailPage({
         </div>
 
         <div className="fi-detail__actions">
-          <ExpandAllButton />
+          {!steps && <ExpandAllButton />}
           {actions}
           {headerIcons.map((it) => (
             <button key={it.label} type="button" className="fi-detail__icon" onClick={it.onSelect} aria-label={it.label} title={it.label}>
@@ -250,7 +311,17 @@ export function DetailPage({
         </div>
       </header>
 
-      <div className="fi-detail__body">{children}</div>
+      {summary}
+
+      {steps ? (
+        <>
+          <WizardSteps steps={steps} current={step} onSelect={goToStep} />
+          <div className="fi-detail__body">{steps[step]?.render()}</div>
+          <WizardNav steps={steps} current={step} onChange={goToStep} />
+        </>
+      ) : (
+        <div className="fi-detail__body">{children}</div>
+      )}
 
       {dirty && (
         <footer className="fi-detail__foot">

@@ -174,15 +174,25 @@ export function RowMenu({ items = [], label = 'Row actions' }) {
   );
 }
 
-/** The trailing kebab column, identical on every actionable list. */
+/**
+ * The Actions column.
+ *
+ * PINNED LEFT, immediately after the select checkbox. A row's actions are the
+ * first thing you reach for once you have identified the row, and on these
+ * grids — some are twenty columns wide — a trailing kebab means scrolling
+ * right past everything to act on something you can already see. Pinning also
+ * keeps it in the same place on every table regardless of column count.
+ */
 export const menuColumn = (buildItems) => ({
   key: '__menu',
-  header: '',
-  fw: 2,
-  width: 44,
-  align: 'right',
+  header: 'Actions',
+  description: 'Row actions available for this record',
+  fw: 3,
+  width: 68,
+  align: 'center',
   searchable: false,
   locked: true,
+  pinned: true,
   cell: (row) => <RowMenu items={buildItems(row)} />,
 });
 

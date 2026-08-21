@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import BrandProvider from '@/brand/BrandProvider';
 import AuthProvider from '@/context/AuthContext';
 import ToastProvider from '@/context/ToastContext';
+import PreferencesProvider from '@/context/PreferencesContext';
 import AppLayout from '@/components/layout/AppLayout';
 import RequireAuth from '@/components/layout/RequireAuth';
 import { LOGIN_ROUTE, routes } from '@/data/navigation';
@@ -73,6 +74,7 @@ import Statements from '@/pages/billing/Statements';
 export function App() {
   return (
     <BrandProvider>
+      <PreferencesProvider>
       <AuthProvider>
         <ToastProvider>
           <BrowserRouter>
@@ -156,6 +158,7 @@ export function App() {
           </BrowserRouter>
         </ToastProvider>
       </AuthProvider>
+      </PreferencesProvider>
     </BrandProvider>
   );
 }

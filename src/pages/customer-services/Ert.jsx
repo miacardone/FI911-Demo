@@ -132,7 +132,7 @@ export function Ert() {
     <>
       <ListPage
         title="ERT Notifications"
-        description="Manage and track Emergency Response Team notifications and alerts"
+        description="Manage and track Error Risk Threat notifications and alerts"
         tabs={tabs}
         tab={tab}
         onTabChange={setTab}

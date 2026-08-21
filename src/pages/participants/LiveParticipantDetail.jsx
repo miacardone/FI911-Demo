@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Badge } from '@/components/ui/Surface';
 import { DetailPage, useForm } from '@/components/fi911/DetailPage';
@@ -29,29 +29,6 @@ import { statusTone } from '@/domain/statuses';
  * pricing of a live participant a four-click journey.
  */
 
-const STEPS = ['Business Information', 'Banking & Individual Information', 'Terminals', 'Pricing'];
-
-function Steps({ current, onSelect }) {
-  return (
-    <div className="fi-steps">
-      {STEPS.map((label, i) => (
-        <Fragment key={label}>
-          <button
-            type="button"
-            className={`fi-step ${i === current ? 'is-active' : i < current ? 'is-done' : ''}`.trim()}
-            onClick={() => onSelect(i)}
-            aria-current={i === current ? 'step' : undefined}
-          >
-            <span className="fi-step__dot">{i + 1}</span>
-            <span className="fi-step__label">{label}</span>
-          </button>
-          {i < STEPS.length - 1 && <span className="fi-step__line" />}
-        </Fragment>
-      ))}
-    </div>
-  );
-}
-
 function SummaryRow({ label, children }) {
   return (
     <div className="fi-summary__row">
@@ -68,7 +45,6 @@ export function LiveParticipantDetail() {
 
   useDetailCrumb(record.participant);
 
-  const [step, setStep] = useState(0);
   const [modal, setModal] = useState(null);
 
   const institution = institutionByName(record.participant);
@@ -140,61 +116,67 @@ export function LiveParticipantDetail() {
           { icon: 'message', label: 'Notes', onSelect: () => setModal({ kind: 'notes' }) },
           { icon: 'menu', label: 'More actions', onSelect: () => {} },
         ]}
-      >
-        <section className="fi-section">
-          <header className="fi-section__head"><span className="fi-section__title">Participant Details</span></header>
-          <div className="fi-section__body">
-            <div className="fi-summary">
-              <SummaryRow label="Participant Name">{record.participant}</SummaryRow>
-              <SummaryRow label="Business Type">LLC</SummaryRow>
-              <SummaryRow label="Sort Code">{sortCode}</SummaryRow>
-              <SummaryRow label="Status"><Badge tone={statusTone(record.status)}>{record.status}</Badge></SummaryRow>
-              <SummaryRow label="Agent Name">{record.agent}</SummaryRow>
-              <SummaryRow label="Work Number">{record.phone}</SummaryRow>
-              <SummaryRow label="Contact Name">{record.contact}</SummaryRow>
-              <SummaryRow label="Email">{record.email}</SummaryRow>
-              <SummaryRow label="Participant Address">556 Tilbury turn ave</SummaryRow>
-              <SummaryRow label="Average Ticket">100.00</SummaryRow>
-              <SummaryRow label="Open Date">2015/07/24</SummaryRow>
-              <SummaryRow label="Annual Revenue">-</SummaryRow>
-              <SummaryRow label="Highest Txn (3M)">
-                {formatCurrency(record.highest)} <span className={record.trend === 'up' ? 'trend--up' : 'trend--down'}>{record.trend === 'up' ? '↗' : '↘'}</span>
-              </SummaryRow>
+        summary={(
+          <section className="fi-section">
+            <header className="fi-section__head"><span className="fi-section__title">Participant Details</span></header>
+            <div className="fi-section__body">
+              <div className="fi-summary">
+                <SummaryRow label="Participant Name">{record.participant}</SummaryRow>
+                <SummaryRow label="Business Type">LLC</SummaryRow>
+                <SummaryRow label="Sort Code">{sortCode}</SummaryRow>
+                <SummaryRow label="Status"><Badge tone={statusTone(record.status)}>{record.status}</Badge></SummaryRow>
+                <SummaryRow label="Agent Name">{record.agent}</SummaryRow>
+                <SummaryRow label="Work Number">{record.phone}</SummaryRow>
+                <SummaryRow label="Contact Name">{record.contact}</SummaryRow>
+                <SummaryRow label="Email">{record.email}</SummaryRow>
+                <SummaryRow label="Participant Address">556 Tilbury turn ave</SummaryRow>
+                <SummaryRow label="Average Ticket">100.00</SummaryRow>
+                <SummaryRow label="Open Date">2015/07/24</SummaryRow>
+                <SummaryRow label="Annual Revenue">-</SummaryRow>
+                <SummaryRow label="Highest Txn (3M)">
+                  {formatCurrency(record.highest)} <span className={record.trend === 'up' ? 'trend--up' : 'trend--down'}>{record.trend === 'up' ? '↗' : '↘'}</span>
+                </SummaryRow>
+              </div>
             </div>
-          </div>
-        </section>
-
-        <Steps current={step} onSelect={setStep} />
-
-        {step === 0 && (
-          <>
-            <BusinessInformationSection form={form} variant="onboarding" />
-            <AddressSection form={form} title="Physical Address" prefix="physical" />
-            <AddressSection form={form} title="Mailing Address" prefix="mailing" />
-            <TransactionInformationSection form={form} />
-            <NatureOfBusinessSection form={form} showFulfillment />
-            <ParticipantRiskRulesSection form={form} />
-            <ComplianceSection form={form} long />
-          </>
+          </section>
         )}
-
-        {step === 1 && (
-          <>
-            <BankAccountsSection form={form} />
-            <IndividualsSection form={form} />
-          </>
-        )}
-
-        {step === 2 && (
-          <>
-            <PaymentTerminalsSection form={form} />
-            <DefaultTerminalSettingsSection form={form} />
-            <ShippingMethodSection form={form} />
-          </>
-        )}
-
-        {step === 3 && <PricingSection form={form} />}
-      </DetailPage>
+        steps={[
+          {
+            label: 'Business Information',
+            render: () => (
+              <>
+                <BusinessInformationSection form={form} variant="onboarding" />
+                <AddressSection form={form} title="Physical Address" prefix="physical" />
+                <AddressSection form={form} title="Mailing Address" prefix="mailing" />
+                <TransactionInformationSection form={form} />
+                <NatureOfBusinessSection form={form} showFulfillment />
+                <ParticipantRiskRulesSection form={form} />
+                <ComplianceSection form={form} long />
+              </>
+            ),
+          },
+          {
+            label: 'Banking & Individual Information',
+            render: () => (
+              <>
+                <BankAccountsSection form={form} />
+                <IndividualsSection form={form} />
+              </>
+            ),
+          },
+          {
+            label: 'Terminals',
+            render: () => (
+              <>
+                <PaymentTerminalsSection form={form} />
+                <DefaultTerminalSettingsSection form={form} />
+                <ShippingMethodSection form={form} />
+              </>
+            ),
+          },
+          { label: 'Pricing', render: () => <PricingSection form={form} /> },
+        ]}
+      />
 
       <AttachmentsModal open={modal?.kind === 'attachments'} onClose={() => setModal(null)} attachments={attachmentsFor(record.id)} />
       <NotesModal open={modal?.kind === 'notes'} onClose={() => setModal(null)} notes={notesFor(record.id)} />
