@@ -52,6 +52,10 @@ import AlertAction from '@/pages/risk/AlertAction';
 import MerchantRiskProfile from '@/pages/risk/MerchantRiskProfile';
 import HeldVolume from '@/pages/risk/HeldVolume';
 import Rules from '@/pages/risk/Rules';
+import WorkQueue from '@/pages/risk/WorkQueue';
+import WorkQueueMerchant from '@/pages/risk/WorkQueueMerchant';
+import ActionHistory from '@/pages/risk/ActionHistory';
+import UnactionedQueue from '@/pages/risk/UnactionedQueue';
 
 // Transactions
 import AccountHolder from '@/pages/transactions/AccountHolder';
@@ -146,6 +150,10 @@ export function App() {
                   <Route path="merchant-risk-profile" element={<MerchantRiskProfile />} />
                   <Route path="held-volume" element={<HeldVolume />} />
                   <Route path="rules" element={<Rules />} />
+                  <Route path="work-queue" element={<WorkQueue />} />
+                  <Route path="work-queue/:mid" element={<WorkQueueMerchant />} />
+                  <Route path="action-history" element={<ActionHistory />} />
+                  <Route path="unactioned-queue" element={<UnactionedQueue />} />
                 </Route>
 
                 <Route path="transactions">

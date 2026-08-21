@@ -1771,3 +1771,123 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
   background: var(--c-surface-sunken); border: 1px solid var(--c-line);
   font-size: var(--fs-micro); color: var(--c-ink-muted);
 }
+
+/* ---------- Risk alert codes ---------- */
+
+/* nowrap keeps a row one line tall — the overflow chip absorbs the rest, so a
+   noisy merchant cannot make its row three times the height of its neighbours */
+.acodes { display: inline-flex; align-items: center; gap: 3px; flex-wrap: nowrap; justify-content: center; }
+
+.acode {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 1px 6px 1px 5px; border-radius: var(--r-pill);
+  font-size: var(--fs-micro); font-weight: 600; letter-spacing: .02em;
+  border: 1px solid var(--c-line); background: var(--c-surface-sunken); color: var(--c-ink-muted);
+  white-space: nowrap; line-height: 1.5;
+}
+.acode__dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
+.acode--high { color: var(--c-danger); border-color: color-mix(in srgb, var(--c-danger) 32%, transparent); background: var(--c-danger-tint); }
+.acode--medium { color: var(--c-accent-deep); border-color: color-mix(in srgb, var(--c-warning) 45%, transparent); background: var(--c-warning-tint); }
+.acode--low { color: var(--c-ink-subtle); }
+.acode--more {
+  cursor: pointer; font-weight: 700; color: var(--c-primary);
+  border-color: color-mix(in srgb, var(--c-primary) 30%, transparent); background: var(--c-primary-wash);
+}
+.acode--more:hover { background: var(--c-primary-tint); }
+
+.acode-list { display: grid; gap: 5px; padding: var(--s-1) 0; }
+.acode-list__row { display: flex; align-items: center; gap: var(--s-2); }
+.acode-list__label { font-size: var(--fs-micro); color: var(--c-ink-muted); }
+
+.alert-legend {
+  border: 1px solid var(--c-line); border-radius: var(--r-md);
+  background: var(--c-surface-sunken); padding: var(--s-3); margin-bottom: var(--s-3);
+}
+.alert-legend__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--s-2); }
+.alert-legend__title { font-size: var(--fs-small); font-weight: 700; color: var(--c-ink); }
+.alert-legend__group { margin-bottom: var(--s-3); }
+.alert-legend__group-label { display: block; font-size: var(--fs-micro); color: var(--c-ink-subtle); margin-bottom: 5px; }
+.alert-legend__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(232px, 1fr)); gap: 4px var(--s-3); }
+.alert-legend__item { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.alert-legend__text { font-size: var(--fs-micro); color: var(--c-ink-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.alert-legend__foot { display: flex; align-items: center; gap: 5px; font-size: var(--fs-micro); color: var(--c-ink-subtle); }
+
+/* ---------- Risk queue cell treatments ---------- */
+
+.ratio, .triage, .resp, .age {
+  display: inline-block; min-width: 42px; padding: 1px 7px;
+  border-radius: var(--r-pill); font-family: var(--font-mono);
+  font-size: var(--fs-micro); font-weight: 600; text-align: center;
+  border: 1px solid transparent;
+}
+.ratio--neutral, .triage--neutral, .age--neutral { color: var(--c-ink-muted); background: var(--c-surface-sunken); border-color: var(--c-line); }
+.ratio--warning, .triage--warning, .resp--warning, .age--warning { color: var(--c-accent-deep); background: var(--c-warning-tint); border-color: color-mix(in srgb, var(--c-warning) 45%, transparent); }
+.ratio--danger, .triage--danger, .resp--danger, .age--danger { color: var(--c-danger); background: var(--c-danger-tint); border-color: color-mix(in srgb, var(--c-danger) 32%, transparent); }
+.resp--success { color: var(--c-success); background: var(--c-success-tint); border-color: color-mix(in srgb, var(--c-success) 32%, transparent); }
+.resp, .age { min-width: 34px; }
+
+.prob { display: inline-flex; align-items: center; gap: 6px; min-width: 96px; }
+.prob__bar { flex: 1; height: 5px; border-radius: var(--r-pill); background: var(--c-surface-sunken); border: 1px solid var(--c-line); overflow: hidden; }
+.prob__fill { display: block; height: 100%; background: var(--c-ink-subtle); }
+.prob--warning .prob__fill { background: var(--c-warning); }
+.prob--danger .prob__fill { background: var(--c-danger); }
+.prob__value { font-family: var(--font-mono); font-size: var(--fs-micro); color: var(--c-ink-muted); min-width: 40px; text-align: right; }
+.prob--danger .prob__value { color: var(--c-danger); font-weight: 600; }
+
+/* Work Queue in-toolbar view switcher + assignment filter */
+.wq-tabs { display: inline-flex; gap: 2px; padding: 2px; border-radius: var(--r-md); background: var(--c-surface-sunken); border: 1px solid var(--c-line); }
+.wq-tab {
+  display: inline-flex; align-items: center; gap: 5px; padding: 3px var(--s-3);
+  border: 0; background: transparent; border-radius: var(--r-sm); cursor: pointer;
+  font-size: var(--fs-small); color: var(--c-ink-muted);
+}
+.wq-tab:hover { color: var(--c-ink); }
+.wq-tab.is-active { background: var(--c-surface); color: var(--c-ink); font-weight: 600; box-shadow: var(--shadow-sm); }
+.wq-tab__count {
+  font-family: var(--font-mono); font-size: var(--fs-micro); padding: 0 5px;
+  border-radius: var(--r-pill); background: var(--c-line); color: var(--c-ink-muted);
+}
+.wq-tab.is-active .wq-tab__count { background: var(--c-primary-tint); color: var(--c-primary-deep); }
+
+.wq-assign { display: inline-flex; align-items: center; gap: 6px; }
+.wq-assign__label { font-size: var(--fs-micro); color: var(--c-ink-subtle); text-transform: uppercase; letter-spacing: .04em; }
+
+/* ---------- Case management drawer ---------- */
+
+.case { display: grid; gap: var(--s-4); }
+.case__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s-3); }
+.case__merchant-name { display: block; font-weight: 600; color: var(--c-ink); }
+.case__merchant-mid { display: block; font-size: var(--fs-micro); color: var(--c-ink-subtle); font-family: var(--font-mono); }
+.case__grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3); }
+.case__field { display: grid; gap: 3px; min-width: 0; }
+.case__label { font-size: var(--fs-micro); color: var(--c-ink-subtle); text-transform: uppercase; letter-spacing: .04em; }
+.case__score { display: flex; align-items: center; gap: 6px; }
+.case__score-bar { flex: 1; height: 5px; border-radius: var(--r-pill); background: var(--c-surface-sunken); border: 1px solid var(--c-line); overflow: hidden; }
+.case__score-fill { display: block; height: 100%; background: var(--c-primary); }
+
+.case__block { display: grid; gap: 6px; padding-top: var(--s-3); border-top: 1px solid var(--c-line); }
+.case__block-title { font-size: var(--fs-small); font-weight: 700; color: var(--c-ink); }
+.case__empty { font-size: var(--fs-small); color: var(--c-ink-subtle); }
+.case__files { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
+.case__files li { display: flex; align-items: center; gap: 6px; font-size: var(--fs-small); }
+.case__file-size { margin-left: auto; font-size: var(--fs-micro); color: var(--c-ink-subtle); font-family: var(--font-mono); }
+.case__comments { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-2); }
+.case__comments li { padding: var(--s-2); border-radius: var(--r-md); background: var(--c-surface-sunken); border: 1px solid var(--c-line); }
+.case__comment-head { display: flex; justify-content: space-between; font-size: var(--fs-micro); margin-bottom: 3px; }
+.case__comment-date { color: var(--c-ink-subtle); font-family: var(--font-mono); }
+.case__comment-body { font-size: var(--fs-small); color: var(--c-ink-muted); line-height: 1.45; }
+.case__draft { resize: vertical; }
+
+/* ---------- Compact KPI strip for queue pages ----------
+   Four tiles across on one line, with tighter vertical rhythm than the
+   dashboard tiles. A queue is a working screen: every pixel the summary takes
+   is a row the operator has to scroll for. */
+
+.queue-kpis {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-3); margin-bottom: var(--s-4);
+}
+.queue-kpis .kpi { padding: var(--s-3) var(--s-4); gap: 2px; }
+.queue-kpis .kpi__value { font-size: 1.125rem; }
+@media (max-width: 1180px) { .queue-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 620px) { .queue-kpis { grid-template-columns: 1fr; } }

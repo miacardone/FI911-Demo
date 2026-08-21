@@ -7,11 +7,11 @@ import { SelectField } from '@/components/ui/Form';
 import { ListPage } from '@/components/fi911/ListPage';
 import { AdvancedSearchPanel, applyFilters } from '@/components/fi911/Filters';
 import { AttachmentsModal, ChangeStatusModal, NotesModal } from '@/components/fi911/RecordModals';
+import { AssignModal } from '@/components/fi911/AssignModal';
 import { LinkCell, Muted, StatusBadge, TypeBadge, menuColumn } from '@/components/fi911/cells';
 import {
   ONBOARDING, ONBOARDING_STATUS, attachmentsFor, filterStage, notesFor, stageTabs, statusOptionsFor,
 } from '@/data/participants';
-import { ASSIGNEES, initialsFor } from '@/data/people';
 import { routes } from '@/data/navigation';
 import { useToast } from '@/context/ToastContext';
 import brand from '@/brand/brand.config';
@@ -31,73 +31,6 @@ const ADVANCED_FIELDS = [
   { name: 'created', label: 'Creation Date', type: 'date' },
 ];
 
-/**
- * Assign Participant.
- *
- * A picker rather than a dropdown: choosing who works a file is a decision
- * about workload, so each operator shows what they are already carrying. A
- * bare <select> hides exactly the information the choice depends on.
- *
- * Open counts are derived from the onboarding book so they move with the data
- * instead of being decorative numbers.
- */
-function AssignParticipantModal({ open, onClose, row, rows, onAssign }) {
-  const [who, setWho] = useState('');
-  const toast = useToast();
-
-  useEffect(() => { if (open) setWho(row?.assignedTo ?? ''); }, [open, row]);
-
-  const workload = useMemo(() => {
-    const counts = rows.reduce((acc, r) => {
-      if (r.assignedTo) acc[r.assignedTo] = (acc[r.assignedTo] ?? 0) + 1;
-      return acc;
-    }, {});
-    return ASSIGNEES.map((name) => ({ name, open: counts[name] ?? 0 }));
-  }, [rows]);
-
-  return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      title="Assign Participant"
-      subtitle={row ? `Choose who takes ${row.participant} through onboarding` : undefined}
-      size="md"
-      footer={(
-        <>
-          <Button variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button
-            variant="primary"
-            disabled={!who}
-            onClick={() => { onAssign(who); toast.notify(`${row?.participant} assigned to ${who}.`); onClose(); }}
-          >
-            Assign to {who || '…'}
-          </Button>
-        </>
-      )}
-    >
-      <div className="assign-grid">
-        {workload.map((op) => (
-          <button
-            key={op.name}
-            type="button"
-            className={`assign-card ${who === op.name ? 'is-active' : ''}`.trim()}
-            aria-pressed={who === op.name}
-            onClick={() => setWho(op.name)}
-          >
-            <span className="assign-card__avatar">{initialsFor(op.name)}</span>
-            <span className="assign-card__text">
-              <span className="assign-card__name">{op.name}</span>
-              <span className="assign-card__load">
-                {op.open === 0 ? 'No open files' : `${op.open} open file${op.open === 1 ? '' : 's'}`}
-              </span>
-            </span>
-            {who === op.name && <Icon name="check" size={16} className="assign-card__check" />}
-          </button>
-        ))}
-      </div>
-    </Modal>
-  );
-}
 
 export function Onboarding() {
   const navigate = useNavigate();
@@ -172,12 +105,18 @@ export function Onboarding() {
         statuses={statusOptionsFor(ONBOARDING_STATUS)}
         onSubmit={({ status }) => setRows((rs) => rs.map((r) => (r.id === modal.row.id ? { ...r, status } : r)))}
       />
-      <AssignParticipantModal
+      <AssignModal
         open={modal?.kind === 'assign'}
         onClose={() => setModal(null)}
-        row={modal?.row}
+        title="Assign Participant"
+        subtitle={modal?.row ? `Choose who takes ${modal.row.participant} through onboarding` : undefined}
+        current={modal?.row?.assignedTo}
         rows={rows}
-        onAssign={(who) => setRows((rs) => rs.map((r) => (r.id === modal.row.id ? { ...r, assignedTo: who, status: 'Assigned' } : r)))}
+        countOpen={(r) => r.assignedTo}
+        onAssign={(who) => {
+          setRows((rs) => rs.map((r) => (r.id === modal.row.id ? { ...r, assignedTo: who, status: 'Assigned' } : r)));
+          toast.notify(`${modal.row.participant} assigned to ${who}.`);
+        }}
       />
       <AttachmentsModal open={modal?.kind === 'attachments'} onClose={() => setModal(null)} attachments={modal?.row ? attachmentsFor(modal.row.id) : []} />
       <NotesModal open={modal?.kind === 'notes'} onClose={() => setModal(null)} notes={modal?.row ? notesFor(modal.row.id) : []} />

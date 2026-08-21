@@ -62,6 +62,10 @@ export const routes = {
   merchantRiskProfile: '/risk-management/merchant-risk-profile',
   heldVolume: '/risk-management/held-volume',
   rules: '/risk-management/rules',
+  workQueue: '/risk-management/work-queue',
+  workQueueMerchant: (mid = ':mid') => `/risk-management/work-queue/${mid}`,
+  actionHistory: '/risk-management/action-history',
+  unactionedQueue: '/risk-management/unactioned-queue',
 
   /* Transactions */
   accountHolder: '/transactions/account-holder',
@@ -160,6 +164,9 @@ export const nav = [
     crumb: 'risk-management',
     children: [
       { label: 'Dashboard', path: routes.riskDashboard, permission: 'Risk Dashboard', area: 'Risk Management', crumb: 'Dashboard' },
+      { label: 'Work Queue', path: routes.workQueue, permission: 'Work Queue', area: 'Risk Management', crumb: 'Work Queue' },
+      { label: 'Action History', path: routes.actionHistory, permission: 'Action History', area: 'Risk Management', crumb: 'Action History' },
+      { label: 'Unactioned Queue', path: routes.unactionedQueue, permission: 'Unactioned Queue', area: 'Risk Management', crumb: 'Unactioned Queue' },
       { label: 'Merchants', path: routes.riskMerchants, permission: 'Risk Merchants', area: 'Risk Management', crumb: 'Merchants' },
       { label: 'Alert Action', path: routes.alertAction, permission: 'Alert Action', area: 'Risk Management', crumb: 'Alert Action' },
       { label: 'Merchant Risk Profile', path: routes.merchantRiskProfile, permission: 'Merchant Risk Profile', area: 'Risk Management', crumb: 'Merchant Risk Profile' },
