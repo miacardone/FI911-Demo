@@ -73,7 +73,20 @@ import Statements from '@/pages/billing/Statements';
 
 // Admin
 import DocumentCenter from '@/pages/documents/DocumentCenter';
-import Setup from '@/pages/setup/Setup';
+import SetupHome from '@/pages/setup/SetupHome';
+import PricingSchedules from '@/pages/setup/PricingSchedules';
+import PricingScheduleDetail from '@/pages/setup/PricingScheduleDetail';
+import AgentProfiles from '@/pages/setup/AgentProfiles';
+import PortfolioSetup from '@/pages/setup/PortfolioSetup';
+import ResidualApproval from '@/pages/setup/ResidualApproval';
+import AdjustmentSetup from '@/pages/setup/AdjustmentSetup';
+import ResidualCalculation from '@/pages/setup/ResidualCalculation';
+import MerchantMapping from '@/pages/setup/MerchantMapping';
+import UnderwritingSetup from '@/pages/setup/UnderwritingSetup';
+import UsersAccess from '@/pages/setup/UsersAccess';
+import BannerAds from '@/pages/setup/BannerAds';
+import DocumentLibrary from '@/pages/setup/DocumentLibrary';
+import TenantConfiguration from '@/pages/setup/TenantConfiguration';
 
 /**
  * One flat authenticated route tree under AppLayout.
@@ -175,7 +188,25 @@ export function App() {
                 </Route>
 
                 <Route path="document-center" element={<DocumentCenter />} />
-                <Route path="setup" element={<Setup />} />
+                <Route path="setup">
+                  <Route index element={<SetupHome />} />
+                  <Route path="pricing-schedules" element={<PricingSchedules />} />
+                  <Route path="pricing-schedules/:id" element={<PricingScheduleDetail />} />
+                  <Route path="agent-profiles" element={<AgentProfiles />} />
+                  <Route path="portfolios" element={<PortfolioSetup />} />
+                  <Route path="residual-approval" element={<ResidualApproval />} />
+                  <Route path="adjustments" element={<AdjustmentSetup />} />
+                  <Route path="residual-calculation" element={<ResidualCalculation />} />
+                  <Route path="merchant-mapping" element={<MerchantMapping />} />
+                  <Route path="underwriting" element={<UnderwritingSetup />} />
+                  {/* Rules Setup is the same screen as Risk > Rules. Config and
+                      operation are different rails, not different code. */}
+                  <Route path="rules" element={<Rules />} />
+                  <Route path="users" element={<UsersAccess />} />
+                  <Route path="banners" element={<BannerAds />} />
+                  <Route path="documents" element={<DocumentLibrary />} />
+                  <Route path="tenant" element={<TenantConfiguration />} />
+                </Route>
 
                 <Route path="*" element={<Navigate to={routes.dashboard} replace />} />
               </Route>

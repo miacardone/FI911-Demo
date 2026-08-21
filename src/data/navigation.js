@@ -87,6 +87,35 @@ export const routes = {
 };
 
 /**
+ * SETUP is a MODE, not a page.
+ *
+ * The live product swaps the whole rail when you enter it — configuration is
+ * a different job from operating the book, done by different people, and
+ * mixing twenty config screens into the operating rail would bury the eight
+ * screens anyone uses daily. That separation is worth keeping; what is not
+ * worth keeping is the reference's landing page, which is blank.
+ *
+ * The way back out is an explicit rail item, so you are never stranded.
+ */
+export const setupRoutes = {
+  home: '/setup',
+  underwriting: '/setup/underwriting',
+  pricingSchedules: '/setup/pricing-schedules',
+  pricingScheduleDetail: (id = ':id') => `/setup/pricing-schedules/${id}`,
+  agentProfiles: '/setup/agent-profiles',
+  portfolios: '/setup/portfolios',
+  residualApproval: '/setup/residual-approval',
+  adjustments: '/setup/adjustments',
+  residualCalculation: '/setup/residual-calculation',
+  merchantMapping: '/setup/merchant-mapping',
+  rulesSetup: '/setup/rules',
+  users: '/setup/users',
+  banners: '/setup/banners',
+  documents: '/setup/documents',
+  tenant: '/setup/tenant',
+};
+
+/**
  * The rail tree. A node with `children` renders as a collapsible group; the
  * group itself is never a route, only its children are.
  */
@@ -218,12 +247,86 @@ export const nav = [
   },
 ];
 
-/** Flattened leaf list — used by Permissions and by the breadcrumb resolver. */
-export const navLeaves = nav.flatMap((item) =>
-  item.children ? item.children.map((c) => ({ ...c, parent: item })) : [{ ...item, parent: null }],
-);
+/** The configuration rail, shown while the pathname is inside /setup. */
+export const setupNav = [
+  {
+    label: 'Back to console',
+    path: routes.dashboard,
+    icon: 'arrowLeft',
+    exit: true,
+    crumb: 'Dashboard',
+  },
+  {
+    label: 'Home',
+    path: setupRoutes.home,
+    icon: 'dashboard',
+    permission: 'Setup Home',
+    area: 'Setup',
+    crumb: 'Home',
+    end: true,
+  },
+  {
+    label: 'Merchants',
+    path: '/setup/merchants',
+    icon: 'users',
+    crumb: 'Merchants',
+    children: [
+      { label: 'Underwriting Setup', path: setupRoutes.underwriting, permission: 'Underwriting Setup', area: 'Setup', crumb: 'Underwriting Setup' },
+    ],
+  },
+  {
+    label: 'Residuals',
+    path: '/setup/residuals',
+    icon: 'pound',
+    crumb: 'Residuals',
+    children: [
+      { label: 'Pricing Schedules', path: setupRoutes.pricingSchedules, permission: 'Pricing Schedules', area: 'Setup', crumb: 'Pricing Schedules' },
+      { label: 'Agent Profiles', path: setupRoutes.agentProfiles, permission: 'Agent Profiles', area: 'Setup', crumb: 'Agent Profiles' },
+      { label: 'Portfolio Setup', path: setupRoutes.portfolios, permission: 'Portfolio Setup', area: 'Setup', crumb: 'Portfolio Setup' },
+      { label: 'Residual Approval', path: setupRoutes.residualApproval, permission: 'Residual Approval', area: 'Setup', crumb: 'Residual Approval' },
+      { label: 'Adjustment Setup', path: setupRoutes.adjustments, permission: 'Adjustment Setup', area: 'Setup', crumb: 'Adjustment Setup' },
+      { label: 'Residual Calculation', path: setupRoutes.residualCalculation, permission: 'Residual Calculation', area: 'Setup', crumb: 'Residual Calculation' },
+      { label: 'Merchant Mapping', path: setupRoutes.merchantMapping, permission: 'Merchant Mapping', area: 'Setup', crumb: 'Merchant Mapping' },
+    ],
+  },
+  {
+    label: 'Risk',
+    path: '/setup/risk',
+    icon: 'shield',
+    crumb: 'Risk',
+    children: [
+      { label: 'Rules Setup', path: setupRoutes.rulesSetup, permission: 'Rules Setup', area: 'Setup', crumb: 'Rules Setup' },
+    ],
+  },
+  {
+    label: 'Admin',
+    path: '/setup/admin',
+    icon: 'wrench',
+    crumb: 'Admin',
+    children: [
+      { label: 'Users & Access Control', path: setupRoutes.users, permission: 'Users & Access Control', area: 'Setup', crumb: 'Users & Access Control' },
+      { label: 'Banner Ads', path: setupRoutes.banners, permission: 'Banner Ads', area: 'Setup', crumb: 'Banner Ads' },
+      { label: 'Document Library', path: setupRoutes.documents, permission: 'Document Library', area: 'Setup', crumb: 'Document Library' },
+      { label: 'Tenant Configuration', path: setupRoutes.tenant, permission: 'Tenant Configuration', area: 'Setup', crumb: 'Tenant Configuration' },
+    ],
+  },
+];
 
-export const PERMISSION_AREAS = [...new Set(navLeaves.map((l) => l.area))];
+/** Which rail a pathname belongs to. One test, used by the layout and here. */
+export const isSetupPath = (pathname) => pathname === setupRoutes.home || pathname.startsWith(`${setupRoutes.home}/`);
+export const navTreeFor = (pathname) => (isSetupPath(pathname) ? setupNav : nav);
+
+const leavesOf = (tree) => tree.flatMap((item) => (
+  item.children ? item.children.map((c) => ({ ...c, parent: item })) : [{ ...item, parent: null }]
+));
+
+/** Flattened leaf list — used by Permissions and by the breadcrumb resolver. */
+export const navLeaves = leavesOf(nav);
+export const setupNavLeaves = leavesOf(setupNav).filter((l) => !l.exit);
+
+export const ALL_LEAVES = [...navLeaves, ...setupNavLeaves];
+
+export const PERMISSION_AREAS = [...new Set(ALL_LEAVES.map((l) => l.area))];
 
 /**
  * Resolve the breadcrumb trail for a pathname.
@@ -235,9 +338,16 @@ export const PERMISSION_AREAS = [...new Set(navLeaves.map((l) => l.area))];
  * bespoke header props.
  */
 export function crumbsFor(pathname, detailLabel) {
-  const trail = [{ label: 'Home', path: routes.dashboard }];
+  const setup = isSetupPath(pathname);
 
-  const leaf = navLeaves
+  /* Inside Setup the trail roots at Setup, not at the operating dashboard —
+     the two are different places and a trail that pretends otherwise gives a
+     link that leaves the mode you are in. */
+  const trail = setup
+    ? [{ label: 'Setup', path: setupRoutes.home }]
+    : [{ label: 'Home', path: routes.dashboard }];
+
+  const leaf = (setup ? setupNavLeaves : navLeaves)
     .filter((l) => pathname === l.path || pathname.startsWith(`${l.path}/`))
     .sort((a, b) => b.path.length - a.path.length)[0];
 

@@ -5,7 +5,7 @@ import Icon from '@/components/ui/Icon';
 import Wordmark from '@/brand/Wordmark';
 import { Tooltip } from '@/components/ui/Overlay';
 import { useAuth } from '@/context/AuthContext';
-import { nav } from '@/data/navigation';
+import { isSetupPath, navTreeFor } from '@/data/navigation';
 
 /**
  * Deep-navy navigation rail with collapsible groups.
@@ -48,8 +48,14 @@ function NavGroup({ item, collapsed }) {
   }, [isActiveGroup]);
 
   if (!item.children) {
+    /* The exit item leaves the mode rather than navigating within it, so it
+       never lights up as "current" — it is a door, not a destination. */
     const link = (
-      <NavLink to={item.path} className={({ isActive }) => `rail__link ${isActive ? 'is-active' : ''}`.trim()}>
+      <NavLink
+        to={item.path}
+        end={item.end}
+        className={({ isActive }) => `rail__link ${item.exit ? 'rail__link--exit' : ''} ${isActive && !item.exit ? 'is-active' : ''}`.trim()}
+      >
         <Icon name={item.icon} size={17} className="rail__icon" />
         {!collapsed && <span className="rail__label">{item.label}</span>}
       </NavLink>
@@ -108,9 +114,19 @@ function NavGroup({ item, collapsed }) {
 
 export function Sidebar({ collapsed, onToggle }) {
   const { user } = useAuth();
+  const { pathname } = useLocation();
+
+  /* Setup is a mode with its own rail. Configuration is a different job from
+     operating the book, and folding fourteen config screens into the
+     operating rail would bury the eight screens anyone opens daily. */
+  const inSetup = isSetupPath(pathname);
+  const tree = navTreeFor(pathname);
 
   return (
-    <aside className={`rail ${collapsed ? 'rail--collapsed' : ''}`.trim()} aria-label="Main navigation">
+    <aside
+      className={`rail ${collapsed ? 'rail--collapsed' : ''} ${inSetup ? 'rail--setup' : ''}`.trim()}
+      aria-label={inSetup ? 'Setup navigation' : 'Main navigation'}
+    >
       <div className="rail__head">
         <Wordmark inverse markOnly={collapsed} size={collapsed ? 30 : 30} showText={false} />
         <Tooltip label={collapsed ? 'Expand navigation' : 'Collapse navigation'} side="right">
@@ -126,6 +142,13 @@ export function Sidebar({ collapsed, onToggle }) {
         </Tooltip>
       </div>
 
+      {inSetup && !collapsed && (
+        <div className="rail__mode">
+          <Icon name="wrench" size={13} />
+          <span>Configuration</span>
+        </div>
+      )}
+
       <div className="rail__user">
         <span className="rail__user-avatar"><Icon name="userCircle" size={20} /></span>
         {!collapsed && (
@@ -137,7 +160,7 @@ export function Sidebar({ collapsed, onToggle }) {
       </div>
 
       <nav className="rail__nav">
-        {nav.map((item) => <NavGroup key={item.path} item={item} collapsed={collapsed} />)}
+        {tree.map((item) => <NavGroup key={item.path} item={item} collapsed={collapsed} />)}
       </nav>
     </aside>
   );

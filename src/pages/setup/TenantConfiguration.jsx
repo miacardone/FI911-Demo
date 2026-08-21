@@ -41,7 +41,7 @@ function ListChips({ items }) {
   );
 }
 
-export function Setup() {
+export function TenantConfiguration() {
   const brand = useBrand();
   const toast = useToast();
   const { theme, setTheme, density, setDensity } = usePreferences();
@@ -77,8 +77,8 @@ export function Setup() {
   return (
     <>
       <PageHeader
-        title="Setup"
-        description="Tenant configuration — the single control file behind every screen"
+        title="Tenant Configuration"
+        description="The single control file behind every screen in this console"
         actions={(
           <Button variant="primary" size="sm" icon="check" onClick={() => toast.notify('Configuration saved.')}>
             Save configuration
@@ -215,4 +215,4 @@ export function Setup() {
   );
 }
 
-export default Setup;
+export default TenantConfiguration;
