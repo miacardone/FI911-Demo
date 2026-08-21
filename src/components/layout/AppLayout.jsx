@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/layout/Sidebar';
+import DirectorySearch, { useTrackRecentPages } from '@/components/layout/DirectorySearch';
 import Icon from '@/components/ui/Icon';
 import { Popover } from '@/components/ui/Overlay';
 import { useAuth } from '@/context/AuthContext';
@@ -28,15 +29,13 @@ export function useDetailCrumb(label) {
   }, [label, setLabel]);
 }
 
-function Topbar({ onToggleRail }) {
+function Topbar() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
   return (
     <header className="topbar">
-      <button type="button" className="topbar__burger" onClick={onToggleRail} aria-label="Toggle navigation">
-        <Icon name="menu" size={20} />
-      </button>
+      <DirectorySearch />
 
       <Popover
         align="right"
@@ -96,6 +95,10 @@ export function AppLayout() {
   const [collapsed, setCollapsed] = useState(() => readPref(SIDEBAR_KEY) === 'true');
   const [detailLabel, setDetailLabel] = useState(null);
 
+  /* Recents must record every navigation — rail clicks and breadcrumbs
+     included — so the tracker lives here rather than inside the search box. */
+  useTrackRecentPages();
+
   const toggle = () => {
     setCollapsed((c) => {
       const next = !c;
@@ -107,9 +110,9 @@ export function AppLayout() {
   return (
     <CrumbContext.Provider value={setDetailLabel}>
       <div className="shell">
-        <Sidebar collapsed={collapsed} />
+        <Sidebar collapsed={collapsed} onToggle={toggle} />
         <div className="shell__main">
-          <Topbar onToggleRail={toggle} />
+          <Topbar />
           <Crumbbar detailLabel={detailLabel} />
           <main className="shell__content">
             <Outlet />

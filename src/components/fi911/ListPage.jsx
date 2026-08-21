@@ -1,9 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import Icon from '@/components/ui/Icon';
 import { Button, PageHeader } from '@/components/ui/Surface';
-import { ColumnToggle, DataTable } from '@/components/ui/DataTable';
-import { downloadExcel } from '@/utils/export';
+import { ColumnToggle, DataTable, DensityToggle, ExportButtons } from '@/components/ui/DataTable';
 import { useToast } from '@/context/ToastContext';
+import { useAutoPageSize } from '@/hooks/useAutoPageSize';
 
 /**
  * THE LIST PAGE SHELL.
@@ -100,31 +100,17 @@ export function ListToolbar({
 
       <div className="fi-toolbar__right">
         {rightExtra}
-        {onDensityChange && (
-          <Button
-            variant="secondary"
-            size="sm"
-            icon="expand"
-            onClick={() => onDensityChange(density === 'fit' ? 'comfortable' : 'fit')}
-            aria-pressed={density === 'fit'}
-          >
-            Autosize
-          </Button>
-        )}
+        {onDensityChange && <DensityToggle value={density} onChange={onDensityChange} />}
         {columns && onHiddenColumnsChange && (
           <ColumnToggle columns={columns} hidden={hiddenColumns} onChange={onHiddenColumnsChange} />
         )}
         {exportRows && (
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => {
-              downloadExcel(columns.filter((c) => !hiddenColumns?.has(c.key)), exportRows, exportName ?? 'export');
-              toast.notify('Export started.');
-            }}
-          >
-            Export to Excel
-          </Button>
+          <ExportButtons
+            columns={columns.filter((c) => !hiddenColumns?.has(c.key))}
+            rows={exportRows}
+            name={exportName ?? 'export'}
+            onCopied={(ok) => toast.notify(ok ? 'Copied to clipboard.' : 'Copy failed.', ok ? 'default' : 'danger')}
+          />
         )}
       </div>
     </div>
@@ -135,7 +121,7 @@ export function ListToolbar({
    "Page Size: [20]   1 to 20 of 22   |< < Page 1 of 2 > >|" — first/last jumps
    included, which the shared Pagination in DataTable.jsx does not carry. */
 
-export function ListPager({ total, page, pageSize, onPageChange, onPageSizeChange, pageSizes = [10, 20, 50, 100] }) {
+export function ListPager({ total, page, pageSize, onPageChange, onPageSizeChange, pageSizes = [10, 20, 50, 100], auto, onAutoChange }) {
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
   const start = total === 0 ? 0 : (page - 1) * pageSize + 1;
   const end = Math.min(total, page * pageSize);
@@ -148,10 +134,15 @@ export function ListPager({ total, page, pageSize, onPageChange, onPageSizeChang
         <span>Page Size:</span>
         <select
           className="select"
-          value={pageSize}
-          onChange={(e) => { onPageSizeChange(Number(e.target.value)); onPageChange(1); }}
+          value={auto ? 'auto' : pageSize}
+          onChange={(e) => {
+            const v = e.target.value;
+            if (v === 'auto') { onAutoChange?.(true); } else { onAutoChange?.(false); onPageSizeChange(Number(v)); }
+            onPageChange(1);
+          }}
           aria-label="Page size"
         >
+          <option value="auto">Auto ({pageSize})</option>
           {pageSizes.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
       </label>
@@ -170,17 +161,6 @@ export function ListPager({ total, page, pageSize, onPageChange, onPageSizeChang
         <button type="button" className="fi-pager__btn" disabled={page >= pageCount} onClick={() => jump(pageCount)} aria-label="Last page">⇥</button>
       </div>
     </div>
-  );
-}
-
-/* ---------- Feedback ---------- */
-
-export function FeedbackButton() {
-  const toast = useToast();
-  return (
-    <Button variant="secondary" size="sm" icon="message" onClick={() => toast.notify('Thanks — feedback noted.')}>
-      Feedback
-    </Button>
   );
 }
 
@@ -211,6 +191,8 @@ export function ListTable({
 }) {
   const [innerSearch, setInnerSearch] = useState('');
   const [selected, setSelected] = useState(() => new Set());
+  const bodyRef = useRef(null);
+  const [auto, setAuto] = useState(true);
   const search = searchProp ?? innerSearch;
   const onSearchChange = onSearchChangeProp ?? setInnerSearch;
 
@@ -218,7 +200,14 @@ export function ListTable({
   const [hidden, setHidden] = useState(() => new Set());
   const [sort, setSort] = useState(null);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(initialPageSize);
+  const [manualPageSize, setManualPageSize] = useState(initialPageSize);
+
+  /* Row height tracks density: "Fit to width" is the compact mode. */
+  const autoSize = useAutoPageSize(bodyRef, {
+    estimatedRowHeight: density === 'fit' ? 33 : 44,
+    enabled: auto,
+  });
+  const pageSize = auto ? (autoSize ?? initialPageSize) : manualPageSize;
 
   /* Search matches the rendered TEXT of a row, not its raw fields, so a
      search for "Bank" hits a row whose Type column renders a badge reading
@@ -301,24 +290,28 @@ export function ListTable({
       {advancedOpen && advanced}
       {note && <p className="fi-note">{note}</p>}
 
-      <DataTable
-        columns={visibleColumns}
-        rows={pageRows}
-        rowKey={rowKey}
-        density={density}
-        sort={sort}
-        onSort={toggleSort}
-        selection={selection}
-        onRowClick={onRowClick}
-        empty={empty}
-      />
+      <div ref={bodyRef}>
+        <DataTable
+          columns={visibleColumns}
+          rows={pageRows}
+          rowKey={rowKey}
+          density={density}
+          sort={sort}
+          onSort={toggleSort}
+          selection={selection}
+          onRowClick={onRowClick}
+          empty={empty}
+        />
+      </div>
 
       <ListPager
         total={sorted.length}
         page={safePage}
         pageSize={pageSize}
         onPageChange={setPage}
-        onPageSizeChange={setPageSize}
+        onPageSizeChange={setManualPageSize}
+        auto={auto}
+        onAutoChange={setAuto}
       />
     </>
   );
@@ -339,11 +332,7 @@ export function ListPage({
 }) {
   return (
     <>
-      <PageHeader
-        title={title}
-        description={description}
-        actions={headerActions ?? <FeedbackButton />}
-      />
+      <PageHeader title={title} description={description} actions={headerActions} />
 
       {tabs && <TabStrip tabs={tabs} value={tab} onChange={onTabChange} />}
       {scope && <ScopeStrip items={scope} />}

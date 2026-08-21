@@ -8,15 +8,15 @@ import { useAuth } from '@/context/AuthContext';
 import { nav } from '@/data/navigation';
 
 /**
- * White navigation rail with collapsible groups.
+ * Deep-navy navigation rail with collapsible groups.
  *
- * The Expedia build ran a dark navy rail and carried a perspective switcher.
- * Fi911's rail is white and there is one operator perspective, so the
- * switcher is gone and the block under the wordmark is the signed-in user
- * instead — which is what the reference shows.
+ * The Expedia build carried a perspective switcher here; Fi911 has one
+ * operator perspective, so that slot shows the signed-in user instead.
  *
- * A group turns brand-blue when any of its children is active, so the user
- * can see which section they are in even when the group is collapsed.
+ * The collapse control is a tab on the rail's own right edge rather than a
+ * hamburger in the topbar: it belongs to the thing it collapses, and it sits
+ * in the same place whether the rail is open or shut. An active group stays
+ * lit while collapsed, so you can still see which section you are in.
  */
 
 function Flyout({ anchorRect, item }) {
@@ -106,13 +106,24 @@ function NavGroup({ item, collapsed }) {
   );
 }
 
-export function Sidebar({ collapsed }) {
+export function Sidebar({ collapsed, onToggle }) {
   const { user } = useAuth();
 
   return (
     <aside className={`rail ${collapsed ? 'rail--collapsed' : ''}`.trim()} aria-label="Main navigation">
       <div className="rail__head">
-        <Wordmark size={collapsed ? 26 : 30} />
+        <Wordmark inverse size={collapsed ? 22 : 28} showText={false} />
+        <Tooltip label={collapsed ? 'Expand navigation' : 'Collapse navigation'} side="right">
+          <button
+            type="button"
+            className="rail__collapse"
+            onClick={onToggle}
+            aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
+            aria-expanded={!collapsed}
+          >
+            <Icon name={collapsed ? 'chevronsRight' : 'chevronsLeft'} size={15} />
+          </button>
+        </Tooltip>
       </div>
 
       <div className="rail__user">

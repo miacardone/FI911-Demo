@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Icon from '@/components/ui/Icon';
 import { Badge, Button } from '@/components/ui/Surface';
@@ -24,8 +24,34 @@ import { useToast } from '@/context/ToastContext';
 
 /* ---------- Section ---------- */
 
+/**
+ * Broadcast channel for Expand all / Collapse all.
+ *
+ * A counter rather than a boolean: sections keep their own open state so you
+ * can still open one section inside a collapsed form, and a bare boolean would
+ * fight that every time the parent re-rendered. Bumping the counter is an
+ * event ("everyone go to this state now"), not a value to stay in sync with.
+ */
+const SectionBroadcast = createContext(null);
+
+export function SectionStack({ children, allOpen = true }) {
+  const [signal, setSignal] = useState({ n: 0, open: allOpen });
+  const value = { signal, setAll: (open) => setSignal((s) => ({ n: s.n + 1, open })) };
+  return <SectionBroadcast.Provider value={value}>{children}</SectionBroadcast.Provider>;
+}
+
+export function useSectionControls() {
+  return useContext(SectionBroadcast);
+}
+
 export function Section({ title, children, collapsible = true, defaultOpen = true, underline = false, actions }) {
   const [open, setOpen] = useState(defaultOpen);
+  const broadcast = useContext(SectionBroadcast);
+  const signal = broadcast?.signal;
+
+  useEffect(() => {
+    if (signal && signal.n > 0) setOpen(signal.open);
+  }, [signal]);
 
   return (
     <section className="fi-section">
@@ -162,6 +188,23 @@ export function AddButton({ children, onClick }) {
 
 /* ---------- Page shell ---------- */
 
+function ExpandAllButton() {
+  const ctrl = useSectionControls();
+  const [expanded, setExpanded] = useState(true);
+  if (!ctrl) return null;
+
+  return (
+    <Button
+      variant="secondary"
+      size="sm"
+      icon={expanded ? 'chevronsUpDown' : 'chevronsUpDown'}
+      onClick={() => { ctrl.setAll(!expanded); setExpanded((v) => !v); }}
+    >
+      {expanded ? 'Collapse all' : 'Expand all'}
+    </Button>
+  );
+}
+
 export function DetailPage({
   title,
   subtitle,
@@ -183,6 +226,7 @@ export function DetailPage({
   };
 
   return (
+    <SectionStack>
     <div className="fi-detail">
       <header className="fi-detail__head">
         <button type="button" className="fi-detail__back" onClick={() => (onBack ? onBack() : navigate(-1))} aria-label="Back">
@@ -196,6 +240,7 @@ export function DetailPage({
         </div>
 
         <div className="fi-detail__actions">
+          <ExpandAllButton />
           {actions}
           {headerIcons.map((it) => (
             <button key={it.label} type="button" className="fi-detail__icon" onClick={it.onSelect} aria-label={it.label} title={it.label}>
@@ -214,6 +259,7 @@ export function DetailPage({
         </footer>
       )}
     </div>
+    </SectionStack>
   );
 }
 

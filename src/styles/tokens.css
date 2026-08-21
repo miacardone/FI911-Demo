@@ -6,36 +6,41 @@
    ============================================================ */
 
 :root {
-  --c-primary: #1F6FEB;
-  --c-primary-deep: #1553BE;
-  --c-primary-tint: #E3EDFD;
-  --c-primary-wash: #F4F8FE;
+  --c-primary: #00AAB4;
+  --c-primary-deep: #00818A;
+  --c-primary-tint: #D6F1F3;
+  --c-primary-wash: #F0FAFB;
 
-  /* Chrome: blue topbar, black breadcrumb strip, white rail */
-  --c-topbar: #3568C8;
+  --c-accent: #FFC300;
+  --c-accent-deep: #C79800;
+  --c-accent-tint: #FFF3CC;
+
+  /* Chrome: brand Dark topbar and rail, Gray One breadcrumb strip */
+  --c-topbar: #14191E;
   --c-topbar-ink: #FFFFFF;
-  --c-topbar-chip: #4E7DD2;
-  --c-crumbbar: #050505;
-  --c-crumbbar-ink: #9AA3AE;
+  --c-topbar-chip: #3C4146;
+  --c-topbar-field: #242B33;
+  --c-crumbbar: #3C4146;
+  --c-crumbbar-ink: #A8AFB6;
   --c-crumbbar-ink-active: #FFFFFF;
 
-  --c-login-panel: #101C30;
-  --c-login-panel-ink: #A9B6C8;
+  --c-login-panel: #14191E;
+  --c-login-panel-ink: #A8AFB6;
 
-  --c-nav-rail: #FFFFFF;
-  --c-nav-rail-deep: #F4F7FB;
-  --c-nav-active: #1F6FEB;
-  --c-nav-ink: #39434F;
-  --c-nav-ink-muted: #7A8494;
+  --c-nav-rail: #14191E;
+  --c-nav-rail-deep: #0E1216;
+  --c-nav-active: #FFC300;
+  --c-nav-ink: #D3D8DD;
+  --c-nav-ink-muted: #8B939B;
 
-  --c-ink: #111821;
-  --c-ink-muted: #4E5A68;
-  --c-ink-subtle: #84909E;
-  --c-canvas: #F5F7FA;
+  --c-ink: #14191E;
+  --c-ink-muted: #3C4146;
+  --c-ink-subtle: #6B747C;
+  --c-canvas: #E9EDF0;
   --c-surface: #ffffff;
-  --c-surface-sunken: #F8FAFC;
-  --c-line: #E2E7EE;
-  --c-line-strong: #C7D0DB;
+  --c-surface-sunken: #F4F6F8;
+  --c-line: #D8DDE2;
+  --c-line-strong: #B2BAC1;
 
   --c-success: #0f7b4f;
   --c-success-tint: #e4f4ec;
@@ -52,13 +57,13 @@
   --c-scheme-discover: #e9730c;
 
   /* Validated categorical ramp — see brand.config.js for why this order */
-  --c-series-0: #1F6FEB;
-  --c-series-1: #8A94A6;
-  --c-series-2: #1F8A93;
-  --c-series-3: #16305C;
-  --c-series-4: #B8C2CF;
+  --c-series-0: #00AAB4;
+  --c-series-1: #3C4146;
+  --c-series-2: #FFC300;
+  --c-series-3: #00646B;
+  --c-series-4: #9AA3AB;
   --c-series-contrast: #C42B21;
-  --c-series-neutral: #8A94A6;
+  --c-series-neutral: #8B939B;
 
   /* Type — one family everywhere: headings, body copy, case numbers,
      amounts, emails, reference IDs. No separate monospace face. */

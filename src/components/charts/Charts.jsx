@@ -67,7 +67,17 @@ export function BarChart({
   const barW = grouped ? Math.max(3, groupW / series.length) : groupW;
   const y = (v) => PAD.top + plotH - (v / niceMax) * plotH;
 
-  const labelEvery = Math.max(1, Math.ceil(data.length / maxTicks(plotW)));
+  /* A CATEGORICAL axis must never drop a label — a five-bar funnel that
+     prints "Invitations, Underwriting, Live Participants" has silently hidden
+     two of its five stages. Short series always label every bar and truncate
+     the text to its slot; only long time series thin their ticks out. */
+  const categorical = data.length <= 8;
+  const labelEvery = categorical ? 1 : Math.max(1, Math.ceil(data.length / maxTicks(plotW)));
+  const labelChars = Math.max(4, Math.floor(slot / 6.2));
+  const clip = (t) => {
+    const str = String(t);
+    return categorical && str.length > labelChars ? `${str.slice(0, labelChars - 1)}…` : str;
+  };
 
   return (
     <div className="chart-frame" ref={ref}>
@@ -114,7 +124,8 @@ export function BarChart({
               })}
               {i % labelEvery === 0 && (
                 <text x={PAD.left + slot * i + slot / 2} y={H - (xLabel ? 20 : 6)} className="chart__axis" textAnchor="middle">
-                  {row[xKey]}
+                  {clip(row[xKey])}
+                  <title>{row[xKey]}</title>
                 </text>
               )}
             </g>
@@ -174,7 +185,17 @@ export function AreaChart({
   const line = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${x(i)},${y(d[valueKey] ?? 0)}`).join(' ');
   const area = data.length ? `${line} L${x(data.length - 1)},${PAD.top + plotH} L${x(0)},${PAD.top + plotH} Z` : '';
   const gid = `area-${valueKey}-${data.length}`;
-  const labelEvery = Math.max(1, Math.ceil(data.length / maxTicks(plotW)));
+  /* A CATEGORICAL axis must never drop a label — a five-bar funnel that
+     prints "Invitations, Underwriting, Live Participants" has silently hidden
+     two of its five stages. Short series always label every bar and truncate
+     the text to its slot; only long time series thin their ticks out. */
+  const categorical = data.length <= 8;
+  const labelEvery = categorical ? 1 : Math.max(1, Math.ceil(data.length / maxTicks(plotW)));
+  const labelChars = Math.max(4, Math.floor((plotW / Math.max(data.length, 1)) / 6.2));
+  const clip = (t) => {
+    const str = String(t);
+    return categorical && str.length > labelChars ? `${str.slice(0, labelChars - 1)}…` : str;
+  };
 
   return (
     <div className="chart-frame" ref={ref}>
@@ -219,7 +240,10 @@ export function AreaChart({
         ))}
 
         {data.map((d, i) => (i % labelEvery === 0 ? (
-          <text key={`lbl-${d[xKey]}-${i}`} x={x(i)} y={H - (xLabel ? 20 : 6)} className="chart__axis" textAnchor="middle">{d[xKey]}</text>
+          <text key={`lbl-${d[xKey]}-${i}`} x={x(i)} y={H - (xLabel ? 20 : 6)} className="chart__axis" textAnchor="middle">
+            {clip(d[xKey])}
+            <title>{d[xKey]}</title>
+          </text>
         ) : null))}
 
         <line x1={PAD.left} x2={W - PAD.right} y1={PAD.top + plotH} y2={PAD.top + plotH} className="chart__baseline" />
@@ -393,7 +417,17 @@ export function LineChart({
 
   const x = (i) => PAD.left + (data.length <= 1 ? plotW / 2 : (plotW / (data.length - 1)) * i);
   const y = (v) => PAD.top + plotH - (v / niceMax) * plotH;
-  const labelEvery = Math.max(1, Math.ceil(data.length / maxTicks(plotW)));
+  /* A CATEGORICAL axis must never drop a label — a five-bar funnel that
+     prints "Invitations, Underwriting, Live Participants" has silently hidden
+     two of its five stages. Short series always label every bar and truncate
+     the text to its slot; only long time series thin their ticks out. */
+  const categorical = data.length <= 8;
+  const labelEvery = categorical ? 1 : Math.max(1, Math.ceil(data.length / maxTicks(plotW)));
+  const labelChars = Math.max(4, Math.floor((plotW / Math.max(data.length, 1)) / 6.2));
+  const clip = (t) => {
+    const str = String(t);
+    return categorical && str.length > labelChars ? `${str.slice(0, labelChars - 1)}…` : str;
+  };
 
   return (
     <div className="chart-frame" ref={ref}>
@@ -437,7 +471,10 @@ export function LineChart({
         ))}
 
         {data.map((d, i) => (i % labelEvery === 0 ? (
-          <text key={`lbl-${d[xKey]}-${i}`} x={x(i)} y={H - (xLabel ? 20 : 6)} className="chart__axis" textAnchor="middle">{d[xKey]}</text>
+          <text key={`lbl-${d[xKey]}-${i}`} x={x(i)} y={H - (xLabel ? 20 : 6)} className="chart__axis" textAnchor="middle">
+            {clip(d[xKey])}
+            <title>{d[xKey]}</title>
+          </text>
         ) : null))}
 
         <line x1={PAD.left} x2={W - PAD.right} y1={PAD.top + plotH} y2={PAD.top + plotH} className="chart__baseline" />

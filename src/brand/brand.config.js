@@ -15,11 +15,9 @@
  * participant lifecycle, residuals, risk, transactions and billing — so the
  * perspective indirection is gone and the nav is a single operator tree.
  *
- * CHROME NOTE: Fi911 inverts Expedia's chrome. Expedia ran a dark navy rail
- * against a white topbar; Fi911 runs a WHITE rail against a blue topbar, with
- * a black breadcrumb strip beneath it. Those three surfaces are the
- * `railSurface` / `topbar` / `crumbbar` slots below — they are brand-identity
- * colors like any other, so components still never name them.
+ * CHROME NOTE: deep navy rail, blue topbar, dark breadcrumb strip. Those three
+ * surfaces are the `navRail` / `topbar` / `crumbbar` slots below — they are
+ * brand-identity colors like any other, so components still never name them.
  */
 
 /* ------------------------------------------------------------------ *
@@ -70,49 +68,60 @@ export const fi911Brand = {
   wordmark: { text: '', accent: '', weight: 700 },
 
   /* --- Palette ---------------------------------------------------------- *
-   * Fi911's identity is a single royal blue over neutral greys. Semantic
-   * (success/warning/danger/info) and scheme colors are shared constants
-   * across every tenant this console has shipped; only the brand-identity
-   * slots change.
+   * Fi911's brand colours, straight off the identity sheet:
    *
-   * `topbar` is the blue application bar, `crumbbar` the black breadcrumb
-   * strip under it, `railSurface` the white navigation rail. Keeping all
-   * three here is what lets the same Sidebar/AppLayout render either tenant's
-   * chrome without a conditional. */
+   *   Secondary Blue   #00AAB4   the teal that leads — used here as PRIMARY
+   *   Secondary Yellow #FFC300   the accent
+   *   Dark             #14191E   chrome and rail
+   *   Gray One         #3C4146   secondary chrome and body ink
+   *
+   * The teal carries actions and selection; the yellow is reserved for
+   * emphasis (active nav, focus, highlights) and never for a status, because
+   * amber already means "warning" in every badge in this console.
+   *
+   * CONTRAST NOTE: the rail is Dark, not white. A white rail against a
+   * near-white canvas gave three barely-separated light surfaces and the
+   * muted icon ink on top of it failed to read at all. Anchoring the left
+   * edge dark gives the layout a spine and lets the canvas stay light. */
   colors: {
-    primary: '#1F6FEB',
-    primaryDeep: '#1553BE',
-    primaryTint: '#E3EDFD',
-    primaryWash: '#F4F8FE',
+    primary: '#00AAB4',
+    primaryDeep: '#00818A',
+    primaryTint: '#D6F1F3',
+    primaryWash: '#F0FAFB',
+
+    /* Accent — emphasis only, never a status. */
+    accent: '#FFC300',
+    accentDeep: '#C79800',
+    accentTint: '#FFF3CC',
 
     /* Chrome */
-    topbar: '#3568C8',
+    topbar: '#14191E',
     topbarInk: '#FFFFFF',
-    topbarChip: '#4E7DD2',
-    crumbbar: '#050505',
-    crumbbarInk: '#9AA3AE',
+    topbarChip: '#3C4146',
+    topbarField: '#242B33',
+    crumbbar: '#3C4146',
+    crumbbarInk: '#A8AFB6',
     crumbbarInkActive: '#FFFFFF',
 
-    /* The sign-in split panel. It needs its own dark slot because the rail
-       it used to borrow from is white in this tenant — white-on-white. */
-    loginPanel: '#101C30',
-    loginPanelInk: '#A9B6C8',
+    /* The sign-in split panel. */
+    loginPanel: '#14191E',
+    loginPanelInk: '#A8AFB6',
 
-    /* Navigation rail — white, unlike the Expedia tenant's navy */
-    navRail: '#FFFFFF',
-    navRailDeep: '#F4F7FB',
-    navActive: '#1F6FEB',
-    navInk: '#39434F',
-    navInkMuted: '#7A8494',
+    /* Navigation rail — brand Dark */
+    navRail: '#14191E',
+    navRailDeep: '#0E1216',
+    navActive: '#FFC300',
+    navInk: '#D3D8DD',
+    navInkMuted: '#8B939B',
 
-    ink: '#111821',
-    inkMuted: '#4E5A68',
-    inkSubtle: '#84909E',
-    canvas: '#F5F7FA',
+    ink: '#14191E',
+    inkMuted: '#3C4146',
+    inkSubtle: '#6B747C',
+    canvas: '#E9EDF0',
     surface: '#FFFFFF',
-    surfaceSunken: '#F8FAFC',
-    line: '#E2E7EE',
-    lineStrong: '#C7D0DB',
+    surfaceSunken: '#F4F6F8',
+    line: '#D8DDE2',
+    lineStrong: '#B2BAC1',
 
     success: '#0F7B4F',
     successTint: '#E4F4EC',
@@ -130,21 +139,22 @@ export const fi911Brand = {
   },
 
   /* --- Chart ramp ------------------------------------------------------- *
-   * ONE HUE PLUS TINTS plus a neutral: the dashboards pair a saturated blue
-   * against mid grey (see "PSP Onboarding Summary" and "Transactions YTD &
-   * YOY", where the comparison series is deliberately grey so the current
-   * year reads first). Separation comes from lightness, so the ramp survives
-   * color-vision deficiency and grayscale printing. Assign in fixed order,
-   * never cycle — a sixth category folds into "Other" and takes chartContrast. */
-  chartSeries: ['#1F6FEB', '#8A94A6', '#1F8A93', '#16305C', '#B8C2CF'],
+   * Brand teal leads, brand grey is the comparison series, brand yellow is
+   * third. The dashboards deliberately pair a saturated series against a grey
+   * one (see "PSP Onboarding Summary" and "Transactions YTD & YOY", where the
+   * prior year is grey so the current year reads first). Separation comes from
+   * lightness as well as hue, so the ramp survives colour-vision deficiency
+   * and greyscale printing. Assign in fixed order, never cycle — a sixth
+   * category folds into "Other" and takes chartContrast. */
+  chartSeries: ['#00AAB4', '#3C4146', '#FFC300', '#00646B', '#9AA3AB'],
   chartContrast: '#C42B21',
-  chartNeutral: '#8A94A6',
+  chartNeutral: '#8B939B',
 
   /* Risk tiers read high→low as red→blue→teal on the Risk dashboard donut. */
   riskTiers: [
     { id: 'high', label: 'High Risk', tone: 'danger', color: '#C42B21' },
-    { id: 'medium', label: 'Medium Risk', tone: 'warning', color: '#3D7EA8' },
-    { id: 'low', label: 'Low Risk', tone: 'success', color: '#1F8A93' },
+    { id: 'medium', label: 'Medium Risk', tone: 'warning', color: '#FFC300' },
+    { id: 'low', label: 'Low Risk', tone: 'success', color: '#00AAB4' },
   ],
 
   /* --- Money, locale, markets ------------------------------------------- */

@@ -6,7 +6,6 @@ import { SelectField, TextField } from '@/components/ui/Form';
 import { ListPage } from '@/components/fi911/ListPage';
 import { AdvancedSearchPanel, applyFilters } from '@/components/fi911/Filters';
 import { AttachmentsModal, ChangeStatusModal, NotesModal } from '@/components/fi911/RecordModals';
-import { FeedbackButton } from '@/components/fi911/ListPage';
 import { LinkCell, StatusBadge, Muted, menuColumn } from '@/components/fi911/cells';
 import { FieldGrid, Section } from '@/components/fi911/DetailPage';
 import {
@@ -199,7 +198,6 @@ export function Invitations() {
       <ListPage
         title="Participant Invitations"
         description="Manage and track participant invitation submissions and status"
-        headerActions={<FeedbackButton />}
         tabs={tabs}
         tab={tab}
         onTabChange={setTab}
