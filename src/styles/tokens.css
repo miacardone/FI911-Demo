@@ -15,32 +15,32 @@
   --c-accent-deep: #C79800;
   --c-accent-tint: #FFF3CC;
 
-  /* Chrome: brand Dark topbar and rail, Gray One breadcrumb strip */
-  --c-topbar: #14191E;
-  --c-topbar-ink: #FFFFFF;
-  --c-topbar-chip: #3C4146;
-  --c-topbar-field: #242B33;
-  --c-crumbbar: #3C4146;
-  --c-crumbbar-ink: #A8AFB6;
-  --c-crumbbar-ink-active: #FFFFFF;
+  /* Chrome: light topbar over a soft charcoal rail */
+  --c-topbar: #FFFFFF;
+  --c-topbar-ink: #14191E;
+  --c-topbar-chip: #F1F3F4;
+  --c-topbar-field: #F1F3F4;
+  --c-crumbbar: #F1F3F4;
+  --c-crumbbar-ink: #6B747C;
+  --c-crumbbar-ink-active: #14191E;
 
-  --c-login-panel: #14191E;
+  --c-login-panel: #22282C;
   --c-login-panel-ink: #A8AFB6;
 
-  --c-nav-rail: #14191E;
-  --c-nav-rail-deep: #0E1216;
-  --c-nav-active: #FFC300;
-  --c-nav-ink: #D3D8DD;
+  --c-nav-rail: #30363A;
+  --c-nav-rail-deep: #272C2F;
+  --c-nav-active: #00AAB4;
+  --c-nav-ink: #C9CFD3;
   --c-nav-ink-muted: #8B939B;
 
   --c-ink: #14191E;
-  --c-ink-muted: #3C4146;
-  --c-ink-subtle: #6B747C;
-  --c-canvas: #E9EDF0;
+  --c-ink-muted: #4A5157;
+  --c-ink-subtle: #7A828A;
+  --c-canvas: #EFF1F2;
   --c-surface: #ffffff;
-  --c-surface-sunken: #F4F6F8;
-  --c-line: #D8DDE2;
-  --c-line-strong: #B2BAC1;
+  --c-surface-sunken: #F6F7F8;
+  --c-line: #DFE3E6;
+  --c-line-strong: #BFC5CA;
 
   --c-success: #0f7b4f;
   --c-success-tint: #e4f4ec;

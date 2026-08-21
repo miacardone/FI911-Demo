@@ -76,13 +76,15 @@ export const fi911Brand = {
    *   Gray One         #3C4146   secondary chrome and body ink
    *
    * The teal carries actions and selection; the yellow is reserved for
-   * emphasis (active nav, focus, highlights) and never for a status, because
-   * amber already means "warning" in every badge in this console.
+   * emphasis and chart series, never for a status, because amber already
+   * means "warning" in every badge in this console.
    *
-   * CONTRAST NOTE: the rail is Dark, not white. A white rail against a
-   * near-white canvas gave three barely-separated light surfaces and the
-   * muted icon ink on top of it failed to read at all. Anchoring the left
-   * edge dark gives the layout a spine and lets the canvas stay light. */
+   * CHROME NOTE: matched to the live Fi911 product. The rail is a soft
+   * charcoal — brand Dark #14191E is nearly black and reads as a hard edge
+   * next to a light canvas — and the topbar is LIGHT, not dark, so the app
+   * has one dark anchor (the rail) rather than two competing ones. The active
+   * nav item is a solid teal block, which is how the real product marks
+   * position. */
   colors: {
     primary: '#00AAB4',
     primaryDeep: '#00818A',
@@ -94,34 +96,34 @@ export const fi911Brand = {
     accentDeep: '#C79800',
     accentTint: '#FFF3CC',
 
-    /* Chrome */
-    topbar: '#14191E',
-    topbarInk: '#FFFFFF',
-    topbarChip: '#3C4146',
-    topbarField: '#242B33',
-    crumbbar: '#3C4146',
-    crumbbarInk: '#A8AFB6',
-    crumbbarInkActive: '#FFFFFF',
+    /* Chrome — light topbar over a soft charcoal rail */
+    topbar: '#FFFFFF',
+    topbarInk: '#14191E',
+    topbarChip: '#F1F3F4',
+    topbarField: '#F1F3F4',
+    crumbbar: '#F1F3F4',
+    crumbbarInk: '#6B747C',
+    crumbbarInkActive: '#14191E',
 
-    /* The sign-in split panel. */
-    loginPanel: '#14191E',
+    /* The sign-in split panel stays dark — it is a marketing surface. */
+    loginPanel: '#22282C',
     loginPanelInk: '#A8AFB6',
 
-    /* Navigation rail — brand Dark */
-    navRail: '#14191E',
-    navRailDeep: '#0E1216',
-    navActive: '#FFC300',
-    navInk: '#D3D8DD',
+    /* Navigation rail — soft charcoal, not brand Dark */
+    navRail: '#30363A',
+    navRailDeep: '#272C2F',
+    navActive: '#00AAB4',
+    navInk: '#C9CFD3',
     navInkMuted: '#8B939B',
 
     ink: '#14191E',
-    inkMuted: '#3C4146',
-    inkSubtle: '#6B747C',
-    canvas: '#E9EDF0',
+    inkMuted: '#4A5157',
+    inkSubtle: '#7A828A',
+    canvas: '#EFF1F2',
     surface: '#FFFFFF',
-    surfaceSunken: '#F4F6F8',
-    line: '#D8DDE2',
-    lineStrong: '#B2BAC1',
+    surfaceSunken: '#F6F7F8',
+    line: '#DFE3E6',
+    lineStrong: '#BFC5CA',
 
     success: '#0F7B4F',
     successTint: '#E4F4EC',
