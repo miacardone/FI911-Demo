@@ -10,9 +10,11 @@ export function Wordmark({ inverse = false, showText = true, size = 26, markOnly
   /* The collapsed rail is 62px wide — the full lockup would be illegible, so
      it falls back to the badge, which is the recognisable part anyway. */
   const src = markOnly
-    ? (brand.logoMark ?? brand.logo)
+    ? (inverse ? (brand.logoMarkInverse ?? brand.logoMark ?? brand.logo) : (brand.logoMark ?? brand.logo))
     : (inverse ? (brand.logoInverse ?? brand.logo) : brand.logo);
-  const aspect = markOnly ? 104 / 112 : (brand.logoAspectRatio ?? 1);
+  const aspect = markOnly
+    ? (brand.logoMarkAspectRatio ?? 1)
+    : (brand.logoAspectRatio ?? 1);
 
   return (
     <span className={`wordmark ${inverse ? 'wordmark--inverse' : ''}`.trim()}>

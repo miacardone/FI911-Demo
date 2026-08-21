@@ -128,7 +128,9 @@ export function Sidebar({ collapsed, onToggle }) {
       aria-label={inSetup ? 'Setup navigation' : 'Main navigation'}
     >
       <div className="rail__head">
-        <Wordmark inverse markOnly={collapsed} size={collapsed ? 30 : 30} showText={false} />
+        {/* The collapsed head is 61px and the collapse button claims 26 of them,
+            so the badge has to come down or it sits flush against the edge. */}
+        <Wordmark inverse markOnly={collapsed} size={collapsed ? 25 : 30} showText={false} />
         <Tooltip label={collapsed ? 'Expand navigation' : 'Collapse navigation'} side="right">
           <button
             type="button"

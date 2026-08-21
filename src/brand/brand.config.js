@@ -60,12 +60,18 @@ export const fi911Brand = {
   emailDomain: 'ukpaymentsops.co.uk',
 
   /** Paths only — never imported into a component. Served from /public.
-   *  The lockup already spells out "Fi911", so no text renders beside it. */
-  logo: '/tenant-wordmark-blue.svg',
+   *  The lockup already spells out "Fi911", so no text renders beside it.
+   *
+   *  The inverse is not a CSS filter over the same file: the wordmark's dark
+   *  navy has to become white while the teal stays teal, and no single filter
+   *  does both. It is a real second asset, cut from the same source. */
+  logo: '/fi911-logo.png',
   /** Badge only — the collapsed rail has no room for the wordmark. */
-  logoMark: '/tenant-mark-blue.svg',
-  logoInverse: '/tenant-wordmark-white.svg',
-  logoAspectRatio: 420 / 116,
+  logoMark: '/fi911-mark.png',
+  logoInverse: '/fi911-logo-white.png',
+  logoMarkInverse: '/fi911-mark-white.png',
+  logoAspectRatio: 409 / 106,
+  logoMarkAspectRatio: 112 / 106,
 
   wordmark: { text: '', accent: '', weight: 700 },
 
