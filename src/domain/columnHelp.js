@@ -197,3 +197,73 @@ export function withColumnHelp(columns) {
 }
 
 export default withColumnHelp;
+
+/* ------------------------------------------------------------------ *
+ * STATUS MEANINGS
+ * ------------------------------------------------------------------ *
+ * A status badge names a state but never explains it. "Do Not Represent",
+ * "Merchant On Hold" and "Released" all read as English and none of them tell
+ * a new operator what actually happened or what they are expected to do next.
+ * The badge carries this on hover, so the vocabulary is learnable from the
+ * grid rather than from a manual.
+ */
+
+const STATUS_HELP = {
+  /* Participant funnel */
+  'new': 'Created but not yet picked up by anyone.',
+  'new lead': 'Captured from an enquiry; no contact made yet.',
+  'wip lead': 'Being worked — contact made, application not yet submitted.',
+  'in progress': 'Actively being worked by the assigned owner.',
+  'pending': 'Waiting on someone outside this team — usually the participant.',
+  'open': 'Live and unresolved.',
+  'assigned': 'Has an owner and is queued for work.',
+  'submitted to underwriting': 'Handed to the underwriting desk for a decision.',
+  'manual review required': 'Automated checks were inconclusive; a human decision is needed.',
+  'approved': 'Underwriting passed. Not yet processing.',
+  'new contract': 'Approved and contracted, awaiting boarding.',
+  'onboarded': 'Boarded and able to process.',
+  'live': 'Processing transactions now.',
+  'declined': 'Rejected — no further action.',
+  'dead lead': 'Abandoned. Kept for reporting only.',
+  'closed': 'Ended. No longer processing.',
+  'completed': 'Finished, nothing outstanding.',
+  'expired': 'Passed its deadline without action and can no longer be worked.',
+
+  /* Risk */
+  'merchant on hold': 'Settlement suspended pending a risk decision.',
+  'flagged': 'Tripped a rule and is waiting on a decision.',
+  'released': 'Reviewed and allowed to settle.',
+  'held': 'Funds retained pending further evidence.',
+  'active': 'Operating normally.',
+  'suspended': 'Temporarily stopped; can be reinstated.',
+  'locked': 'Sign-in blocked.',
+  'inactive': 'Configured but switched off.',
+
+  /* Disputes */
+  'do not represent': 'A decision was taken not to contest this chargeback.',
+  'won': 'Represented successfully — funds retained.',
+  'lost': 'Represented and lost — funds go to the cardholder.',
+  'represented': 'Evidence submitted; awaiting the issuer.',
+
+  /* Jobs and imports */
+  'in progress ': 'Currently running.',
+  'completed with errors': 'Finished, but some rows failed and were skipped.',
+  'failed': 'Did not finish. Nothing was written.',
+  'cancelled': 'Stopped before completion by an operator.',
+  'scheduled': 'Not started yet — waiting for its start date.',
+  'recalculating': 'Figures are being rebuilt and may move.',
+  'calculated': 'Figures are final for this cycle.',
+
+  /* Approvals */
+  'pending approval': 'Calculated but not yet signed off; it will not pay until it is.',
+  'on hold': 'Deliberately excluded from this payout cycle.',
+  'rejected': 'Sent back — the calculation will not pay as it stands.',
+  'under review': 'A case is open and being investigated.',
+  'escalated': 'Raised to a second line for a decision.',
+  'resolved': 'Case closed with an outcome recorded.',
+  'closed — no action': 'Case closed; nothing was wrong.',
+  'unmapped': 'Not attached to a portfolio, so it pays out to nobody.',
+};
+
+/** Plain-English meaning of a status value, if one is known. */
+export const statusHelp = (value) => STATUS_HELP[String(value ?? '').trim().toLowerCase()] ?? null;

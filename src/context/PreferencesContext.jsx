@@ -31,7 +31,7 @@ const prefersDark = () =>
 
 export function PreferencesProvider({ children }) {
   const [theme, setThemeState] = useState(() => readPref(THEME_KEY) ?? 'light');
-  const [density, setDensityState] = useState(() => readPref(DENSITY_KEY) ?? 'comfortable');
+  const [density, setDensityState] = useState(() => readPref(DENSITY_KEY) ?? 'fit');
   const [systemDark, setSystemDark] = useState(prefersDark);
 
   /* Track the OS setting so "System" stays live rather than being sampled once. */
@@ -70,7 +70,7 @@ export function PreferencesProvider({ children }) {
 
 export function usePreferences() {
   return useContext(PreferencesContext) ?? {
-    theme: 'light', resolved: 'light', setTheme: () => {}, density: 'comfortable', setDensity: () => {},
+    theme: 'light', resolved: 'light', setTheme: () => {}, density: 'fit', setDensity: () => {},
   };
 }
 

@@ -21,6 +21,25 @@ export const formatCompactCurrency = (amount, currency = brand.currency) =>
 
 export const formatNumber = (n) => new Intl.NumberFormat(brand.locale).format(n ?? 0);
 
+/**
+ * Axis-gutter number: 200,000,000 does not belong in a 44px gutter, and
+ * printing it there is what squeezes the plot and makes the labels collide.
+ * 200M carries the same information in a fifth of the width.
+ */
+export const formatAxis = (n) => {
+  const v = Number(n) || 0;
+  const abs = Math.abs(v);
+  const cut = (d, suffix) => {
+    const x = v / d;
+    /* One decimal only when it says something — 1.5M is useful, 200.0M is noise. */
+    return `${Number.isInteger(x) || abs / d >= 100 ? Math.round(x) : x.toFixed(1)}${suffix}`;
+  };
+  if (abs >= 1e9) return cut(1e9, 'B');
+  if (abs >= 1e6) return cut(1e6, 'M');
+  if (abs >= 1e4) return cut(1e3, 'k');
+  return formatNumber(Math.round(v));
+};
+
 export const formatPercent = (n, digits = 1) => (n == null ? '—' : `${Number(n).toFixed(digits)}%`);
 
 export const formatDate = (value) => {

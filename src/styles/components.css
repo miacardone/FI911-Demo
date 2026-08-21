@@ -373,10 +373,48 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 
 .dt-wrap { width: 100%; }
 .dt-wrap--scroll { overflow-x: auto; }
-.dt-wrap--fit { overflow: visible; }
+/* A safety valve, not a scroll bar: fit mode compresses text columns until
+   only the numbers' own minimum width remains. If even that will not fit, the
+   grid scrolls rather than clipping a figure. */
+.dt-wrap--fit { overflow-x: auto; overflow-y: visible; }
 
 .dt { width: 100%; border-collapse: collapse; font-size: var(--fs-small); }
-.dt--fit { table-layout: fixed; font-size: var(--fs-micro); }
+/* `auto` rather than `fixed`: fixed layout honours the declared width and
+   nothing else, so a money cell gets truncated at whatever share it was
+   allotted. Auto layout respects a nowrap cell's content width and takes the
+   difference out of the flexible columns, which is the behaviour we want. */
+.dt--fit { table-layout: auto; width: 100%; font-size: var(--fs-micro); }
+
+/* Numbers: shrink-to-content, never wrap, never ellipsize. `width: 1%` is the
+   standard way to tell auto layout "give this column its minimum and no more". */
+.dt--fit .dt__num { width: 1%; white-space: nowrap; }
+
+/* Text: absorbs all remaining space and ellipsizes inside it. `max-width: 0`
+   is what makes text-overflow work at all inside a table cell. */
+.dt--fit .dt__flex { max-width: 0; }
+.dt--fit td.dt__flex > * { overflow: hidden; text-overflow: ellipsis; }
+
+/* ATOMIC cell content sizes to itself.
+   A status badge reading "New Contrac" or an alert code cut to "AM" is not a
+   shortened label, it is a different label. Anything that only means something
+   whole — badges, alert codes, ratios, card brands, scheme pills — opts out of
+   compression and the prose columns give up the width instead. */
+.dt--fit td.dt__flex:has(> .badge),
+.dt--fit td.dt__flex:has(> .acodes),
+.dt--fit td.dt__flex:has(> .card-brand),
+.dt--fit td.dt__flex:has(> .ratio),
+.dt--fit td.dt__flex:has(> .triage),
+.dt--fit td.dt__flex:has(> .resp),
+.dt--fit td.dt__flex:has(> .age),
+.dt--fit td.dt__flex:has(> .delta),
+.dt--fit td.dt__flex:has(> .dorm),
+.dt--fit td.dt__flex:has(> .signed),
+.dt--fit td.dt__flex:has(> .money),
+.dt--fit td.dt__flex:has(> .tagged-flag),
+.dt--fit td.dt__flex:has(> .trend) {
+  max-width: none; width: 1%; white-space: nowrap; overflow: visible;
+}
+.badge, .money { white-space: nowrap; }
 
 .dt thead th {
   position: sticky; top: 0; z-index: 2;
@@ -436,13 +474,16 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
    Without these three rules long emails and queue names bleed into the next
    column and the due pill collides with the actions icons. */
 .dt--fit th,
-.dt--fit td { overflow: hidden; }
+.dt--fit td.dt__flex { overflow: hidden; }
+.dt--fit td.dt__num { overflow: visible; }
 .dt td > *,
 .dt th > * { max-width: 100%; }
 
 /* Two-line identity cells are deliberately two lines — each line still
    truncates, but the cell keeps its stacked shape. */
 .dt tbody td .cell-2l { white-space: normal; }
+.dt tbody td[style*="center"] .cell-2l { align-items: center; }
+.dt tbody td[style*="left"] .cell-2l { align-items: flex-start; }
 .dt tbody td .cell-2l__main,
 .dt tbody td .cell-2l__sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .dt--fit td .due { max-width: 100%; overflow: hidden; }
@@ -1060,7 +1101,10 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 
 /* ---------- Cells ---------- */
 
-.cell-2l { display: flex; flex-direction: column; gap: 1px; min-width: 0; line-height: 1.35; }
+/* `align-items: inherit` is what lets a two-line cell follow its column's
+   text-align — as a flex container it would otherwise always pack left,
+   leaving identity columns ragged while every other column centred. */
+.cell-2l { display: flex; flex-direction: column; gap: 1px; min-width: 0; line-height: 1.35; align-items: inherit; }
 .cell-2l__main { font-weight: 500; color: var(--c-ink); }
 .cell-2l__sub { font-size: var(--fs-micro); color: var(--c-ink-subtle); }
 

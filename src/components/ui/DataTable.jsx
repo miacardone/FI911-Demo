@@ -203,7 +203,40 @@ export function DataTable({
 
   // Fit mode spreads the remaining width by each column's weight.
   const totalWeight = columns.reduce((s, c) => s + (c.fw ?? 8), 0);
-  const widthFor = (c) => (fit ? `${((c.fw ?? 8) / totalWeight) * 100}%` : c.width);
+
+  /**
+   * A NUMERIC column never gives up width.
+   *
+   * Fit-to-width used to compress every column equally, which produced
+   * "£202,080…" and a totals row reading "£2,331,150.!". A truncated word is
+   * still readable from its first half; a truncated number is not just
+   * unreadable, it is WRONG — it looks like a smaller figure. So numbers
+   * shrink-to-content and the text columns absorb the compression instead.
+   */
+  const numericCol = (c) => c.numeric ?? (c.align === 'right' || Boolean(c.totalCell) || Boolean(c.mono));
+
+  /**
+   * PROSE columns are the ones that compress, and therefore the ones that
+   * ellipsize. Centring them clips the FIRST character as well as the last —
+   * "Ashton & Partners Ltd" becomes "shton & Partner" — which is strictly
+   * worse than an end-ellipsis, so they stay left-aligned under a left-aligned
+   * heading.
+   *
+   * Everything that fits its cell — numbers, dates, codes, badges, ratios —
+   * centres under its heading.
+   */
+  const prose = (c) => !numericCol(c) && (c.fw ?? 8) >= 11 && c.align !== 'center';
+  const alignOf = (c) => (c.align === 'left' || prose(c) ? 'left' : 'center');
+
+  const widthFor = (c) => {
+    if (!fit) return c.width;
+    return numericCol(c) ? undefined : `${((c.fw ?? 8) / totalWeight) * 100}%`;
+  };
+
+  const cellClass = (c, extra) => [
+    numericCol(c) ? 'dt__num' : 'dt__flex',
+    extra,
+  ].filter(Boolean).join(' ') || undefined;
 
   const allSelected = rows.length > 0 && rows.every((r) => selection?.selected.has(rowKey(r)));
   const someSelected = rows.some((r) => selection?.selected.has(rowKey(r)));
@@ -267,8 +300,9 @@ export function DataTable({
               return (
                 <th
                   key={c.key}
-                  style={{ width: widthFor(c), textAlign: c.align ?? 'left' }}
+                  style={{ width: widthFor(c), textAlign: alignOf(c) }}
                   className={[
+                    cellClass(c),
                     draggableCol ? 'dt__th--draggable' : 'dt__th--pinned',
                     dragColKey === c.key ? 'is-dragging' : '',
                     dragOverCol?.key === c.key ? `dt__th--drop-${dragOverCol.edge}` : '',
@@ -368,15 +402,20 @@ export function DataTable({
 
                   {columns.map((c) => {
                     const plain = c.text ? c.text(row) : row[c.key];
+                    /* Custom renderers bring their own hover (badges explain
+                       their status, alert codes their meaning), so a native
+                       title on the cell as well would double up. */
                     const title = c.cell && plain != null && typeof plain !== 'object' ? String(plain) : undefined;
                     return (
                       <td
                         key={c.key}
-                        style={{ textAlign: c.align ?? 'left' }}
-                        className={c.mono ? 'mono' : undefined}
+                        style={{ textAlign: alignOf(c) }}
+                        className={cellClass(c, c.mono ? 'mono' : undefined)}
                         title={title}
                       >
-                        {c.cell ? c.cell(row) : <TruncatedText value={String(row[c.key] ?? '—')} />}
+                        {c.cell
+                          ? c.cell(row)
+                          : <TruncatedText value={String(row[c.key] ?? '—')} always />}
                       </td>
                     );
                   })}
@@ -402,11 +441,15 @@ export function DataTable({
               {expansion && <td className="dt__lead" />}
               {columns.map((c, i) => {
                 if (!totals.includes(c.key)) {
-                  return <td key={c.key} style={{ textAlign: c.align ?? 'left' }}>{i === 0 ? 'Totals' : ''}</td>;
+                  return (
+                    <td key={c.key} className={cellClass(c)} style={{ textAlign: i === 0 ? 'left' : alignOf(c) }}>
+                      {i === 0 ? 'Totals' : ''}
+                    </td>
+                  );
                 }
                 const sum = rows.reduce((acc, r) => acc + (Number(r[c.key]) || 0), 0);
                 return (
-                  <td key={c.key} style={{ textAlign: c.align ?? 'right' }}>
+                  <td key={c.key} className={cellClass(c)} style={{ textAlign: alignOf(c) }}>
                     {c.totalCell ? c.totalCell(sum) : formatNumber(Math.round(sum * 100) / 100)}
                   </td>
                 );

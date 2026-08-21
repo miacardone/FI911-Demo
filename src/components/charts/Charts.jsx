@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import useElementWidth from '@/hooks/useElementWidth';
-import { formatNumber } from '@/utils/format';
+import { formatAxis, formatNumber } from '@/utils/format';
 
 /**
  * Hand-rolled inline SVG charts — no charting library.
@@ -17,6 +17,58 @@ import { formatNumber } from '@/utils/format';
  */
 
 const seriesColor = (i) => `var(--c-series-${i % 5})`;
+
+/**
+ * A "nice" y-scale: a top value and a step both landing on 1, 2, 2.5 or 5
+ * times a power of ten.
+ *
+ * The previous version rounded the maximum up to a power of ten and then
+ * divided by three, which is how an axis ends up reading 66,666,667 and
+ * 133,333,333 — arithmetically correct and unreadable. Ticks people can
+ * actually place have to fall on round numbers, which means choosing the
+ * STEP first and letting it decide the top of the scale.
+ */
+function niceScale(max, targetTicks = 4) {
+  const safe = Math.max(1, max);
+  const rough = safe / targetTicks;
+  const mag = 10 ** Math.floor(Math.log10(rough));
+  const norm = rough / mag;
+  const step = (norm <= 1 ? 1 : norm <= 2 ? 2 : norm <= 2.5 ? 2.5 : norm <= 5 ? 5 : 10) * mag;
+  const top = Math.ceil(safe / step) * step;
+  const ticks = [];
+  for (let v = 0; v <= top + step / 2; v += step) ticks.push(v);
+  return { top, step, ticks };
+}
+
+/**
+ * Fit an axis label to the space available.
+ *
+ * Blunt truncation is fine for words and useless for dates: a week of
+ * "2026/08/15 … 2026/08/20" all cut to "2026/08/…" prints the same label six
+ * times. A date sheds its least useful part first — the year, then the month —
+ * so what survives is what distinguishes one tick from the next.
+ */
+function fitLabel(value, chars) {
+  const str = String(value);
+  if (str.length <= chars) return str;
+
+  const date = str.match(/^(\d{4})[/-](\d{2})[/-](\d{2})$/);
+  if (date) {
+    const [, , mm, dd] = date;
+    if (chars >= 5) return `${mm}/${dd}`;
+    return dd;
+  }
+
+  /* Mon-YYYY sheds its century before its month. */
+  const month = str.match(/^([A-Za-z]{3})-(\d{4})$/);
+  if (month) {
+    const [, mon, yyyy] = month;
+    if (chars >= 6) return `${mon} '${yyyy.slice(2)}`;
+    return mon;
+  }
+
+  return `${str.slice(0, Math.max(1, chars - 1))}…`;
+}
 
 /** Axis ticks: at most this many, so a 28-day series does not print 28 labels. */
 const maxTicks = (width) => Math.max(4, Math.floor(width / 90));
@@ -59,8 +111,8 @@ export function BarChart({
     ? data.flatMap((row) => series.map((x) => row[x.key] ?? 0))
     : data.map((row) => series.reduce((s, x) => s + (row[x.key] ?? 0), 0));
   const max = Math.max(1, ...totals);
-  const step = 10 ** Math.floor(Math.log10(max));
-  const niceMax = Math.ceil(max / step) * step || 10;
+  const scale = niceScale(max, 4);
+  const niceMax = scale.top;
 
   const slot = plotW / Math.max(data.length, 1);
   const groupW = Math.min(46, slot * 0.62);
@@ -74,23 +126,20 @@ export function BarChart({
   const categorical = data.length <= 8;
   const labelEvery = categorical ? 1 : Math.max(1, Math.ceil(data.length / maxTicks(plotW)));
   const labelChars = Math.max(4, Math.floor(slot / 6.2));
-  const clip = (t) => {
-    const str = String(t);
-    return categorical && str.length > labelChars ? `${str.slice(0, labelChars - 1)}…` : str;
-  };
+  const clip = (t) => (categorical ? fitLabel(t, labelChars) : String(t));
 
   return (
     <div className="chart-frame" ref={ref}>
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} className="chart" role="img" aria-label={`${yLabel ?? 'Value'} by ${xLabel ?? 'period'}`}>
-        {[0, 1, 2, 3].map((i) => {
-          const v = (niceMax / 3) * i;
-          return (
-            <g key={i}>
-              <line x1={PAD.left} x2={W - PAD.right} y1={y(v)} y2={y(v)} className="chart__grid" />
-              <text x={PAD.left - 6} y={y(v) + 3.5} className="chart__axis" textAnchor="end">{formatNumber(Math.round(v))}</text>
-            </g>
-          );
-        })}
+        {scale.ticks.map((v) => (
+          <g key={v}>
+            <line x1={PAD.left} x2={W - PAD.right} y1={y(v)} y2={y(v)} className="chart__grid" />
+            <text x={PAD.left - 6} y={y(v) + 3.5} className="chart__axis" textAnchor="end">
+              {formatAxis(v)}
+              <title>{formatNumber(Math.round(v))}</title>
+            </text>
+          </g>
+        ))}
 
         {data.map((row, i) => {
           const bandW = grouped ? barW * series.length : barW;
@@ -176,8 +225,8 @@ export function AreaChart({
   const plotH = Math.max(H - PAD.top - PAD.bottom, 10);
 
   const max = Math.max(1, ...data.map((d) => d[valueKey] ?? 0));
-  const step = 10 ** Math.floor(Math.log10(max));
-  const niceMax = Math.ceil(max / step) * step || 10;
+  const scale = niceScale(max, 4);
+  const niceMax = scale.top;
 
   const x = (i) => PAD.left + (data.length <= 1 ? plotW / 2 : (plotW / (data.length - 1)) * i);
   const y = (v) => PAD.top + plotH - (v / niceMax) * plotH;
@@ -192,10 +241,7 @@ export function AreaChart({
   const categorical = data.length <= 8;
   const labelEvery = categorical ? 1 : Math.max(1, Math.ceil(data.length / maxTicks(plotW)));
   const labelChars = Math.max(4, Math.floor((plotW / Math.max(data.length, 1)) / 6.2));
-  const clip = (t) => {
-    const str = String(t);
-    return categorical && str.length > labelChars ? `${str.slice(0, labelChars - 1)}…` : str;
-  };
+  const clip = (t) => (categorical ? fitLabel(t, labelChars) : String(t));
 
   return (
     <div className="chart-frame" ref={ref}>
@@ -207,15 +253,15 @@ export function AreaChart({
           </linearGradient>
         </defs>
 
-        {[0, 1, 2].map((i) => {
-          const v = (niceMax / 2) * i;
-          return (
-            <g key={i}>
-              <line x1={PAD.left} x2={W - PAD.right} y1={y(v)} y2={y(v)} className="chart__grid" />
-              <text x={PAD.left - 6} y={y(v) + 3.5} className="chart__axis" textAnchor="end">{formatNumber(Math.round(v))}</text>
-            </g>
-          );
-        })}
+        {scale.ticks.map((v) => (
+          <g key={v}>
+            <line x1={PAD.left} x2={W - PAD.right} y1={y(v)} y2={y(v)} className="chart__grid" />
+            <text x={PAD.left - 6} y={y(v) + 3.5} className="chart__axis" textAnchor="end">
+              {formatAxis(v)}
+              <title>{formatNumber(Math.round(v))}</title>
+            </text>
+          </g>
+        ))}
 
         {area && <path d={area} fill={`url(#${gid})`} />}
         {line && <path d={line} className="chart__line" stroke={color} />}
@@ -412,8 +458,8 @@ export function LineChart({
   const plotH = Math.max(H - PAD.top - PAD.bottom, 10);
 
   const max = Math.max(1, ...data.flatMap((d) => series.map((s) => d[s.key] ?? 0)));
-  const step = 10 ** Math.floor(Math.log10(max));
-  const niceMax = Math.ceil(max / step) * step || 10;
+  const scale = niceScale(max, 4);
+  const niceMax = scale.top;
 
   const x = (i) => PAD.left + (data.length <= 1 ? plotW / 2 : (plotW / (data.length - 1)) * i);
   const y = (v) => PAD.top + plotH - (v / niceMax) * plotH;
@@ -424,23 +470,20 @@ export function LineChart({
   const categorical = data.length <= 8;
   const labelEvery = categorical ? 1 : Math.max(1, Math.ceil(data.length / maxTicks(plotW)));
   const labelChars = Math.max(4, Math.floor((plotW / Math.max(data.length, 1)) / 6.2));
-  const clip = (t) => {
-    const str = String(t);
-    return categorical && str.length > labelChars ? `${str.slice(0, labelChars - 1)}…` : str;
-  };
+  const clip = (t) => (categorical ? fitLabel(t, labelChars) : String(t));
 
   return (
     <div className="chart-frame" ref={ref}>
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} className="chart" role="img" aria-label={`${yLabel ?? 'Value'} over time`} onMouseLeave={() => setHover(null)}>
-        {[0, 1, 2, 3].map((i) => {
-          const v = (niceMax / 3) * i;
-          return (
-            <g key={i}>
-              <line x1={PAD.left} x2={W - PAD.right} y1={y(v)} y2={y(v)} className="chart__grid" />
-              <text x={PAD.left - 6} y={y(v) + 3.5} className="chart__axis" textAnchor="end">{formatNumber(Math.round(v))}</text>
-            </g>
-          );
-        })}
+        {scale.ticks.map((v) => (
+          <g key={v}>
+            <line x1={PAD.left} x2={W - PAD.right} y1={y(v)} y2={y(v)} className="chart__grid" />
+            <text x={PAD.left - 6} y={y(v) + 3.5} className="chart__axis" textAnchor="end">
+              {formatAxis(v)}
+              <title>{formatNumber(Math.round(v))}</title>
+            </text>
+          </g>
+        ))}
 
         {series.map((s, si) => {
           const line = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${x(i)},${y(d[s.key] ?? 0)}`).join(' ');
@@ -520,8 +563,10 @@ export function DotPlot({ data, xKey = 'label', valueKey = 'value', height = 220
   const plotH = Math.max(H - PAD.top - PAD.bottom, 10);
 
   const values = data.map((d) => d[valueKey] ?? 0);
-  const max = Math.max(1, ...values);
+  const rawMax = Math.max(1, ...values);
   const min = Math.min(0, ...values);
+  const scale = niceScale(rawMax - min, 4);
+  const max = min + scale.top;
   const y = (v) => PAD.top + plotH - ((v - min) / (max - min || 1)) * plotH;
   const slot = plotW / Math.max(data.length, 1);
   const x = (i) => PAD.left + slot * i + slot / 2;
@@ -530,12 +575,15 @@ export function DotPlot({ data, xKey = 'label', valueKey = 'value', height = 220
   return (
     <div className="chart-frame" ref={ref}>
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} className="chart" role="img" aria-label={`${yLabel ?? 'Value'} by ${xKey}`}>
-        {[0, 1, 2, 3].map((i) => {
-          const v = min + ((max - min) / 3) * i;
+        {scale.ticks.map((t) => {
+          const v = min + t;
           return (
-            <g key={i}>
+            <g key={t}>
               <line x1={PAD.left} x2={W - PAD.right} y1={y(v)} y2={y(v)} className="chart__grid" />
-              <text x={PAD.left - 6} y={y(v) + 3.5} className="chart__axis" textAnchor="end">{formatNumber(Math.round(v))}</text>
+              <text x={PAD.left - 6} y={y(v) + 3.5} className="chart__axis" textAnchor="end">
+                {formatAxis(v)}
+                <title>{formatNumber(Math.round(v))}</title>
+              </text>
             </g>
           );
         })}

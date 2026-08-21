@@ -75,6 +75,10 @@ export function Tooltip({ label, side = 'top', wide = false, disabled = false, c
     <span
       ref={ref}
       className={className}
+      /* The label is mirrored onto the element so it is discoverable without
+         hovering — by assistive tech, and by the QA sweep that checks every
+         column actually carries an explanation. */
+      data-tooltip={label || undefined}
       style={{ display: 'inline-flex', minWidth: 0, maxWidth: '100%' }}
       onMouseEnter={show}
       onMouseLeave={hide}
@@ -208,7 +212,15 @@ export function Drawer({ open, onClose, title, children, width = 340 }) {
  * Wraps text that may overflow: renders truncated, and only attaches a tooltip
  * when it actually overflows its box.
  */
-export function TruncatedText({ value, className = '', tooltip }) {
+/**
+ * Text that may not fit its box.
+ *
+ * `always` makes the tooltip unconditional rather than overflow-only. Every
+ * table cell wants one: a value that fits today is truncated the moment the
+ * window narrows or a column is compressed, and a hover that only sometimes
+ * works reads as a broken hover.
+ */
+export function TruncatedText({ value, className = '', tooltip, always = false }) {
   const ref = useRef(null);
   const [overflowing, setOverflowing] = useState(false);
 
@@ -219,8 +231,11 @@ export function TruncatedText({ value, className = '', tooltip }) {
 
   const content = <span ref={ref} className={`truncate ${className}`.trim()}>{value}</span>;
 
-  return overflowing || tooltip
-    ? <Tooltip label={tooltip ?? value} className={className}>{content}</Tooltip>
+  const label = tooltip ?? value;
+  const worthShowing = label != null && String(label).trim() !== '' && String(label).trim() !== '—';
+
+  return (overflowing || tooltip || always) && worthShowing
+    ? <Tooltip label={label} className={className}>{content}</Tooltip>
     : content;
 }
 

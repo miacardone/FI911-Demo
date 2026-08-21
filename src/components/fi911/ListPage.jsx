@@ -1,9 +1,10 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Icon from '@/components/ui/Icon';
 import { Button, PageHeader } from '@/components/ui/Surface';
 import { ColumnToggle, DataTable, DensityToggle, ExportButtons } from '@/components/ui/DataTable';
 import { useToast } from '@/context/ToastContext';
 import { useAutoPageSize } from '@/hooks/useAutoPageSize';
+import { usePreferences } from '@/context/PreferencesContext';
 import { withColumnHelp } from '@/domain/columnHelp';
 
 /**
@@ -228,7 +229,15 @@ export function ListTable({
   const search = searchProp ?? innerSearch;
   const onSearchChange = onSearchChangeProp ?? setInnerSearch;
 
-  const [density, setDensity] = useState('comfortable');
+  /* Density starts from the user's saved preference rather than a hard-coded
+     default — the profile menu and Setup both offer "Default table density",
+     and a preference that no table reads is not a preference. The per-table
+     toggle stays a LOCAL override, so compacting one grid does not silently
+     rewrite the account-wide default; changing the default re-syncs open
+     tables. */
+  const { density: preferredDensity } = usePreferences();
+  const [density, setDensity] = useState(preferredDensity);
+  useEffect(() => { setDensity(preferredDensity); }, [preferredDensity]);
   const [hidden, setHidden] = useState(() => new Set());
   const [sort, setSort] = useState(null);
   const [page, setPage] = useState(1);

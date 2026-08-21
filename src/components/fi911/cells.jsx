@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
 import Icon from '@/components/ui/Icon';
 import { Badge } from '@/components/ui/Surface';
-import { Popover } from '@/components/ui/Overlay';
+import { Popover, Tooltip } from '@/components/ui/Overlay';
 import { statusLabel, statusTone, priorityMeta } from '@/domain/statuses';
+import { statusHelp } from '@/domain/columnHelp';
 import { formatCurrency } from '@/utils/format';
 import brand, { findScheme } from '@/brand/brand.config';
 
@@ -63,14 +64,26 @@ export const moneyText = (value, currency = brand.currency) => {
 
 export function StatusBadge({ value, tone }) {
   if (value == null || value === '') return <span className="subtle">—</span>;
-  return <Badge tone={tone ?? statusTone(value)}>{statusLabel(value)}</Badge>;
+
+  const badge = <Badge tone={tone ?? statusTone(value)}>{statusLabel(value)}</Badge>;
+  /* A status names a state without explaining it. Where we can say what the
+     state actually means, the badge says it on hover. */
+  const help = statusHelp(value);
+  return help ? <Tooltip label={`${statusLabel(value)} — ${help}`}>{badge}</Tooltip> : badge;
 }
 
 /** PSP / Bank / Merchant — the participant Type column. */
+const TYPE_HELP = {
+  bank: 'A bank participant — holds accounts directly and settles in its own name.',
+  psp: 'A payment service provider — settles through a sponsoring bank.',
+  merchant: 'A merchant trading under a participant.',
+};
+
 export function TypeBadge({ value }) {
   const key = String(value ?? '').toLowerCase();
   const tone = key === 'bank' ? 'success' : key === 'psp' ? 'info' : 'neutral';
-  return <Badge tone={tone}>{value}</Badge>;
+  const badge = <Badge tone={tone}>{value}</Badge>;
+  return TYPE_HELP[key] ? <Tooltip label={`${value} — ${TYPE_HELP[key]}`}>{badge}</Tooltip> : badge;
 }
 
 /* ---------- Risk ---------- *
