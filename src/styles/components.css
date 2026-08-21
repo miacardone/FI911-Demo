@@ -395,23 +395,27 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 .dt--fit td.dt__flex > * { overflow: hidden; text-overflow: ellipsis; }
 
 /* ATOMIC cell content sizes to itself.
+   Matched as a DESCENDANT, not a direct child: a badge that carries its own
+   explanatory tooltip is wrapped by the Tooltip span, so `:has(> .badge)`
+   silently stopped matching the moment status badges gained hover text —
+   and the column went back to clipping "New Contrac".
    A status badge reading "New Contrac" or an alert code cut to "AM" is not a
    shortened label, it is a different label. Anything that only means something
    whole — badges, alert codes, ratios, card brands, scheme pills — opts out of
    compression and the prose columns give up the width instead. */
-.dt--fit td.dt__flex:has(> .badge),
-.dt--fit td.dt__flex:has(> .acodes),
-.dt--fit td.dt__flex:has(> .card-brand),
-.dt--fit td.dt__flex:has(> .ratio),
-.dt--fit td.dt__flex:has(> .triage),
-.dt--fit td.dt__flex:has(> .resp),
-.dt--fit td.dt__flex:has(> .age),
-.dt--fit td.dt__flex:has(> .delta),
-.dt--fit td.dt__flex:has(> .dorm),
-.dt--fit td.dt__flex:has(> .signed),
-.dt--fit td.dt__flex:has(> .money),
-.dt--fit td.dt__flex:has(> .tagged-flag),
-.dt--fit td.dt__flex:has(> .trend) {
+.dt--fit td.dt__flex:has(.badge),
+.dt--fit td.dt__flex:has(.acodes),
+.dt--fit td.dt__flex:has(.card-brand),
+.dt--fit td.dt__flex:has(.ratio),
+.dt--fit td.dt__flex:has(.triage),
+.dt--fit td.dt__flex:has(.resp),
+.dt--fit td.dt__flex:has(.age),
+.dt--fit td.dt__flex:has(.delta),
+.dt--fit td.dt__flex:has(.dorm),
+.dt--fit td.dt__flex:has(.signed),
+.dt--fit td.dt__flex:has(.money),
+.dt--fit td.dt__flex:has(.tagged-flag),
+.dt--fit td.dt__flex:has(.trend) {
   max-width: none; width: 1%; white-space: nowrap; overflow: visible;
 }
 .badge, .money { white-space: nowrap; }

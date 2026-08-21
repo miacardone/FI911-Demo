@@ -74,7 +74,9 @@ function TemplatesTab() {
     },
     {
       key: 'lastApplied', header: 'Last Applied', fw: 9, align: 'center', sortable: true,
-      cell: (r) => (r.lastApplied ? r.lastApplied : <Muted>Never</Muted>),
+      cell: (r) => (r.lastApplied
+        ? r.lastApplied
+        : <Tooltip label="This template has never decided an application"><Muted>Never</Muted></Tooltip>),
       description: 'When this template last decided an application. The reference does not record it, so dead templates are indistinguishable from live ones.',
     },
     {

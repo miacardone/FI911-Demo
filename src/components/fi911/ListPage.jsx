@@ -238,7 +238,13 @@ export function ListTable({
   const { density: preferredDensity } = usePreferences();
   const [density, setDensity] = useState(preferredDensity);
   useEffect(() => { setDensity(preferredDensity); }, [preferredDensity]);
-  const [hidden, setHidden] = useState(() => new Set());
+  /* A column may ship hidden. The widest grids carry twenty-odd columns
+     because the data supports them, not because anyone reads them all at
+     once — shipping the secondary ones off means the page FITS on open, and
+     the Columns menu still has them a click away. */
+  const [hidden, setHidden] = useState(() => new Set(
+    columnsProp.filter((c) => c.hiddenByDefault).map((c) => c.key),
+  ));
   const [sort, setSort] = useState(null);
   const [page, setPage] = useState(1);
   const [manualPageSize, setManualPageSize] = useState(initialPageSize);

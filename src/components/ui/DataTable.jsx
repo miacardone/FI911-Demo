@@ -233,6 +233,24 @@ export function DataTable({
     return numericCol(c) ? undefined : `${((c.fw ?? 8) / totalWeight) * 100}%`;
   };
 
+  /**
+   * A floor for the columns that DO compress.
+   *
+   * Protecting numbers and badges from compression only works while there is
+   * slack elsewhere. On a sixteen-column grid there is not, and the prose
+   * columns collapsed to four characters — a merchant column reading "Pars"
+   * is no more useful than a truncated total. Each flexible column keeps a
+   * minimum proportional to its declared weight, and the grid scrolls if the
+   * sum genuinely will not fit.
+   */
+  const minWidthFor = (c) => {
+    if (!fit || numericCol(c)) return undefined;
+    /* A column that declared a pixel width has already said what it needs —
+       the Actions menu does not want a 76px floor for a 16px button. */
+    if (c.width) return c.width;
+    return Math.max(52, (c.fw ?? 8) * 7);
+  };
+
   const cellClass = (c, extra) => [
     numericCol(c) ? 'dt__num' : 'dt__flex',
     extra,
@@ -300,7 +318,7 @@ export function DataTable({
               return (
                 <th
                   key={c.key}
-                  style={{ width: widthFor(c), textAlign: alignOf(c) }}
+                  style={{ width: widthFor(c), minWidth: minWidthFor(c), textAlign: alignOf(c) }}
                   className={[
                     cellClass(c),
                     draggableCol ? 'dt__th--draggable' : 'dt__th--pinned',
