@@ -386,6 +386,11 @@ export function Donut({
         </g>
         {arcLabels && arcs.map((arc) => {
           if (arc.fraction < 0.06) return null;
+          /* The biggest slice is already spelled out in the center, with its
+             name under it. Printing the same number again on its own arc reads
+             as two different figures that happen to match. */
+          if (!active && arc === biggest) return null;
+          if (active && arc === active) return null;
           const mid = (arc.offset + arc.length / 2) / circumference;
           const angle = mid * 2 * Math.PI - Math.PI / 2;
           return (

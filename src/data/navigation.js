@@ -218,20 +218,20 @@ export const nav = [
     crumb: 'Document Center',
   },
   {
-    label: 'Eric (archive)',
-    path: routes.eric,
-    icon: 'archive',
-    permission: 'Eric Archive',
-    area: 'Administration',
-    crumb: 'Eric',
-  },
-  {
     label: 'Setup',
     path: routes.setup,
     icon: 'wrench',
     permission: 'Setup',
     area: 'Administration',
     crumb: 'Setup',
+  },
+  {
+    label: 'Eric (archive)',
+    path: routes.eric,
+    icon: 'archive',
+    permission: 'Eric Archive',
+    area: 'Administration',
+    crumb: 'Eric',
   },
 ];
 

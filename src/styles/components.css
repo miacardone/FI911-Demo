@@ -1524,7 +1524,17 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 .spark-tile__count { font-size: var(--fs-small); color: var(--c-ink-muted); }
 .spark-tile__meta { font-size: var(--fs-micro); color: var(--c-ink-subtle); }
 
-.donut-arc__label { font-size: 11px; font-weight: 700; fill: #fff; pointer-events: none; }
+/* White reads on the teal and charcoal slices and vanishes on the yellow one.
+   A dark halo behind the glyphs makes the label legible on ANY slice colour,
+   which matters because the palette is tenant-configurable — picking a text
+   colour per series would break the moment someone changes the accent. */
+.donut-arc__label {
+  font-size: 11px; font-weight: 700; fill: #fff; pointer-events: none;
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.45);
+  stroke-width: 2.5px;
+  stroke-linejoin: round;
+}
 
 /* ---------- Directory search (topbar) ---------- */
 
