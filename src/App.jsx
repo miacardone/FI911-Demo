@@ -17,8 +17,6 @@ import Applications from '@/pages/participants/Applications';
 import ApplicationDetail from '@/pages/participants/ApplicationDetail';
 import Underwriting from '@/pages/participants/Underwriting';
 import UnderwritingDetail from '@/pages/participants/UnderwritingDetail';
-import Onboarding from '@/pages/participants/Onboarding';
-import OnboardingDetail from '@/pages/participants/OnboardingDetail';
 import LiveParticipants from '@/pages/participants/LiveParticipants';
 import LiveParticipantDetail from '@/pages/participants/LiveParticipantDetail';
 import ParticipantMerchants from '@/pages/participants/ParticipantMerchants';
@@ -33,7 +31,6 @@ import ProductivityReport from '@/pages/reports/ProductivityReport';
 // Residuals
 import GeneralLedger from '@/pages/residuals/GeneralLedger';
 import FeeAdjustments from '@/pages/residuals/FeeAdjustments';
-import TrendingReport from '@/pages/residuals/TrendingReport';
 import AgentPayoutSummary from '@/pages/residuals/AgentPayoutSummary';
 import PayoutDetails from '@/pages/residuals/PayoutDetails';
 import ParticipantStatus from '@/pages/residuals/ParticipantStatus';
@@ -46,11 +43,6 @@ import DisputeDetail from '@/pages/disputes/DisputeDetail';
 import ChargebacksAlerts from '@/pages/disputes/ChargebacksAlerts';
 
 // Risk Management
-import RiskDashboard from '@/pages/risk/RiskDashboard';
-import RiskMerchants from '@/pages/risk/RiskMerchants';
-import AlertAction from '@/pages/risk/AlertAction';
-import MerchantRiskProfile from '@/pages/risk/MerchantRiskProfile';
-import HeldVolume from '@/pages/risk/HeldVolume';
 import Rules from '@/pages/risk/Rules';
 import WorkQueue from '@/pages/risk/WorkQueue';
 import WorkQueueMerchant from '@/pages/risk/WorkQueueMerchant';
@@ -58,12 +50,9 @@ import ActionHistory from '@/pages/risk/ActionHistory';
 import UnactionedQueue from '@/pages/risk/UnactionedQueue';
 
 // Transactions
-import AccountHolder from '@/pages/transactions/AccountHolder';
-import Gateway from '@/pages/transactions/Gateway';
 import AchListings from '@/pages/transactions/AchListings';
 import Authorizations from '@/pages/transactions/Authorizations';
 import Settlements from '@/pages/transactions/Settlements';
-import FundingCategory from '@/pages/transactions/FundingCategory';
 import FundingDeposits from '@/pages/transactions/FundingDeposits';
 import Qualifications from '@/pages/transactions/Qualifications';
 import MerchantReserves from '@/pages/transactions/MerchantReserves';
@@ -119,8 +108,6 @@ export function App() {
                   <Route path="applications/:id" element={<ApplicationDetail />} />
                   <Route path="underwriting" element={<Underwriting />} />
                   <Route path="underwriting/:id" element={<UnderwritingDetail />} />
-                  <Route path="onboarding" element={<Onboarding />} />
-                  <Route path="onboarding/:id" element={<OnboardingDetail />} />
                   <Route path="live" element={<LiveParticipants />} />
                   <Route path="live/:id" element={<LiveParticipantDetail />} />
                   <Route path="live/:id/merchants" element={<ParticipantMerchants />} />
@@ -135,7 +122,6 @@ export function App() {
                   <Route index element={<Navigate to={routes.generalLedger} replace />} />
                   <Route path="general-ledger" element={<GeneralLedger />} />
                   <Route path="fee-adjustments" element={<FeeAdjustments />} />
-                  <Route path="trending-report" element={<TrendingReport />} />
                   <Route path="agent-payout-summary" element={<AgentPayoutSummary />} />
                   <Route path="payout-details" element={<PayoutDetails />} />
                   <Route path="participant-status" element={<ParticipantStatus />} />
@@ -156,13 +142,7 @@ export function App() {
                 </Route>
 
                 <Route path="risk-management">
-                  <Route index element={<Navigate to={routes.riskDashboard} replace />} />
-                  <Route path="dashboard" element={<RiskDashboard />} />
-                  <Route path="merchants" element={<RiskMerchants />} />
-                  <Route path="alert-action" element={<AlertAction />} />
-                  <Route path="merchant-risk-profile" element={<MerchantRiskProfile />} />
-                  <Route path="held-volume" element={<HeldVolume />} />
-                  <Route path="rules" element={<Rules />} />
+                  <Route index element={<Navigate to={routes.workQueue} replace />} />
                   <Route path="work-queue" element={<WorkQueue />} />
                   <Route path="work-queue/:mid" element={<WorkQueueMerchant />} />
                   <Route path="action-history" element={<ActionHistory />} />
@@ -170,13 +150,10 @@ export function App() {
                 </Route>
 
                 <Route path="transactions">
-                  <Route index element={<Navigate to={routes.accountHolder} replace />} />
-                  <Route path="account-holder" element={<AccountHolder />} />
-                  <Route path="gateway" element={<Gateway />} />
+                  <Route index element={<Navigate to={routes.achListings} replace />} />
                   <Route path="ach-listings" element={<AchListings />} />
                   <Route path="authorizations" element={<Authorizations />} />
                   <Route path="settlements" element={<Settlements />} />
-                  <Route path="funding-category" element={<FundingCategory />} />
                   <Route path="funding-deposits" element={<FundingDeposits />} />
                   <Route path="qualifications" element={<Qualifications />} />
                   <Route path="merchant-reserves" element={<MerchantReserves />} />
