@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import useElementWidth from '@/hooks/useElementWidth';
 import { formatAxis, formatNumber } from '@/utils/format';
 
@@ -381,25 +381,60 @@ export function Donut({
     return str.length > centreChars ? `${str.slice(0, centreChars - 1)}…` : str;
   };
 
-  /* Tooltip sits OUTSIDE the ring, beside the slice it describes, rather than
-     on top of the doughnut where it covers the very numbers it is explaining.
-     Which side it flips to depends on the slice's angle. */
+  /* Tooltip sits beside the doughnut, not on it — it used to cover the very
+     numbers it was explaining. Placing it by the slice's own angle sent it
+     diagonally out of the card, so it hugs the LEFT edge of the ring instead,
+     level with the slice, and only flips right when the card is too close to
+     the window edge for the card to fit on the left. */
+  const tipRef = useRef(null);
+  const tipElRef = useRef(null);
+  const [tipSide, setTipSide] = useState('left');
+
+  /**
+   * Which side of the ring the hover card sits on.
+   *
+   * Two earlier attempts failed for instructive reasons. Placing it at the
+   * slice's own angle sent it diagonally off the card. Clamping it back inside
+   * the page pushed it straight back over the doughnut — when there is no room
+   * on the left, "stay inside" and "stay off the ring" are contradictory
+   * instructions.
+   *
+   * So the side is CHOSEN, once, from the card's measured width against the
+   * space actually available either side. Left is preferred because that is
+   * where the eye already is; right is the fallback for the leftmost chart in
+   * a row, whose left is the navigation rail. Deriving it from a measurement
+   * rather than from the current position means it settles in one pass and
+   * cannot oscillate.
+   */
+  useLayoutEffect(() => {
+    if (!active) return;
+    const host = tipRef.current;
+    const el = tipElRef.current;
+    if (!host || !el) return;
+
+    const scroller = host.closest('.shell__content');
+    const bound = scroller ? scroller.getBoundingClientRect() : { left: 0, right: window.innerWidth };
+    const box = host.getBoundingClientRect();
+    const width = el.getBoundingClientRect().width + 12;
+
+    const fitsLeft = box.left - width >= bound.left;
+    setTipSide(fitsLeft ? 'left' : 'right');
+  }, [active]);
+
   const tipAt = (() => {
     if (!active) return null;
     const mid = (active.offset + active.length / 2) / circumference;
     const angle = mid * 2 * Math.PI - Math.PI / 2;
-    const dx = Math.cos(angle);
-    const dy = Math.sin(angle);
-    return {
-      left: c + dx * (size / 2 + 6),
-      top: c + dy * (size / 2 + 6),
-      /* Anchor the corner nearest the doughnut so the card grows outward. */
-      transform: `translate(${dx < -0.2 ? '-100%' : dx > 0.2 ? '0' : '-50%'}, ${dy < -0.2 ? '-100%' : dy > 0.2 ? '0' : '-50%'})`,
-    };
+    /* Vertical position follows the slice, so which one is described is
+       obvious; horizontal is fixed so the card never wanders. */
+    const top = Math.min(Math.max(c + Math.sin(angle) * r, 14), size - 14);
+    return tipSide === 'left'
+      ? { left: -10, top, transform: 'translate(-100%, -50%)' }
+      : { left: size + 10, top, transform: 'translate(0, -50%)' };
   })();
 
   return (
-    <div className="donut">
+    <div className="donut" ref={tipRef}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={`${data.length} segments, ${total} total`}>
         <circle cx={c} cy={c} r={r} fill="none" stroke="var(--c-line)" strokeWidth={thickness} />
         <g transform={`rotate(-90 ${c} ${c})`}>
@@ -456,7 +491,7 @@ export function Donut({
       </svg>
 
       {active && tipAt && (
-        <div className="tooltip donut__tip" style={{ position: 'absolute', left: tipAt.left, top: tipAt.top, transform: tipAt.transform }}>
+        <div ref={tipElRef} className="tooltip donut__tip" style={{ position: 'absolute', left: tipAt.left, top: tipAt.top, transform: tipAt.transform }}>
           <span className="row row--xtight row--nowrap" style={{ gap: 6 }}>
             <span className="legend__swatch" style={{ background: active.color }} />
             <span className="tooltip__title" style={{ marginBottom: 0 }}>{active.label}</span>

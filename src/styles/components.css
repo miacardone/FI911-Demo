@@ -221,7 +221,10 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 
 /* The tooltip hangs outside the ring, so its card must not be clipped by the
    one it sits in. */
-.donut__tip { z-index: 5; white-space: nowrap; }
+/* The card is positioned against the ring, so it must size to its content
+   rather than wrap "47.6% of 184" onto two lines and change height. */
+.donut__tip { z-index: 5; white-space: nowrap; width: max-content; max-width: none; }
+.donut__tip .tooltip__sub { white-space: nowrap; }
 
 /* ---------- Toolbar ---------- */
 
