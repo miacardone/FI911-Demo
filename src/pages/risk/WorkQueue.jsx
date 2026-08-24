@@ -30,7 +30,7 @@ import brand from '@/brand/brand.config';
  *   · Rows arrive TRIAGED — alert severity, money exposed and the merchant's
  *     existing chargeback ratio combine into one score, and the queue leads
  *     with the worst. A queue whose order carries no information is a list.
- *   · Alert codes explain themselves on hover and are coloured by severity,
+ *   · Alert codes explain themselves on hover and are colored by severity,
  *     so the shape of a row is readable before any code is read.
  *   · The Batch File Processing tab is populated. The reference renders it
  *     empty, which cannot answer the one question it exists for — did last
@@ -51,7 +51,7 @@ const ADVANCED_FIELDS = [
 
 const ratioTone = (v) => (v >= 15 ? 'danger' : v >= 10 ? 'warning' : 'neutral');
 
-/** Card-scheme monitoring programmes start around 0.9% count / 1% value. */
+/** Card-scheme monitoring programs start around 0.9% count / 1% value. */
 function Ratio({ value }) {
   const tone = ratioTone(value);
   return (

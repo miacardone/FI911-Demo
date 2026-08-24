@@ -107,7 +107,7 @@ export function InvitationDetail() {
           <FieldGrid>
             <SelectField {...field('type', 'Type')} options={opts(brand.participantTypes.map((t) => t.label))} placeholder="" />
             <TextField {...field('legalName', 'Legal Name')} />
-            <TextField {...field('participant', 'Participant Name')} required />
+            <TextField {...field('merchant', 'Merchant Name')} required />
             <TextField {...field('website', 'Website')} />
             <TextField {...field('contact', 'Contact Name')} required />
             <TextField {...field('phone', 'Contact Phone')} />

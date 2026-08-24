@@ -11,7 +11,7 @@ import { formatNumber } from '@/utils/format';
 const columns = [
   { key: 'reserveMonth', header: 'Reserve Funded Month', fw: 12, sortable: true },
   { key: 'payoutMonth', header: 'Payout Month', fw: 10, sortable: true },
-  { key: 'participant', header: 'Participant', fw: 16, sortable: true },
+  { key: 'merchant', header: 'Merchant', fw: 16, sortable: true },
   { key: 'type', header: 'Type', fw: 6, sortable: true },
   { key: 'splitTo', header: 'Split To', fw: 10, sortable: true },
   { key: 'splitFrom', header: 'Split From', fw: 16, sortable: true },
@@ -32,7 +32,7 @@ export function GeneralLedger() {
 
   return (
     <ListPage
-      title="General Ledger"
+      title="Payout Splits"
       description="View split details and manage your splits"
       tabs={tabs}
       tab={tab}

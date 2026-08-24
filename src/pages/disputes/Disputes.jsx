@@ -22,16 +22,16 @@ import { formatNumber, formatPercent } from '@/utils/format';
  */
 
 const SUMMARY_FIELDS = [
-  { name: 'participant', label: 'Participant Name' },
+  { name: 'merchant', label: 'Merchant Name' },
   { name: 'type', label: 'Type', type: 'select', options: [{ value: 'Bank', label: 'Bank' }, { value: 'PSP', label: 'PSP' }] },
   { name: 'pspType', label: 'PSP Type' },
 ];
 
 const DETAIL_FIELDS = [
   { name: 'caseNumber', label: 'Case Number' },
-  { name: 'participant', label: 'Participant Name' },
+  { name: 'merchant', label: 'Merchant Name' },
   { name: 'bankName', label: 'Bank Name' },
-  { name: 'sortCode', label: 'Sort Code' },
+  { name: 'routingNumber', label: 'Routing Number' },
   { name: 'accountNumber', label: 'Account Number' },
   { name: 'trn', label: 'TRN' },
   { name: 'reasonCategory', label: 'Reason Category', type: 'select', options: DISPUTE_REASONS.map((r) => ({ value: r, label: r })) },
@@ -75,25 +75,25 @@ export function Disputes() {
 
   const summaryColumns = [
     {
-      key: 'participant', header: 'Participant Name', fw: 16, sortable: true,
-      cell: (r) => <TwoLine primary={<LinkCell onClick={() => setTab('details')}>{r.participant}</LinkCell>} secondary={`[${r.sortCode}]`} />,
-      text: (r) => `${r.participant} ${r.sortCode}`,
+      key: 'merchant', header: 'Merchant Name', fw: 16, sortable: true,
+      cell: (r) => <TwoLine primary={<LinkCell onClick={() => setTab('details')}>{r.participant}</LinkCell>} secondary={`[${r.routingNumber}]`} />,
+      text: (r) => `${r.merchant} ${r.routingNumber}`,
     },
     { key: 'pspType', header: 'PSP Type', fw: 9, cell: () => <Badge tone="primary">Sending PSP</Badge> },
     { key: 'transactions', header: 'Transaction (#)', fw: 9, align: 'right', sortable: true, cell: (r) => <LinkCell onClick={() => setTab('details')}>{formatNumber(r.transactions)}</LinkCell> },
     { key: 'disputes', header: 'Dispute (#)', fw: 8, align: 'right', sortable: true },
     { key: 'countRatio', header: 'Count Ratio', fw: 8, align: 'right', sortable: true, cell: (r) => formatPercent(r.countRatio, 2) },
-    { key: 'txnValue', header: 'Transaction (£)', fw: 12, align: 'right', sortable: true, sortValue: (r) => r.txnValue, text: (r) => moneyText(r.txnValue), cell: (r) => <Money value={r.txnValue} /> },
-    { key: 'disputeValue', header: 'Dispute (£)', fw: 10, align: 'right', sortable: true, sortValue: (r) => r.disputeValue, text: (r) => moneyText(r.disputeValue), cell: (r) => <Money value={r.disputeValue} /> },
+    { key: 'txnValue', header: 'Transaction ($)', fw: 12, align: 'right', sortable: true, sortValue: (r) => r.txnValue, text: (r) => moneyText(r.txnValue), cell: (r) => <Money value={r.txnValue} /> },
+    { key: 'disputeValue', header: 'Dispute ($)', fw: 10, align: 'right', sortable: true, sortValue: (r) => r.disputeValue, text: (r) => moneyText(r.disputeValue), cell: (r) => <Money value={r.disputeValue} /> },
     { key: 'amountRatio', header: 'Amount Ratio', fw: 9, align: 'right', sortable: true, cell: (r) => formatPercent(r.amountRatio, 2) },
     { key: 'type', header: 'Type', fw: 7, sortable: true },
   ];
 
   const detailColumns = [
     { key: 'caseNumber', header: 'Case Numb...', fw: 10, sortable: true, cell: (r) => <LinkCell to={routes.disputeDetail(r.caseNumber)}>{r.caseNumber}</LinkCell> },
-    { key: 'participant', header: 'Participant Name', fw: 14, sortable: true },
+    { key: 'merchant', header: 'Merchant Name', fw: 14, sortable: true },
     { key: 'bankName', header: 'Bank Name', fw: 12, sortable: true },
-    { key: 'sortCode', header: 'Sort Code', fw: 8, sortable: true },
+    { key: 'routingNumber', header: 'Routing Number', fw: 8, sortable: true },
     { key: 'accountNumber', header: 'Account Num...', fw: 10 },
     { key: 'trn', header: 'TRN', fw: 14 },
     { key: 'reasonCategory', header: 'Reason Category', fw: 14, sortable: true },
@@ -117,7 +117,7 @@ export function Disputes() {
 
   const ratioColumns = [
     {
-      key: 'tier', header: 'Programme', fw: 11, align: 'center', sortable: true,
+      key: 'tier', header: 'Program', fw: 11, align: 'center', sortable: true,
       cell: (r) => <ProgrammeBadge row={r} />, text: (r) => r.label,
       description: 'Whether this merchant/scheme pair has crossed a card-scheme monitoring threshold',
     },
@@ -138,8 +138,8 @@ export function Disputes() {
       cell: (r) => <RatioCell row={r} value={r.countRatio} />, text: (r) => `${r.countRatio}%`,
       description: 'Chargeback count as a share of transaction count — the figure the schemes actually measure',
     },
-    { key: 'txnValue', header: 'Transaction (£)', fw: 12, align: 'right', sortable: true, sortValue: (r) => r.txnValue, text: (r) => moneyText(r.txnValue), cell: (r) => <Money value={r.txnValue} />, totalCell: moneyTotal },
-    { key: 'cbValue', header: 'Chargeback (£)', fw: 11, align: 'right', sortable: true, sortValue: (r) => r.cbValue, text: (r) => moneyText(r.cbValue), cell: (r) => <Money value={r.cbValue} />, totalCell: moneyTotal },
+    { key: 'txnValue', header: 'Transaction ($)', fw: 12, align: 'right', sortable: true, sortValue: (r) => r.txnValue, text: (r) => moneyText(r.txnValue), cell: (r) => <Money value={r.txnValue} />, totalCell: moneyTotal },
+    { key: 'cbValue', header: 'Chargeback ($)', fw: 11, align: 'right', sortable: true, sortValue: (r) => r.cbValue, text: (r) => moneyText(r.cbValue), cell: (r) => <Money value={r.cbValue} />, totalCell: moneyTotal },
     { key: 'amountRatio', header: 'Amount Ratio', fw: 9, align: 'center', sortable: true, cell: (r) => <span className="ratio ratio--neutral">{r.amountRatio.toFixed(2)}%</span>, text: (r) => `${r.amountRatio}%` },
     { key: 'processor', header: 'Processor', fw: 9, align: 'center', sortable: true },
   ];
@@ -163,7 +163,7 @@ export function Disputes() {
         <>
           <div className="queue-kpis">
             <Kpi
-              label="In a programme"
+              label="In a program"
               value={CHARGEBACK_RATIOS.filter((r) => r.tier === 'excessive' || r.tier === 'standard').length}
               meta="Merchant/scheme pairs over a scheme threshold"
               invert
@@ -197,7 +197,7 @@ export function Disputes() {
             totals={['transactions', 'chargebacks', 'txnValue', 'cbValue']}
             note="Measured per card scheme, because the thresholds are set per scheme. Worst breaches first."
             leftExtra={(
-              <div className="wq-tabs" role="tablist" aria-label="Programme tier">
+              <div className="wq-tabs" role="tablist" aria-label="Program tier">
                 {RATIO_TABS.map((t) => (
                   <button
                     key={t.value}
@@ -239,7 +239,7 @@ export function Disputes() {
           rows={tab === 'summary' ? summaryRows : detailRows}
           searchPlaceholder={tab === 'summary' ? 'Search disputes' : 'Search claim details'}
           exportName={tab === 'summary' ? 'disputes-summary' : 'disputes-details'}
-          note={tab === 'details' ? 'Showing all claim-level disputes across PSP, Bank, and Merchant participants.' : undefined}
+          note={tab === 'details' ? 'Showing all claim-level disputes across PSP, Bank, and Merchant merchants.' : undefined}
           onAdvanced={() => setAdvancedOpen((v) => !v)}
           advancedOpen={advancedOpen}
           advanced={(

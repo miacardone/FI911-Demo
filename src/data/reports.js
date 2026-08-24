@@ -159,7 +159,7 @@ export const DOCUMENTS = (() => {
       type: type.label,
       icon: type.icon,
       participant: owner.name,
-      sortCode: owner.sortCode,
+      routingNumber: owner.routingNumber,
       uploadedBy: d.pick([CURRENT_USER.name, ...ASSIGNEES.slice(0, 5)]),
       uploaded: `2026/0${d.int(4, 8)}/${String(d.int(1, 28)).padStart(2, '0')}`,
       sizeMb: Math.round(size * 10) / 10,
@@ -209,7 +209,7 @@ export const ALERTS = (() => {
       cardLast4: d.digits(4),
       scheme: d.pick(['visa', 'mastercard', 'amex', 'discover']),
       amount,
-      reason: d.pick(['Fraud', 'Cancelled Recurring', 'Goods Not Received', 'Duplicate Processing', 'Credit Not Processed']),
+      reason: d.pick(['Fraud', 'Canceled Recurring', 'Goods Not Received', 'Duplicate Processing', 'Credit Not Processed']),
       received: `2026/08/${String(received).padStart(2, '0')}`,
       /* Alerts expire — usually 24–72h to act. */
       deadline: `2026/08/${String(Math.min(received + d.int(1, 3), 28)).padStart(2, '0')}`,

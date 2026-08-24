@@ -1,6 +1,6 @@
 /* ============================================================
    DESIGN TOKENS
-   Colour variables (--c-*) are written at runtime by BrandProvider from
+   Color variables (--c-*) are written at runtime by BrandProvider from
    brand.config.js. The values below are static fallbacks for the frame
    before that effect runs. Keep them in sync with the Fi911 tenant.
    ============================================================ */
@@ -127,7 +127,7 @@
 
 /* ============================================================
    DARK THEME
-   Every colour in this console is a custom property, so a dark
+   Every color in this console is a custom property, so a dark
    palette is this block and nothing else — no component changes.
 
    Not a mechanical inversion: the rail stays dark (it already was,

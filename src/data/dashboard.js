@@ -12,7 +12,7 @@
  */
 
 import { createDraw } from '@/data/rng';
-import { TOP_SORT_CODES } from '@/data/reference';
+import { TOP_ROUTING_NUMBERS } from '@/data/reference';
 import { REASON_CATEGORIES } from '@/brand/brand.config';
 
 export const LAST_CALCULATED = '2026/08/20';
@@ -79,11 +79,10 @@ export function activePspSeries(range = 'ytd') {
  * ------------------------------------------------------------------ */
 
 export const ONBOARDING_STAGES = [
-  { period: 'Invitations', New: 72, 'In Progress': 88, Pending: 18, Open: 6 },
-  { period: 'Applications', New: 14, 'In Progress': 12, Pending: 22, Open: 34 },
+  { period: 'Proposals', New: 72, 'In Progress': 88, Pending: 18, Open: 6 },
+  { period: 'Contracts', New: 14, 'In Progress': 12, Pending: 22, Open: 34 },
   { period: 'Underwriting', New: 213, 'In Progress': 131, Pending: 4, Open: 2 },
-  { period: 'Onboarding', New: 178, 'In Progress': 56, Pending: 60, Open: 3 },
-  { period: 'Live Participants', New: 165, 'In Progress': 74, Pending: 22, Open: 26 },
+  { period: 'Live Merchants', New: 165, 'In Progress': 74, Pending: 22, Open: 26 },
 ];
 
 export const FUNNEL_SERIES = [
@@ -93,34 +92,23 @@ export const FUNNEL_SERIES = [
   { key: 'Open', label: 'Open', color: 'var(--c-series-3)' },
 ];
 
-/** The five status donuts under the funnel. */
-export const STATUS_DONUTS = [
-  {
-    id: 'invitation', title: 'Invitation Status', data: [
-      { label: 'New', value: 37 }, { label: 'In Progress', value: 50 }, { label: 'Open', value: 13 },
-    ],
-  },
-  {
-    id: 'application', title: 'Application Status', data: [
-      { label: 'New', value: 20 }, { label: 'In Progress', value: 20 }, { label: 'Pending', value: 20 }, { label: 'Open', value: 40 },
-    ],
-  },
-  {
-    id: 'underwriting', title: 'Underwriting Status', data: [
-      { label: 'New', value: 62 }, { label: 'In Progress', value: 38 },
-    ],
-  },
-  {
-    id: 'onboarding', title: 'Onboarding Status', data: [
-      { label: 'New', value: 60 }, { label: 'In Progress', value: 20 }, { label: 'Pending', value: 20 },
-    ],
-  },
-  {
-    id: 'live', title: 'Live Status', data: [
-      { label: 'New', value: 55 }, { label: 'In Progress', value: 9 }, { label: 'Pending', value: 9 }, { label: 'Open', value: 27 },
-    ],
-  },
-];
+/**
+ * The status donuts under the funnel.
+ *
+ * DERIVED from the funnel bars rather than declared beside them. They used to
+ * be hand-written percentages that summed to 100, which meant two things: the
+ * donut could disagree with the bar directly above it, and a slice could only
+ * ever say "20%" — of what, it never said. Reading the counts off the funnel
+ * fixes both: the numbers on the slices are merchants, and they add up to the
+ * bar.
+ */
+export const STATUS_DONUTS = ONBOARDING_STAGES.map((stage) => ({
+  id: stage.period.toLowerCase().replace(/[^a-z]+/g, '-'),
+  title: `${stage.period} Status`,
+  data: FUNNEL_SERIES
+    .map((s2) => ({ label: s2.label, value: stage[s2.key] ?? 0 }))
+    .filter((d) => d.value > 0),
+}));
 
 /* ------------------------------------------------------------------ *
  * Transaction summary
@@ -163,12 +151,15 @@ export const YOY_DATA = (() => {
   });
 })();
 
-export const TOP_SORT_CODE_SPLIT = [
-  { label: TOP_SORT_CODES[1], value: 53.3 },
-  { label: TOP_SORT_CODES[0], value: 37.7 },
-  { label: TOP_SORT_CODES[3], value: 5.0 },
-  { label: TOP_SORT_CODES[2], value: 3.9 },
-  { label: TOP_SORT_CODES[4], value: 0.1 },
+/* Transaction COUNTS per routing number, not shares. A donut already draws
+   the share; printing it as the value too says the same thing twice and never
+   answers "how many". */
+export const TOP_ROUTING_SPLIT = [
+  { label: TOP_ROUTING_NUMBERS[1], value: 41_284 },
+  { label: TOP_ROUTING_NUMBERS[0], value: 29_190 },
+  { label: TOP_ROUTING_NUMBERS[3], value: 3_872 },
+  { label: TOP_ROUTING_NUMBERS[2], value: 3_019 },
+  { label: TOP_ROUTING_NUMBERS[4], value: 77 },
 ];
 
 /* ------------------------------------------------------------------ *
@@ -184,11 +175,12 @@ export const CLAIM_KPIS = [
   { id: 'rejected', title: 'Dispute Claims - Total Rejected', value: 72_159.06, spark: spark(2406, sparkMonths, 70_000, 11_000) },
 ];
 
+/* Claim counts by reason, not shares — same reasoning as the routing split. */
 export const REASON_SPLIT = [
-  { label: REASON_CATEGORIES[0].label, value: 46 },
-  { label: REASON_CATEGORIES[3].label, value: 27 },
-  { label: REASON_CATEGORIES[1].label, value: 18 },
-  { label: REASON_CATEGORIES[2].label, value: 9 },
+  { label: REASON_CATEGORIES[0].label, value: 1006 },
+  { label: REASON_CATEGORIES[3].label, value: 590 },
+  { label: REASON_CATEGORIES[1].label, value: 393 },
+  { label: REASON_CATEGORIES[2].label, value: 197 },
 ];
 
 export const DISPUTE_FUNDING_SERIES = [
@@ -227,14 +219,14 @@ export function financialSplitSeries(range = 'ytd') {
 
 export const CLAIM_TURNOVER = [
   { label: 'NWB [56-00-03]', value: 25_600 },
-  { label: 'Halifax [11-16-26]', value: 2_100 },
+  { label: 'PNC Bank [11-16-26]', value: 2_100 },
   { label: 'BOS [12-11-03]', value: 780 },
-  { label: 'First Direct [40-47-87]', value: 690 },
-  { label: 'Santander UK [72-00-00]', value: 640 },
-  { label: 'Barclays [20-26-78]', value: 600 },
-  { label: 'Lloyds Bank [30-96-35]', value: 560 },
+  { label: 'TD Bank [40-47-87]', value: 690 },
+  { label: 'Truist Bank [72-00-00]', value: 640 },
+  { label: 'Citibank [20-26-78]', value: 600 },
+  { label: 'Wells Fargo Bank [30-96-35]', value: 560 },
   { label: 'BNY [76-02-25]', value: 520 },
-  { label: 'HSBC [40-12-76]', value: 480 },
+  { label: 'U.S. Bank [40-12-76]', value: 480 },
   { label: 'SBL [60-83-71]', value: 440 },
 ];
 

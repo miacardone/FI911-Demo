@@ -9,9 +9,9 @@ import Icon from '@/components/ui/Icon';
 import { routes } from '@/data/navigation';
 
 const POINTS = [
-  { icon: 'users', title: 'The whole participant lifecycle', body: 'Invitation to live participant in one funnel, with underwriting and onboarding in between.' },
+  { icon: 'users', title: 'The whole merchant lifecycle', body: 'Invitation to live merchant in one funnel, with underwriting and onboarding in between.' },
   { icon: 'pound', title: 'Residuals that reconcile', body: 'Splits, adjustments and payouts traced from the ledger down to the merchant line item.' },
-  { icon: 'shield', title: 'Risk and disputes together', body: 'Alerts, held volume and claim outcomes against the same participant book.' },
+  { icon: 'shield', title: 'Risk and disputes together', body: 'Alerts, held volume and claim outcomes against the same merchant book.' },
 ];
 
 const HOME_ROUTE = routes.dashboard;

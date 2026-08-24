@@ -39,7 +39,7 @@ export function DisputeDetail() {
   return (
     <DetailPage
       title={record.caseNumber}
-      subtitle={`Participant Name: ${record.bankName}, Sort Code: ${record.sortCode}`}
+      subtitle={`Merchant Name: ${record.bankName}, Routing Number: ${record.routingNumber}`}
       onBack={() => navigate(routes.disputes)}
     >
       <section className="fi-section">

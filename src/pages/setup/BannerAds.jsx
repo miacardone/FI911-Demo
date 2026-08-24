@@ -12,7 +12,7 @@ import { useToast } from '@/context/ToastContext';
  *
  * In-console announcements, and which roles see them.
  *
- * The reference shows a card grid of broken image placeholders labelled only
+ * The reference shows a card grid of broken image placeholders labeled only
  * "Roles: 2" — you cannot tell what a banner says, when it runs, or whether
  * anyone clicked it. A banner nobody clicks is worth knowing about, so each
  * card carries its title, its schedule, its audience and its click-through

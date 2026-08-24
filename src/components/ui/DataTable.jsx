@@ -218,7 +218,7 @@ export function DataTable({
   /**
    * Every value centres under its heading.
    *
-   * Centring used to clip both ends of an overflowing cell, which is why the
+   * Centering used to clip both ends of an overflowing cell, which is why the
    * prose columns were excluded. That is now handled where it belongs — a
    * value that overflows switches itself to left-aligned so the ellipsis
    * lands at the end (see TruncatedText and .cell-2l) — so alignment no

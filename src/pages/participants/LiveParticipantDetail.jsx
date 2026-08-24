@@ -11,7 +11,7 @@ import {
 import { AttachmentsModal, NotesModal } from '@/components/fi911/RecordModals';
 import { useDetailCrumb } from '@/components/layout/AppLayout';
 import { LIVE_PARTICIPANTS, attachmentsFor, notesFor } from '@/data/participants';
-import { institutionByName, sortCodeFor } from '@/data/reference';
+import { institutionByName, routingNumberFor } from '@/data/reference';
 import { routes } from '@/data/navigation';
 import { formatCurrency } from '@/utils/format';
 import { statusTone } from '@/domain/statuses';
@@ -48,11 +48,11 @@ export function LiveParticipantDetail() {
   const [modal, setModal] = useState(null);
 
   const institution = institutionByName(record.participant);
-  const sortCode = institution?.sortCode ?? sortCodeFor(record.participant);
+  const routingNumber = institution?.routingNumber ?? routingNumberFor(record.participant);
 
   const form = useForm({
     agentName: record.agent,
-    agentEmail: `Clooney@ukpaymentsops.co.uk`,
+    agentEmail: `Clooney@ukpaymentsops.com`,
     type: record.type,
     region: '',
     legalName: record.participant,
@@ -95,17 +95,17 @@ export function LiveParticipantDetail() {
     storesCardData: false, storesTrack: false, storesCvv: false,
     accessLimited: true, noUnencrypted: true,
 
-    bankAccounts: [{ bankName: record.participant, accountNumber: '28473910', routing: sortCode, use: 'Direct Credit Authority' }],
+    bankAccounts: [{ bankName: record.participant, accountNumber: '28473910', routing: routingNumber, use: 'Direct Credit Authority' }],
     individuals: [{ name: record.contact, phone: record.phone, email: record.email, city: 'Duluth', ownership: '100', isSignatory: true, isOfficer: true }],
     terminals: [{}],
-    shipping: 'Ship to Participant Address',
+    shipping: 'Ship to Merchant Address',
     pricingType: 'Interchange Plus',
   });
 
   return (
     <>
       <DetailPage
-        title="Participant Processing Agreement"
+        title="Merchant Processing Agreement"
         badge={{ label: record.type, tone: record.type === 'Bank' ? 'success' : 'info' }}
         onBack={() => navigate(routes.liveParticipants)}
         dirty={form.dirty}
@@ -121,15 +121,15 @@ export function LiveParticipantDetail() {
             <header className="fi-section__head"><span className="fi-section__title">Participant Details</span></header>
             <div className="fi-section__body">
               <div className="fi-summary">
-                <SummaryRow label="Participant Name">{record.participant}</SummaryRow>
+                <SummaryRow label="Merchant Name">{record.participant}</SummaryRow>
                 <SummaryRow label="Business Type">LLC</SummaryRow>
-                <SummaryRow label="Sort Code">{sortCode}</SummaryRow>
+                <SummaryRow label="Routing Number">{routingNumber}</SummaryRow>
                 <SummaryRow label="Status"><Badge tone={statusTone(record.status)}>{record.status}</Badge></SummaryRow>
                 <SummaryRow label="Agent Name">{record.agent}</SummaryRow>
                 <SummaryRow label="Work Number">{record.phone}</SummaryRow>
                 <SummaryRow label="Contact Name">{record.contact}</SummaryRow>
                 <SummaryRow label="Email">{record.email}</SummaryRow>
-                <SummaryRow label="Participant Address">556 Tilbury turn ave</SummaryRow>
+                <SummaryRow label="Merchant Address">556 Tilbury turn ave</SummaryRow>
                 <SummaryRow label="Average Ticket">100.00</SummaryRow>
                 <SummaryRow label="Open Date">2015/07/24</SummaryRow>
                 <SummaryRow label="Annual Revenue">-</SummaryRow>
@@ -144,7 +144,7 @@ export function LiveParticipantDetail() {
         steps={[
           {
             label: 'Business Information',
-            required: ['agentName', 'agentEmail', 'type', 'legalName', 'participant', 'website',
+            required: ['agentName', 'agentEmail', 'type', 'legalName', 'merchant', 'website',
               'contact', 'phone', 'email', 'taxId', 'businessDescription',
               'physicalAddress', 'physicalCity', 'physicalZip', 'averageTicket', 'monthlyVolume'],
             render: () => (

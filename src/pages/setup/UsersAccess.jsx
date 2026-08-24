@@ -95,7 +95,7 @@ function UsersTab() {
     menuColumn((r) => [
       { label: 'Edit user', icon: 'edit', onSelect: () => toast.notify(`Editing ${r.name}.`) },
       { label: 'Reset password', icon: 'refresh', onSelect: () => toast.notify(`Password reset sent to ${r.email}.`) },
-      !r.mfa && { label: 'Require MFA', icon: 'shieldCheck', onSelect: () => toast.notify(`${r.name} must enrol a second factor at next sign-in.`) },
+      !r.mfa && { label: 'Require MFA', icon: 'shieldCheck', onSelect: () => toast.notify(`${r.name} must enroll a second factor at next sign-in.`) },
       { label: r.status === 'Locked' ? 'Unlock account' : 'Lock account', icon: 'lock', tone: r.status === 'Locked' ? undefined : 'danger', onSelect: () => toast.notify(`${r.name} ${r.status === 'Locked' ? 'unlocked' : 'locked'}.`) },
     ]),
     { key: 'name', header: 'User', fw: 16, sortable: true, cell: (r) => <TwoLine primary={r.name} secondary={r.email} />, text: (r) => `${r.name} ${r.email}` },

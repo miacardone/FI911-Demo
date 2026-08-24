@@ -16,7 +16,7 @@
  */
 
 import { createDraw } from '@/data/rng';
-import { INSTITUTIONS, MERCHANTS, midFor, sortCodeFor } from '@/data/reference';
+import { INSTITUTIONS, MERCHANTS, midFor, routingNumberFor } from '@/data/reference';
 import brand, { DISPUTE_CYCLES, REASON_CATEGORIES } from '@/brand/brand.config';
 
 /* ------------------------------------------------------------------ *
@@ -45,7 +45,7 @@ export const DISPUTE_SUMMARY = SUMMARY_SHAPES.map((s, i) => {
   return {
     id: `ds-${i}`,
     participant: inst?.short === 'BNY' ? 'Bank of New York Mellon' : (inst?.name ?? s.id),
-    sortCode: inst?.sortCode ?? sortCodeFor(s.id),
+    routingNumber: inst?.routingNumber ?? routingNumberFor(s.id),
     pspType: 'Sending PSP',
     transactions: s.transactions,
     disputes: s.disputes,
@@ -65,8 +65,8 @@ const STATUSES = ['New', 'Completed', 'Expired', 'Do Not Represent'];
 const OUTCOMES = ['', 'Won', 'Lost', 'Represented'];
 
 const DETAIL_PARTICIPANTS = [
-  'Lloyds Bank', 'Barclays', 'Holmfirth Wool & Craft Ltd', 'Skipton Farm & Saddlery Supplies',
-  'Hawes Creamery & Dairy Ltd', 'Revolut', 'GRANDVIEW-MAR001', 'RTCLASVEGASTR002',
+  'Wells Fargo Bank', 'Citibank', 'Hudson Wool & Craft LLC', 'Sedona Farm & Saddlery Supply',
+  'Hartland Creamery & Dairy LLC', 'Capital One', 'GRANDVIEW-MAR001', 'RTCLASVEGASTR002',
   'ILLINOISSECRE139', 'MOTORVEHICLED001', ...MERCHANTS.slice(0, 12),
 ];
 
@@ -86,7 +86,7 @@ export const DISPUTE_DETAILS = (() => {
       caseNumber: String(686617660 - i),
       participant: d.pick(DETAIL_PARTICIPANTS),
       bankName: bank.name,
-      sortCode: sortCodeFor(`${bank.id}-${i}`),
+      routingNumber: routingNumberFor(`${bank.id}-${i}`),
       accountNumber: d.digits(10),
       trn: d.digits(20),
       reasonCategory: reason.label,
@@ -109,7 +109,7 @@ export const DISPUTE_DETAILS = (() => {
       approvalNumber: `${d.digits(5)}D`,
       retrievalDate: `2026/02/${String(d.int(1, 28)).padStart(2, '0')}`,
       completedDate: `2026/03/${String(d.int(1, 28)).padStart(2, '0')}`,
-      currency: 'GBP',
+      currency: 'USD',
     };
   });
 })();
@@ -126,7 +126,7 @@ export const DISPUTE_CYCLE_LABELS = DISPUTE_CYCLES.map((c) => c.label);
  * ------------------------------------------------------------------ *
  * The participant summary above answers "which bank has a dispute problem".
  * This answers a different question: which MERCHANT, on which SCHEME, is
- * heading into a card-scheme monitoring programme.
+ * heading into a card-scheme monitoring program.
  *
  * The grain matters because the thresholds are per scheme, not per merchant.
  * A merchant can sit comfortably under 1% overall while its Mastercard volume
@@ -143,20 +143,20 @@ export const SCHEME_PROGRAMMES = {
   discover: { name: 'Monitoring', standard: { count: 1.0, minCount: 50 }, excessive: { count: 2.0, minCount: 200 } },
 };
 
-/** Which programme tier a row falls into. Count-based, as the schemes are. */
+/** Which program tier a row falls into. Count-based, as the schemes are. */
 export function programmeTier(row) {
   const p = SCHEME_PROGRAMMES[row.scheme];
-  if (!p) return { tier: 'ok', label: 'Within limits', programme: '' };
+  if (!p) return { tier: 'ok', label: 'Within limits', program: '' };
   if (row.chargebacks >= p.excessive.minCount && row.countRatio >= p.excessive.count) {
-    return { tier: 'excessive', label: `${p.name} — excessive`, programme: p.name };
+    return { tier: 'excessive', label: `${p.name} — excessive`, program: p.name };
   }
   if (row.chargebacks >= p.standard.minCount && row.countRatio >= p.standard.count) {
-    return { tier: 'standard', label: `${p.name} — standard`, programme: p.name };
+    return { tier: 'standard', label: `${p.name} — standard`, program: p.name };
   }
   if (row.countRatio >= p.standard.count * 0.75) {
-    return { tier: 'approaching', label: `Approaching ${p.name}`, programme: p.name };
+    return { tier: 'approaching', label: `Approaching ${p.name}`, program: p.name };
   }
-  return { tier: 'ok', label: 'Within limits', programme: p.name };
+  return { tier: 'ok', label: 'Within limits', program: p.name };
 }
 
 export const CHARGEBACK_RATIOS = (() => {
@@ -206,7 +206,7 @@ export const CHARGEBACK_RATIOS = (() => {
 export const RATIO_TABS = [
   { value: 'all', label: 'All', match: () => true },
   { value: 'excessive', label: 'Excessive', match: (r) => r.tier === 'excessive' },
-  { value: 'standard', label: 'In programme', match: (r) => r.tier === 'standard' },
+  { value: 'standard', label: 'In program', match: (r) => r.tier === 'standard' },
   { value: 'approaching', label: 'Approaching', match: (r) => r.tier === 'approaching' },
   { value: 'ok', label: 'Within limits', match: (r) => r.tier === 'ok' },
 ];

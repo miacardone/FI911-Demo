@@ -6,7 +6,7 @@ import { formatNumber } from '@/utils/format';
 import { useToast } from '@/context/ToastContext';
 
 /** Agent Payout Summary — one row per agent per payout month.
- *  "No Of Profiles" and "Participants" are links because in the reference each
+ *  "No Of Profiles" and "Merchants" are links because in the reference each
  *  drills into the set behind the number. */
 
 export function AgentPayoutSummary() {
@@ -22,8 +22,8 @@ export function AgentPayoutSummary() {
       cell: (r) => <LinkCell onClick={() => toast.notify(`${r.profiles} profile(s) for ${r.agent}.`)}>{r.profiles}</LinkCell>,
     },
     {
-      key: 'participants', header: 'Participants', fw: 9, align: 'right', sortable: true,
-      cell: (r) => <LinkCell onClick={() => toast.notify(`${r.participants} participants under ${r.agent}.`)}>{r.participants}</LinkCell>,
+      key: 'merchants', header: 'Merchants', fw: 9, align: 'right', sortable: true,
+      cell: (r) => <LinkCell onClick={() => toast.notify(`${r.merchants} merchants under ${r.agent}.`)}>{r.participants}</LinkCell>,
     },
     { key: 'transactions', header: 'Transactions', fw: 9, align: 'right', sortable: true, cell: (r) => formatNumber(r.transactions) },
     { key: 'volume', header: 'Volume', fw: 10, align: 'right', sortable: true, sortValue: (r) => r.volume, text: (r) => moneyText(r.volume), cell: (r) => <Money value={r.volume} /> },

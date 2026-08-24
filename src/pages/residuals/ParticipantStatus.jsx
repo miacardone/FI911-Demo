@@ -7,9 +7,9 @@ import { PARTICIPANT_STATUS } from '@/data/residuals';
 
 const columns = [
   {
-    key: 'participant', header: 'Participant Name', fw: 18, sortable: true,
-    cell: (r) => <TwoLine primary={r.participant} secondary={r.sortCode} />,
-    text: (r) => `${r.participant} ${r.sortCode}`,
+    key: 'merchant', header: 'Merchant Name', fw: 18, sortable: true,
+    cell: (r) => <TwoLine primary={r.participant} secondary={r.routingNumber} />,
+    text: (r) => `${r.merchant} ${r.routingNumber}`,
   },
   {
     key: 'partner', header: 'Partner', fw: 16, sortable: true,
@@ -29,13 +29,13 @@ const columns = [
 export function ParticipantStatus() {
   return (
     <ListPage
-      title="Participant Status"
-      description="View current participant portfolio assignments and status"
+      title="Merchant Status"
+      description="View current merchant portfolio assignments and status"
       columns={columns}
       rows={PARTICIPANT_STATUS}
-      searchPlaceholder="Search participants"
-      exportName="participant-status"
-      empty="No participants assigned."
+      searchPlaceholder="Search merchants"
+      exportName="merchant-status"
+      empty="No merchants assigned."
     />
   );
 }

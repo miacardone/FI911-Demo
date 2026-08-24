@@ -22,9 +22,9 @@ const columns = [
     text: (r) => `${r.agent} ${r.agentScope}`,
   },
   {
-    key: 'participant', header: 'Participants', fw: 14, sortable: true,
+    key: 'merchant', header: 'Merchants', fw: 14, sortable: true,
     cell: (r) => <TwoLine primary={r.participant} secondary={r.participantMid} />,
-    text: (r) => `${r.participant} ${r.participantMid}`,
+    text: (r) => `${r.merchant} ${r.participantMid}`,
   },
   {
     key: 'partner', header: 'Partner', fw: 12, sortable: true,

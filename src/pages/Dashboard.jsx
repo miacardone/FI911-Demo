@@ -8,7 +8,7 @@ import {
   ACTIVE_PSPS, CLAIM_KPIS, CLAIM_TURNOVER, DAILY_AMOUNT_SPARK, DAILY_TRANSACTION_AMOUNT,
   DISPUTE_FUNDING, DISPUTE_FUNDING_SERIES, ERT_ACTIVE, ERT_SERIES, ERT_TREND, FUNNEL_SERIES,
   LAST_CALCULATED, ONBOARDING_STAGES, OUTSTANDING_REIMBURSABLE, PROCESSED_SPARK, RANGES,
-  REASON_SPLIT, REIMBURSABLE_SPARK, SPLIT_SERIES, STATUS_DONUTS, TOP_SORT_CODE_SPLIT,
+  REASON_SPLIT, REIMBURSABLE_SPARK, SPLIT_SERIES, STATUS_DONUTS, TOP_ROUTING_SPLIT,
   TRANSACTIONS_PROCESSED, YOY_DATA, YOY_SERIES, activePspSeries, financialSplitSeries,
 } from '@/data/dashboard';
 import { routes } from '@/data/navigation';
@@ -116,7 +116,7 @@ export function Dashboard() {
         <div className="dash-grid dash-grid--5" style={{ marginTop: 'var(--s-4)' }}>
           {STATUS_DONUTS.map((d) => (
             <Card key={d.id} title={d.title}>
-              <Donut data={d.data} size={150} thickness={38} arcLabels formatValue={(v) => `${v}%`} />
+              <Donut data={d.data} size={150} thickness={38} arcLabels formatValue={formatNumber} />
             </Card>
           ))}
         </div>
@@ -150,10 +150,10 @@ export function Dashboard() {
             <BarChart data={YOY_DATA} series={YOY_SERIES} height={280} grouped formatValue={formatCompactCurrency} />
           </ChartCard>
           <ChartCard
-            title="Transactions by Top Five Sort Codes"
-            table={{ columns: [{ key: 'label', label: 'Sort Code' }, { key: 'value', label: 'Share', format: pct }], rows: TOP_SORT_CODE_SPLIT }}
+            title="Transactions by Top Five Routing Numbers"
+            table={{ columns: [{ key: 'label', label: 'Routing Number' }, { key: 'value', label: 'Share', format: pct }], rows: TOP_ROUTING_SPLIT }}
           >
-            <Donut data={TOP_SORT_CODE_SPLIT} size={230} thickness={58} arcLabels formatValue={(v) => `${v}%`} />
+            <Donut data={TOP_ROUTING_SPLIT} size={230} thickness={58} arcLabels formatValue={formatNumber} />
           </ChartCard>
         </div>
       </section>
@@ -174,7 +174,7 @@ export function Dashboard() {
             title="Dispute Claims by Reason Category"
             table={{ columns: [{ key: 'label', label: 'Reason' }, { key: 'value', label: 'Share', format: pct }], rows: REASON_SPLIT }}
           >
-            <Donut data={REASON_SPLIT} size={220} thickness={56} arcLabels formatValue={(v) => `${v}%`} />
+            <Donut data={REASON_SPLIT} size={220} thickness={56} arcLabels formatValue={formatNumber} />
           </ChartCard>
           <ChartCard
             title="Dispute Funding by Sending and Receiving PSP"

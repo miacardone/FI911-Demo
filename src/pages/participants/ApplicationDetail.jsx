@@ -42,7 +42,7 @@ export function ApplicationDetail() {
     type: record.type,
     region: 'EMEA',
     legalProduct: 'Business Banking & Payment Processing',
-    legalName: `${record.participant.replace(/ (Payments|Business|Commercial)$/, '')} Platform Ltd`,
+    legalName: `${record.merchant.replace(/ (Payments|Business|Commercial)$/, '')} Platform Ltd`,
     participant: record.participant,
     website: 'www.tide.co',
     contact: record.contact,
@@ -76,7 +76,7 @@ export function ApplicationDetail() {
     storesCardData: false, storesTrack: false, storesCvv: false,
     accessLimited: true, noUnencrypted: true,
 
-    bankAccounts: [{ bankName: 'ClearBank', accountNumber: '04112233445566', routing: '04-06-20', use: 'Direct Credit Authority' }],
+    bankAccounts: [{ bankName: 'First Citizens Bank', accountNumber: '04112233445566', routing: '040620021', use: 'Direct Credit Authority' }],
     individuals: [{
       name: record.contact, phone: record.phone, email: record.email,
       address1: '20 Orange Street', city: 'London', zip: 'WC2H 7EF',
@@ -84,7 +84,7 @@ export function ApplicationDetail() {
       ownership: '0', isSignatory: true, isOfficer: true, isBeneficiary: false,
     }],
     terminals: [{}],
-    shipping: 'Ship to Participant Address',
+    shipping: 'Ship to Merchant Address',
 
     pricingType: 'Interchange Plus',
     mcVisaDiscoverPct: '0.11', mcVisaDiscoverFixed: '0.004',
@@ -109,7 +109,7 @@ export function ApplicationDetail() {
   return (
     <>
       <DetailPage
-        title="Participant Processing Agreement"
+        title="Merchant Processing Agreement"
         subtitle={`${record.agent} (${record.agent.toLowerCase().replace(/\s+/g, '.')}@fi911.com)`}
         onBack={() => navigate(routes.applications)}
         dirty={form.dirty}
@@ -118,14 +118,14 @@ export function ApplicationDetail() {
         headerIcons={[
           { icon: 'paperclip', label: 'Attachments', onSelect: () => setModal({ kind: 'attachments' }) },
           { icon: 'message', label: 'Notes', onSelect: () => setModal({ kind: 'notes' }) },
-          { icon: 'mail', label: 'Email participant', onSelect: () => toast.notify('Draft email opened.') },
+          { icon: 'mail', label: 'Email merchant', onSelect: () => toast.notify('Draft email opened.') },
           { icon: 'edit', label: 'Edit', onSelect: () => {} },
         ]}
         values={form.values}
         steps={[
           {
             label: 'Business Information',
-            required: ['agentName', 'agentEmail', 'type', 'legalName', 'participant', 'website',
+            required: ['agentName', 'agentEmail', 'type', 'legalName', 'merchant', 'website',
               'contact', 'phone', 'email', 'taxId', 'businessType', 'businessDescription',
               'physicalAddress', 'physicalCity', 'physicalZip', 'mailingAddress', 'mailingCity', 'mailingZip'],
             render: () => (

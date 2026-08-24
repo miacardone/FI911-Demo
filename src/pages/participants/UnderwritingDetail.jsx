@@ -35,12 +35,12 @@ export function UnderwritingDetail() {
   const [modal, setModal] = useState(null);
 
   const form = useForm({
-    sortCode: '30-12-45',
+    routingNumber: '301245021',
     businessType: 'Government',
     openDate: '',
     participantType: '',
     address: '25 Gresham Street, London EC2V 7HN',
-    website: 'www.barclaysmerchantservices.co.uk',
+    website: 'www.barclaysmerchantservices.com',
     workNumber: record.phone,
     mcc: '5411',
     monthlyVolume: '15,000.00',
@@ -56,7 +56,7 @@ export function UnderwritingDetail() {
     channel: '',
     mccCode: '5411 - Grocery Stores',
     marketingMethod: 'Web Referral',
-    currency: 'GBP',
+    currency: 'USD',
 
     productSold: 'Financial services, payment processing solutions',
     cardAcceptance: 'Visa, Mastercard, Amex, Discover',
@@ -66,8 +66,8 @@ export function UnderwritingDetail() {
     subscriptionBilling: 'Monthly and Annual plans',
     advertiseBusiness: 'Online advertising, industry conferences, referral network',
 
-    depositBank: 'Lloyds Bank', depositRouting: '30-12-45', depositAccount: '28473910', depositType: '',
-    feeBank: 'Lloyds Bank', feeRouting: '30-12-45', feeAccount: '28473928', feeType: '',
+    depositBank: 'Wells Fargo Bank', depositRouting: '301245021', depositAccount: '28473910', depositType: '',
+    feeBank: 'Wells Fargo Bank', feeRouting: '301245021', feeAccount: '28473928', feeType: '',
     directCredit: true, directDebit: true,
 
     owners: [
@@ -101,8 +101,8 @@ export function UnderwritingDetail() {
   return (
     <>
       <DetailPage
-        title="Participant Underwriting"
-        subtitle={`${record.participant} — ${record.status}`}
+        title="Merchant Underwriting"
+        subtitle={`${record.merchant} — ${record.status}`}
         onBack={() => navigate(routes.underwriting)}
         dirty={form.dirty}
         onDiscard={() => form.reset()}
@@ -113,15 +113,15 @@ export function UnderwritingDetail() {
         ]}
         steps={[
           {
-            label: 'Participant & General',
+            label: 'Merchant & General',
             render: () => (
               <>
-                <Section title="Participant Details">
+                <Section title="Merchant Details">
           <FieldGrid>
-            <TextField {...field('sortCode', 'Sort Code')} required />
+            <TextField {...field('routingNumber', 'Routing Number')} required />
             <SelectField {...field('businessType', 'Business Type')} options={opts(brand.businessTypes)} />
             <TextField {...field('openDate', 'Open Date')} type="date" />
-            <SelectField {...field('participantType', 'Participant Type')} options={opts(['Acquirer', 'Issuer', 'Gateway'])} placeholder="" />
+            <SelectField {...field('participantType', 'Merchant Type')} options={opts(['Acquirer', 'Issuer', 'Gateway'])} placeholder="" />
             <FullRow><TextField {...field('address', 'Address')} /></FullRow>
             <TextField {...field('website', 'Website')} />
             <TextField {...field('workNumber', 'Work Number')} />
@@ -142,7 +142,7 @@ export function UnderwritingDetail() {
             <SelectField {...field('channel', 'Channel')} options={opts(['Direct', 'Referral', 'ISO'])} placeholder="" />
             <TextField {...field('mccCode', 'MCC Code')} />
             <TextField {...field('marketingMethod', 'Marketing Method')} />
-            <SelectField {...field('currency', 'Currency')} options={opts(['GBP', 'EUR', 'USD'])} />
+            <SelectField {...field('currency', 'Currency')} options={opts(['USD', 'EUR', 'USD'])} />
           </FieldGrid>
         </Section>
               </>

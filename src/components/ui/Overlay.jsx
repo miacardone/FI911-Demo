@@ -232,10 +232,10 @@ export function TruncatedText({ value, className = '', tooltip, always = false }
     if (el) setOverflowing(el.scrollWidth > el.clientWidth + 1);
   }, [value]);
 
-  /* Centre what fits, left-align what does not.
-     A centred cell clips BOTH ends when its text overflows, so "Ashton &
+  /* Center what fits, left-align what does not.
+     A centered cell clips BOTH ends when its text overflows, so "Ashton &
      Partners Ltd" loses its A as well as its d. Marking the element only once
-     it actually overflows keeps every value centred under its heading while
+     it actually overflows keeps every value centered under its heading while
      guaranteeing the ellipsis is always at the end. */
   const content = <span ref={ref} className={`truncate ${className}`.trim()}>{value}</span>;
 

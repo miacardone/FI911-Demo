@@ -7,7 +7,7 @@
  * be a long list that goes stale the first time someone adds a status.
  *
  * So tone is resolved by MEANING instead: an explicit map for the values that
- * carry a specific colour, then keyword matching for the rest. A status this
+ * carry a specific color, then keyword matching for the rest. A status this
  * file has never seen still renders as a sane neutral badge rather than
  * crashing or rendering untoned.
  */
@@ -64,10 +64,10 @@ const KEYWORDS = [
   [/(closed|archive|written off|inactive|expired)/, 'muted'],
 ];
 
-const normalise = (value) => String(value ?? '').trim().toLowerCase().replace(/[_-]+/g, ' ');
+const normalize = (value) => String(value ?? '').trim().toLowerCase().replace(/[_-]+/g, ' ');
 
 export function statusTone(value) {
-  const key = normalise(value);
+  const key = normalize(value);
   if (!key) return 'neutral';
   if (EXPLICIT[key]) return EXPLICIT[key];
   const hit = KEYWORDS.find(([re]) => re.test(key));
@@ -103,7 +103,7 @@ export const LIFECYCLE_TAB_LABELS = {
 };
 
 export function lifecycleBucket(status) {
-  const key = normalise(status);
+  const key = normalize(status);
   if (/(closed|dead|declined|onboarded|approved|complete)/.test(key)) return 'closed';
   if (/(pend|await|missing|hold)/.test(key)) return 'pending';
   if (/(progress|wip|review|initiat|underwriting|submitted)/.test(key)) return 'in_progress';
@@ -141,6 +141,6 @@ export const PRIORITIES = [
   { id: 'low', label: 'Low', tone: 'success', direction: 'down' },
 ];
 
-export const priorityMeta = (id) => PRIORITIES.find((p) => p.id === normalise(id)) ?? PRIORITIES[1];
+export const priorityMeta = (id) => PRIORITIES.find((p) => p.id === normalize(id)) ?? PRIORITIES[1];
 
 export default statusTone;

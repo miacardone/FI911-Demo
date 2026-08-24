@@ -44,10 +44,10 @@ export const SPLITS = (() => {
       id: `gl-${i}`,
       reserveMonth: MONTH,
       payoutMonth: MONTH,
-      participant: internal ? 'Internal settlement' : 'Barclays Merchant Services',
+      participant: internal ? 'Internal settlement' : 'Citi Merchant Services',
       type: 'PSP',
       splitTo: 'ACI admin',
-      splitFrom: internal ? 'Internal settlement' : 'Barclays Merchant Services',
+      splitFrom: internal ? 'Internal settlement' : 'Citi Merchant Services',
       splits: 1,
       transactions,
       volume,
@@ -66,10 +66,10 @@ export const mySplits = () => SPLITS.filter((r) => r.mine);
  * ------------------------------------------------------------------ */
 
 export const FEE_ADJUSTMENTS = [
-  { id: 'fa-1', month: MONTH, participant: 'Barclays Merchant Services BMS01', type: 'PSP', agent: '1st Grafton', profileId: 'A3213-1', item: 'Residual payout adjustment', description: 'Quarterly true-up credit', amount: 18.75, mine: true },
-  { id: 'fa-2', month: MONTH, participant: 'Barclays Merchant Services BMS01', type: 'PSP', agent: '1st Grafton', profileId: 'A3213-1', item: 'Residual fee correction', description: 'Network fee correction', amount: -6.50, mine: false },
-  { id: 'fa-3', month: MONTH, participant: 'Barclays Merchant Services BMS01', type: 'PSP', agent: '1st Grafton', profileId: 'A3213-1', item: 'Residual payout adjustment', description: 'Manual reserve release', amount: 42.00, mine: true },
-  { id: 'fa-4', month: MONTH, participant: 'Barclays Merchant Services BMS01', type: 'PSP', agent: '1st Grafton', profileId: 'A3213-1', item: 'Residual payout adjustment', description: 'Pricing support adjustment', amount: 12.25, mine: false },
+  { id: 'fa-1', month: MONTH, participant: 'Citi Merchant Services BMS01', type: 'PSP', agent: '1st Grafton', profileId: 'A3213-1', item: 'Residual payout adjustment', description: 'Quarterly true-up credit', amount: 18.75, mine: true },
+  { id: 'fa-2', month: MONTH, participant: 'Citi Merchant Services BMS01', type: 'PSP', agent: '1st Grafton', profileId: 'A3213-1', item: 'Residual fee correction', description: 'Network fee correction', amount: -6.50, mine: false },
+  { id: 'fa-3', month: MONTH, participant: 'Citi Merchant Services BMS01', type: 'PSP', agent: '1st Grafton', profileId: 'A3213-1', item: 'Residual payout adjustment', description: 'Manual reserve release', amount: 42.00, mine: true },
+  { id: 'fa-4', month: MONTH, participant: 'Citi Merchant Services BMS01', type: 'PSP', agent: '1st Grafton', profileId: 'A3213-1', item: 'Residual payout adjustment', description: 'Pricing support adjustment', amount: 12.25, mine: false },
 ];
 
 export const myAdjustments = () => FEE_ADJUSTMENTS.filter((r) => r.mine);
@@ -83,28 +83,28 @@ export const myAdjustments = () => FEE_ADJUSTMENTS.filter((r) => r.mine);
  */
 
 const TREND_AGENTS = [
-  { name: 'Bank of Scotland 12-11-03', merchants: 130, payout: 3973.07, volume: 1645570.03, count: 13747 },
-  { name: 'First Direct 40-47-87', merchants: 104, payout: 3697.83, volume: 1143430.55, count: 10267 },
-  { name: 'Santander UK 72-00-00', merchants: 2, payout: 0, volume: 345950.22, count: 3418 },
-  { name: 'Lloyds Bank 30-96-35', merchants: 27, payout: 443.86, volume: 216750.85, count: 5580 },
+  { name: 'Regions Bank 12-11-03', merchants: 130, payout: 3973.07, volume: 1645570.03, count: 13747 },
+  { name: 'TD Bank 40-47-87', merchants: 104, payout: 3697.83, volume: 1143430.55, count: 10267 },
+  { name: 'Truist Bank 72-00-00', merchants: 2, payout: 0, volume: 345950.22, count: 3418 },
+  { name: 'Wells Fargo Bank 30-96-35', merchants: 27, payout: 443.86, volume: 216750.85, count: 5580 },
   { name: 'Cornerstone Cornerstone', merchants: 119, payout: 5925.88, volume: 2617877.89, count: 12297 },
   { name: 'Cornerstone Cornerstone', merchants: 6, payout: 3.61, volume: 19638.96, count: 28 },
-  { name: 'Halifax 11-16-26', merchants: 88, payout: 2841.19, volume: 987654.10, count: 8842 },
-  { name: 'HSBC 40-12-76', merchants: 64, payout: 1930.44, volume: 742199.75, count: 6431 },
-  { name: 'Barclays 20-26-78', merchants: 152, payout: 6712.90, volume: 3011884.62, count: 15903 },
+  { name: 'PNC Bank 11-16-26', merchants: 88, payout: 2841.19, volume: 987654.10, count: 8842 },
+  { name: 'U.S. Bank 40-12-76', merchants: 64, payout: 1930.44, volume: 742199.75, count: 6431 },
+  { name: 'Citibank 20-26-78', merchants: 152, payout: 6712.90, volume: 3011884.62, count: 15903 },
   { name: 'National Westminster 56-00-03', merchants: 97, payout: 3155.02, volume: 1288740.31, count: 9776 },
-  { name: 'Starling Bank 60-83-71', merchants: 41, payout: 812.55, volume: 402118.44, count: 4120 },
+  { name: 'Fifth Third Bank 60-83-71', merchants: 41, payout: 812.55, volume: 402118.44, count: 4120 },
   { name: 'Bank of New York Mellon 76-02-25', merchants: 18, payout: 285.10, volume: 155992.08, count: 1602 },
-  { name: 'Metro Bank 23-05-80', merchants: 33, payout: 604.77, volume: 281443.19, count: 3287 },
-  { name: 'Monzo Business 04-00-03', merchants: 76, payout: 2210.63, volume: 869332.55, count: 7440 },
-  { name: 'Revolut Business 04-29-09', merchants: 59, payout: 1488.31, volume: 613077.90, count: 5911 },
-  { name: 'Clydesdale Bank 82-62-26', merchants: 24, payout: 391.02, volume: 187644.73, count: 2244 },
-  { name: 'Nationwide 07-00-93', merchants: 12, payout: 144.88, volume: 79210.66, count: 968 },
-  { name: 'TSB Bank 77-91-22', merchants: 47, payout: 1002.44, volume: 468920.11, count: 4703 },
-  { name: 'Virgin Money 05-01-15', merchants: 29, payout: 522.19, volume: 240188.37, count: 2810 },
-  { name: 'Tide Payments 04-06-20', merchants: 51, payout: 1173.66, volume: 522904.28, count: 5188 },
-  { name: 'ClearBank 04-11-22', merchants: 15, payout: 231.40, volume: 122570.19, count: 1355 },
-  { name: 'Barclays Bank UK 36-26-74', merchants: 108, payout: 4188.72, volume: 1904330.55, count: 11208 },
+  { name: 'M&T Bank 23-05-80', merchants: 33, payout: 604.77, volume: 281443.19, count: 3287 },
+  { name: 'KeyBank 04-00-03', merchants: 76, payout: 2210.63, volume: 869332.55, count: 7440 },
+  { name: 'Capital One 04-29-09', merchants: 59, payout: 1488.31, volume: 613077.90, count: 5911 },
+  { name: 'Synovus Bank 82-62-26', merchants: 24, payout: 391.02, volume: 187644.73, count: 2244 },
+  { name: 'Zions Bancorporation 07-00-93', merchants: 12, payout: 144.88, volume: 79210.66, count: 968 },
+  { name: 'Citizens Bank 77-91-22', merchants: 47, payout: 1002.44, volume: 468920.11, count: 4703 },
+  { name: 'Comerica Bank 05-01-15', merchants: 29, payout: 522.19, volume: 240188.37, count: 2810 },
+  { name: 'Huntington National Bank 04-06-20', merchants: 51, payout: 1173.66, volume: 522904.28, count: 5188 },
+  { name: 'First Citizens Bank 04-11-22', merchants: 15, payout: 231.40, volume: 122570.19, count: 1355 },
+  { name: 'Bank of America 36-26-74', merchants: 108, payout: 4188.72, volume: 1904330.55, count: 11208 },
 ];
 
 export const TRENDING = TREND_AGENTS.flatMap((a, i) => (
@@ -191,13 +191,13 @@ export const MY_INCOME = (() => {
  * ------------------------------------------------------------------ */
 
 export const PARTICIPANT_STATUS = [
-  { id: 'ps-1', participant: 'Bank of Scotland', sortCode: '12-11-03', partner: 'Halifax', partnerCode: '11-16-26', portfolio: PORTFOLIOS[0], portfolioType: 'Supplier', open: '', close: '', status: 'Active' },
-  { id: 'ps-2', participant: 'Bank of Scotland', sortCode: '12-11-03', partner: 'Halifax', partnerCode: '11-16-26', portfolio: '_QA1', portfolioType: 'PSP', open: '', close: '', status: 'Active' },
-  { id: 'ps-3', participant: 'Barclays', sortCode: '20-26-78', partner: 'Lloyds Bank', partnerCode: '30-96-35', portfolio: PORTFOLIOS[1], portfolioType: 'Supplier', open: '', close: '', status: 'Active' },
-  { id: 'ps-4', participant: 'Halifax', sortCode: '11-16-26', partner: '', partnerCode: '', portfolio: PORTFOLIOS[1], portfolioType: 'Supplier', open: '', close: '', status: 'Active' },
-  { id: 'ps-5', participant: 'Bank of New York Mellon', sortCode: '70-02-25', partner: '', partnerCode: '', portfolio: PORTFOLIOS[0], portfolioType: 'Supplier', open: '2026/08/11', close: '', status: 'Active' },
-  { id: 'ps-6', participant: 'Starling Bank Limited', sortCode: '60-83-71', partner: '', partnerCode: '', portfolio: PORTFOLIOS[0], portfolioType: 'Supplier', open: '2026/08/12', close: '', status: 'Active' },
-  { id: 'ps-7', participant: 'National Westminster Bank', sortCode: '56-00-03', partner: '', partnerCode: '', portfolio: PORTFOLIOS[3], portfolioType: 'PSP', open: '2026/08/12', close: '', status: 'Active' },
+  { id: 'ps-1', participant: 'Regions Bank', routingNumber: '121103021', partner: 'PNC Bank', partnerCode: '111626021', portfolio: PORTFOLIOS[0], portfolioType: 'Supplier', open: '', close: '', status: 'Active' },
+  { id: 'ps-2', participant: 'Regions Bank', routingNumber: '121103021', partner: 'PNC Bank', partnerCode: '111626021', portfolio: '_QA1', portfolioType: 'PSP', open: '', close: '', status: 'Active' },
+  { id: 'ps-3', participant: 'Citibank', routingNumber: '202678021', partner: 'Wells Fargo Bank', partnerCode: '309635021', portfolio: PORTFOLIOS[1], portfolioType: 'Supplier', open: '', close: '', status: 'Active' },
+  { id: 'ps-4', participant: 'PNC Bank', routingNumber: '111626021', partner: '', partnerCode: '', portfolio: PORTFOLIOS[1], portfolioType: 'Supplier', open: '', close: '', status: 'Active' },
+  { id: 'ps-5', participant: 'Bank of New York Mellon', routingNumber: '700225021', partner: '', partnerCode: '', portfolio: PORTFOLIOS[0], portfolioType: 'Supplier', open: '2026/08/11', close: '', status: 'Active' },
+  { id: 'ps-6', participant: 'Fifth Third Bank', routingNumber: '608371021', partner: '', partnerCode: '', portfolio: PORTFOLIOS[0], portfolioType: 'Supplier', open: '2026/08/12', close: '', status: 'Active' },
+  { id: 'ps-7', participant: 'JPMorgan Chase Bank', routingNumber: '560003021', partner: '', partnerCode: '', portfolio: PORTFOLIOS[3], portfolioType: 'PSP', open: '2026/08/12', close: '', status: 'Active' },
 ];
 
 /* ------------------------------------------------------------------ *
@@ -225,7 +225,7 @@ export const INCOME_EXPENSE = (() => {
     payoutMonth: MONTH,
     agent: 'PayUK',
     agentScope: i % 2 === 0 ? 'House [PSP]' : 'House [Supplier]',
-    participant: 'Ashton & Partners Ltd',
+    participant: 'Ashton & Partners LLC',
     participantMid: '889561051029485',
     partner: it.partner.name,
     partnerCode: it.partner.code,
@@ -251,10 +251,10 @@ export const INCOME_EXPENSE = (() => {
 export const PORTFOLIO_PAYOUTS = (() => {
   const d = createDraw(5318);
   const participants = [
-    'Ashton & Partners Ltd', 'Bluebell Care Services', 'Corbridge Engineering', 'Devonshire Tea Rooms',
-    'Eastgate Office Supplies', 'Fairfield Sports Ltd', 'Penarth Marina Ltd', 'Tenby Surf School Ltd',
-    'Helmsley Artisan Bakery', 'Phoenix Wine Merchants', 'Quarry Lane Hardware Ltd', 'Summit Electrical Ltd',
-    'Dunmore Travel Ltd', 'Riverside Flooring Co', 'Whitmore Building Supplies', 'Hargreaves & Sons Ltd',
+    'Ashton & Partners LLC', 'Bluebell Care Services', 'Cornerstone Engineering', 'Dover Street Tea Room',
+    'Eastgate Office Supplies', 'Fairfield Sports Co', 'Pelican Marina LLC', 'Topsail Surf School LLC',
+    'Hillside Artisan Bakery', 'Phoenix Wine Merchants', 'Quarry Lane Hardware Ltd', 'Summit Electrical Ltd',
+    'Dunmore Travel LLC', 'Riverside Flooring Co', 'Whitmore Building Supplies', 'Harrington & Sons LLC',
     'Thornfield Market Ltd', 'Westgate Print & Design', 'Birchwood Vets Ltd', 'Cranleigh Kitchens Ltd',
     'Gainsborough Print Ltd', 'Bramble Hill Deli', 'Granary Bakehouse Ltd', 'Elmside Gift Shop',
     'Clifton Beauty & Wellness',
@@ -279,7 +279,7 @@ export const PORTFOLIO_PAYOUTS = (() => {
         payoutMonth: MONTH,
         participant,
         mid: midFor(participant, 15),
-        partner: 'Barclays Merchant Services',
+        partner: 'Citi Merchant Services',
         agent,
         portfolio: PORTFOLIOS[2],
         transactions: j === 0 ? transactions : Math.max(1, transactions - d.int(0, 4)),

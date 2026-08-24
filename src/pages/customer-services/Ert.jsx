@@ -56,7 +56,7 @@ function CreateTicketModal({ open, onClose, onCreate }) {
       )}
     >
       <div className="stack">
-        <TextField label="Participant Name" required value={form.participant} placeholder="Enter participant name" onChange={set('participant')} />
+        <TextField label="Merchant Name" required value={form.participant} placeholder="Enter merchant name" onChange={set('merchant')} />
         <SelectField label="Department" required value={form.department} onChange={set('department')} placeholder="Select" options={brand.ertDepartments.map((d) => ({ value: d, label: d }))} />
         <SelectField label="Topic" required value={form.topic} onChange={set('topic')} placeholder="Select" options={brand.ertTopics.map((d) => ({ value: d, label: d }))} />
         <SelectField label="Sub Topic" required value={form.subTopic} onChange={set('subTopic')} placeholder="Select" options={brand.ertSubTopics.map((d) => ({ value: d, label: d }))} />

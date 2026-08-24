@@ -11,11 +11,11 @@ const summaryColumns = [
   card(),
   text('terminalId', 'Terminal ID', 11),
   count('authCount', 'Auth (#)', 6),
-  money('authValue', 'Auth (£)', 9),
+  money('authValue', 'Auth ($)', 9),
   count('refundCount', 'Refund (#)', 7),
-  money('refundValue', 'Refund (£)', 9),
+  money('refundValue', 'Refund ($)', 9),
   count('netCount', 'Net (#)', 6),
-  money('netValue', 'Net (£)', 9),
+  money('netValue', 'Net ($)', 9),
   text('processor', 'Processor', 8),
 ];
 

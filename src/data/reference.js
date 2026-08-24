@@ -1,17 +1,18 @@
 /**
  * REFERENCE DATA — the shared nouns.
  *
- * Participants, merchants, partners and sort codes are referenced by nearly
- * every module, so they are defined once here and imported rather than
+ * Participants, merchants, partners and routing numbers are referenced by
+ * nearly every module, so they are defined once here and imported rather than
  * re-invented per screen. That is what makes the demo hang together: the
- * "Lloyds Bank" you onboard in Participants is the same institution that
+ * "Wells Fargo Bank" you onboard in Participants is the same institution that
  * appears in Disputes, in Claim Turnover on the dashboard, and in the
  * Residuals participant status list.
  *
- * Sort codes are the join key. UK sort codes are `nn-nn-nn`; the reference
- * uses a stable one per institution for identity columns, and a per-account
- * one for account-level rows (a bank has many sort codes — the institution's
- * headline code is not the code on a given merchant's account).
+ * Routing numbers are the join key. An ABA routing number is nine digits with
+ * a weighted check digit; the reference uses a stable one per institution for
+ * identity columns, and a per-account one for account-level rows (a bank
+ * holds many routing numbers — the institution's headline ABA is not the one
+ * on a given merchant's account).
  */
 
 /* ------------------------------------------------------------------ *
@@ -19,33 +20,33 @@
  * ------------------------------------------------------------------ */
 
 export const INSTITUTIONS = [
-  { id: 'lloyds', name: 'Lloyds Bank', short: 'Lloyds', sortCode: '30-96-35', type: 'psp', domain: 'lloydsbank.com' },
-  { id: 'barclays', name: 'Barclays', short: 'Barclays', sortCode: '20-26-78', type: 'bank', domain: 'barclays.com' },
-  { id: 'hsbc', name: 'HSBC', short: 'HSBC', sortCode: '40-12-76', type: 'bank', domain: 'hsbc.uk.com' },
-  { id: 'halifax', name: 'Halifax', short: 'Halifax', sortCode: '11-16-26', type: 'psp', domain: 'halifax.com' },
-  { id: 'natwest', name: 'National Westminster Bank', short: 'NWB', sortCode: '56-00-03', type: 'bank', domain: 'natwest.com' },
-  { id: 'santander', name: 'Santander UK', short: 'Santander UK', sortCode: '72-00-00', type: 'psp', domain: 'santander.uk.com' },
-  { id: 'bos', name: 'Bank of Scotland', short: 'BOS', sortCode: '12-11-03', type: 'psp', domain: 'rbs.com' },
-  { id: 'first_direct', name: 'First Direct', short: 'First Direct', sortCode: '40-47-87', type: 'psp', domain: 'firstdirect.com' },
-  { id: 'bony', name: 'Bank of New York Mellon', short: 'BNY', sortCode: '76-02-25', type: 'psp', domain: 'bonym.com' },
-  { id: 'starling', name: 'Starling Bank Limited', short: 'SBL', sortCode: '60-83-71', type: 'psp', domain: 'sbl.com' },
-  { id: 'monzo', name: 'Monzo Business', short: 'Monzo', sortCode: '04-00-03', type: 'psp', domain: 'monzo.com' },
-  { id: 'revolut', name: 'Revolut Business', short: 'Revolut', sortCode: '04-29-09', type: 'psp', domain: 'revolut.com' },
-  { id: 'metro', name: 'Metro Bank', short: 'Metro', sortCode: '23-05-80', type: 'psp', domain: 'metrobank.co.uk' },
-  { id: 'tsb', name: 'TSB Bank', short: 'TSB', sortCode: '77-91-22', type: 'psp', domain: 'tsb.co.uk' },
-  { id: 'virgin', name: 'Virgin Money', short: 'Virgin', sortCode: '05-01-15', type: 'psp', domain: 'virginmoney.com' },
-  { id: 'clydesdale', name: 'Clydesdale Bank', short: 'Clydesdale', sortCode: '82-62-26', type: 'psp', domain: 'cbonline.co.uk' },
-  { id: 'nationwide', name: 'Nationwide Building Society', short: 'Nationwide', sortCode: '07-00-93', type: 'psp', domain: 'nationwide.com' },
-  { id: 'tide', name: 'Tide Payments', short: 'Tide', sortCode: '04-06-20', type: 'psp', domain: 'tidepayments.com' },
-  { id: 'clearbank', name: 'ClearBank', short: 'ClearBank', sortCode: '04-11-22', type: 'bank', domain: 'clearbank.com' },
-  { id: 'barclays_uk', name: 'Barclays Bank UK', short: 'Barclays UK', sortCode: '36-26-74', type: 'bank', domain: 'barclaysuk.com' },
+  { id: 'chase', name: 'JPMorgan Chase Bank', short: 'Chase', routingNumber: '021000021', type: 'bank', domain: 'chase.com' },
+  { id: 'bofa', name: 'Bank of America', short: 'BofA', routingNumber: '026009593', type: 'bank', domain: 'bankofamerica.com' },
+  { id: 'wells', name: 'Wells Fargo Bank', short: 'Wells Fargo', routingNumber: '121000248', type: 'bank', domain: 'wellsfargo.com' },
+  { id: 'citi', name: 'Citibank', short: 'Citi', routingNumber: '021000089', type: 'bank', domain: 'citi.com' },
+  { id: 'usbank', name: 'U.S. Bank', short: 'U.S. Bank', routingNumber: '091000022', type: 'bank', domain: 'usbank.com' },
+  { id: 'pnc', name: 'PNC Bank', short: 'PNC', routingNumber: '043000096', type: 'psp', domain: 'pnc.com' },
+  { id: 'truist', name: 'Truist Bank', short: 'Truist', routingNumber: '061000104', type: 'psp', domain: 'truist.com' },
+  { id: 'capitalone', name: 'Capital One', short: 'Capital One', routingNumber: '051405515', type: 'psp', domain: 'capitalone.com' },
+  { id: 'bony', name: 'Bank of New York Mellon', short: 'BNY', routingNumber: '021000018', type: 'psp', domain: 'bnymellon.com' },
+  { id: 'tdbank', name: 'TD Bank', short: 'TD Bank', routingNumber: '031201360', type: 'psp', domain: 'td.com' },
+  { id: 'fifththird', name: 'Fifth Third Bank', short: 'Fifth Third', routingNumber: '042000314', type: 'psp', domain: '53.com' },
+  { id: 'keybank', name: 'KeyBank', short: 'KeyBank', routingNumber: '041001039', type: 'psp', domain: 'key.com' },
+  { id: 'regions', name: 'Regions Bank', short: 'Regions', routingNumber: '062005690', type: 'psp', domain: 'regions.com' },
+  { id: 'huntington', name: 'Huntington National Bank', short: 'Huntington', routingNumber: '044000024', type: 'psp', domain: 'huntington.com' },
+  { id: 'mtb', name: 'M&T Bank', short: 'M&T', routingNumber: '022000046', type: 'psp', domain: 'mtb.com' },
+  { id: 'citizens', name: 'Citizens Bank', short: 'Citizens', routingNumber: '011500120', type: 'psp', domain: 'citizensbank.com' },
+  { id: 'firstcitizens', name: 'First Citizens Bank', short: 'First Citizens', routingNumber: '053100300', type: 'psp', domain: 'firstcitizens.com' },
+  { id: 'comerica', name: 'Comerica Bank', short: 'Comerica', routingNumber: '072000096', type: 'psp', domain: 'comerica.com' },
+  { id: 'synovus', name: 'Synovus Bank', short: 'Synovus', routingNumber: '061100606', type: 'bank', domain: 'synovus.com' },
+  { id: 'zions', name: 'Zions Bancorporation', short: 'Zions', routingNumber: '124000054', type: 'bank', domain: 'zionsbank.com' },
 ];
 
 export const institutionById = (id) => INSTITUTIONS.find((i) => i.id === id) ?? INSTITUTIONS[0];
 export const institutionByName = (name) => INSTITUTIONS.find((i) => i.name === name) ?? null;
 
-/** The five sort codes the dashboard's "Top Five Sort Codes" donut ranks. */
-export const TOP_SORT_CODES = ['16-52-21', '40-63-77', '40-11-99', '11-00-01', '30-00-05'];
+/** The five routing numbers the dashboard's "Top Five Routing Numbers" donut ranks. */
+export const TOP_ROUTING_NUMBERS = ['021000021', '026009593', '121000248', '021000089', '091000022'];
 
 /* ------------------------------------------------------------------ *
  * Merchants — the businesses beneath the participants
@@ -53,21 +54,18 @@ export const TOP_SORT_CODES = ['16-52-21', '40-63-77', '40-11-99', '11-00-01', '
 
 /** UK trading names, used across Transactions, Residuals and Billing. */
 export const MERCHANTS = [
-  'Ashton & Partners Ltd', 'Bluebell Care Services', 'Corbridge Engineering', 'Devonshire Tea Rooms',
-  'Eastgate Office Supplies', 'Fairfield Sports Ltd', 'Penarth Marina Ltd', 'Tenby Surf School Ltd',
-  'Helmsley Artisan Bakery', 'Phoenix Wine Merchants', 'Quarry Lane Hardware Ltd', 'Summit Electrical Ltd',
-  'Dunmore Travel Ltd', 'Riverside Flooring Co', 'Whitmore Building Supplies', 'Hargreaves & Sons Ltd',
-  'Thornfield Market Ltd', 'Westgate Print & Design', 'Birchwood Vets Ltd', 'Cranleigh Kitchens Ltd',
-  'Gainsborough Print Ltd', 'Bramble Hill Deli', 'Granary Bakehouse Ltd', 'Elmside Gift Shop',
-  'Clifton Beauty & Wellness', 'Corsham Print & Design Ltd', 'Bradford-on-Avon Stone Masons',
-  'Kendal Outdoor Supplies Ltd', 'Pennine Textiles Ltd', 'Bridgford Food Services', 'Lakeside Garden Centre',
-  'Neston Electrical Ltd', 'Redditch Tool Hire Ltd', 'Pemberton Retail Group', 'Highfield Sports Direct',
-  'Kingsway Electronics Ltd', 'Fernbrook Hospitality Ltd', 'Redwood Pharmacy Group', 'Northgate Motor Spares',
-  'Ruthin Timber Merchants', 'Colwyn Bay Catering Supplies', 'Merthyr Tydfil Steel Fabricators',
-  'Brecon Beacons Holiday Park', 'Abergavenny Bakers Ltd', 'Pontypool Packaging Ltd',
-  'Tredegar Office Interiors Ltd', 'Caerphilly Cheese & Deli Ltd', 'Ebbw Vale Engineering Ltd',
-  'Monmouth River Cruises', 'Llandrindod Wells Spa Ltd', 'Welshpool Agricultural Traders',
-  'Newtown Furniture Makers Ltd', 'Aberystwyth Marine Chandlery',
+  'Ashton & Partners LLC', 'Bluebell Care Services', 'Cornerstone Engineering Inc',
+  'Dover Street Tea Room', 'Eastgate Office Supplies', 'Fairfield Sports Co',
+  'Pelican Marina LLC', 'Topsail Surf School', 'Hillside Artisan Bakery',
+  'Phoenix Wine Merchants', 'Quarry Lane Hardware', 'Whitmore Building Supplies',
+  'Kenwood Outdoor Supply', 'Summit Textiles Inc', 'Bridgeport Food Services',
+  'Lakeside Garden Center', 'Midwest Craft Supply Co', 'Deep Dish Delights',
+  'Sunshine Pool & Spa', 'Peach State Auto Spa', 'Tropical Flavors Bistro',
+  'Cascade Mountain Sports', 'Evergreen Digital Agency', 'Brooklyn Web Studios',
+  'Merrimack Valley Wines', 'Stone Mountain BBQ', 'Bluegrass Direct Sales',
+  'Liberty Bell Tutoring', 'Lakeside Event Rentals', 'CloudCart Solutions',
+  'Lakewood Springs Spa', 'Elmwood Engineering', 'Westgate Print & Design',
+  'Monroe Steel', 'Kingsport Electronics', 'Greenfield Print Co',
 ];
 
 /** Merchants named for their acquirer — Alert Action and Gateway use these. */
@@ -121,9 +119,9 @@ export const RISK_MERCHANTS = [
  * ------------------------------------------------------------------ */
 
 export const PARTNERS = [
-  { name: 'Barclays Merchant Services', code: 'BMS01' },
-  { name: 'Barclaycard Business', code: 'BARC01' },
-  { name: 'Lloyds Cardnet', code: 'LLOY02' },
+  { name: 'Citi Merchant Services', code: 'BMS01' },
+  { name: 'Citi Commercial Cards', code: 'BARC01' },
+  { name: 'Wells Fargo Merchant Services', code: 'LLOY02' },
   { name: 'Worldpay from FIS', code: 'WPF03' },
   { name: 'Elavon Merchant Services', code: 'ELAV04' },
   { name: 'Global Payments 03', code: 'GP03' },
@@ -158,12 +156,29 @@ export const PORTFOLIOS = [
  * Helpers
  * ------------------------------------------------------------------ */
 
-/** Deterministic sort code from any string — stable across reloads. */
-export function sortCodeFor(seedText) {
+/**
+ * Deterministic ABA routing number from any string — stable across reloads.
+ *
+ * A US routing number is nine digits and its last one is a weighted check
+ * digit (3-7-1 repeating). Generating it properly means a validator would
+ * accept these, which matters for a demo shown to payments people: an
+ * obviously fake routing number is the kind of detail that gets noticed.
+ */
+export function routingNumberFor(seedText) {
   let h = 0;
   for (let i = 0; i < seedText.length; i += 1) h = (h * 31 + seedText.charCodeAt(i)) >>> 0;
-  const pair = (n) => String(n % 100).padStart(2, '0');
-  return `${pair(h)}-${pair(h >> 7)}-${pair(h >> 14)}`;
+
+  let body = '';
+  let x = h;
+  while (body.length < 8) {
+    x = (x * 1103515245 + 12345) >>> 0;
+    body += String(x % 10);
+  }
+  body = body.slice(0, 8);
+
+  const w = [3, 7, 1, 3, 7, 1, 3, 7];
+  const sum = body.split('').reduce((acc, d, i) => acc + Number(d) * w[i], 0);
+  return `${body}${(10 - (sum % 10)) % 10}`;
 }
 
 /** Deterministic MID (merchant ID) from any string. */
@@ -184,6 +199,6 @@ export const maskAccount = (digits) => `****${String(digits).slice(-4)}`;
 
 /** Business email for a merchant trading name. */
 export const merchantEmail = (name) =>
-  `${name.toLowerCase().replace(/[^a-z0-9]+/g, '')}@example.co.uk`.replace(/ltd@/, '@');
+  `${name.toLowerCase().replace(/[^a-z0-9]+/g, '')}@example.com`.replace(/(llc|inc)@/, '@');
 
 export default INSTITUTIONS;

@@ -183,7 +183,7 @@ export function Rules() {
         open={creating}
         onClose={() => setCreating(false)}
         rule={null}
-        title="Add New Risk Management Rule"
+        title="Add New Risk Rule"
         submitLabel="Create Rule"
         onSave={(form) => {
           setRows((rs) => [{ ...form, id: `rule-${Date.now()}`, active: true }, ...rs]);
@@ -195,7 +195,7 @@ export function Rules() {
         open={Boolean(editing)}
         onClose={() => setEditing(null)}
         rule={editing}
-        title="Edit Risk Management Rule"
+        title="Edit Risk Rule"
         submitLabel="Update Rule"
         onSave={(form) => {
           setRows((rs) => rs.map((r) => (r.id === editing.id ? { ...r, ...form } : r)));

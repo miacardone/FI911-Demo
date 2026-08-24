@@ -23,14 +23,14 @@ export function PortfolioPayoutDetails() {
     { key: 'residualMonth', header: 'Residual Month', fw: 9, sortable: true },
     { hiddenByDefault: true, key: 'payoutMonth', header: 'Payout Month', fw: 9, sortable: true },
     {
-      key: 'participant', header: 'Participant Name', fw: 14, sortable: true,
+      key: 'merchant', header: 'Merchant Name', fw: 14, sortable: true,
       cell: (r) => (
         <TwoLine
           primary={r.participant}
           secondary={<LinkCell onClick={() => toast.notify(`MID ${r.mid}`)}>{r.mid}</LinkCell>}
         />
       ),
-      text: (r) => `${r.participant} ${r.mid}`,
+      text: (r) => `${r.merchant} ${r.mid}`,
     },
     { key: 'partner', header: 'Partner', fw: 11, sortable: true },
     { key: 'agent', header: 'Agent', fw: 13, sortable: true },

@@ -99,9 +99,9 @@ export function TenantConfiguration() {
 
         <Section title="Localisation">
           <FieldGrid columns={3}>
-            <SelectField {...field('currency', 'Currency')} options={opts(['GBP', 'EUR', 'USD'])} />
-            <SelectField {...field('locale', 'Locale')} options={opts(['en-GB', 'en-US', 'de-DE'])} />
-            <SelectField {...field('timezone', 'Timezone')} options={opts(['Europe/London', 'America/New_York', 'UTC'])} />
+            <SelectField {...field('currency', 'Currency')} options={opts(['USD', 'EUR', 'GBP'])} />
+            <SelectField {...field('locale', 'Locale')} options={opts(['en-US', 'en-GB', 'de-DE'])} />
+            <SelectField {...field('timezone', 'Timezone')} options={opts(['America/New_York', 'America/Chicago', 'America/Los_Angeles', 'UTC'])} />
           </FieldGrid>
         </Section>
 

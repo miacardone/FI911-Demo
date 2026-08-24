@@ -14,7 +14,7 @@ import brand from '@/brand/brand.config';
  *  thread; the funnel's shape is otherwise identical to Invitations. */
 
 const ADVANCED_FIELDS = [
-  { name: 'participant', label: 'Participant Name' },
+  { name: 'merchant', label: 'Merchant Name' },
   { name: 'type', label: 'Type', type: 'select', options: brand.participantTypes.map((t) => ({ value: t.label, label: t.label })) },
   { name: 'agent', label: 'Agent Name' },
   { name: 'assignedTo', label: 'Assigned To' },
@@ -41,7 +41,7 @@ export function Applications() {
   );
 
   const columns = [
-    { key: 'participant', header: 'Participant Name', fw: 15, sortable: true, cell: (r) => <LinkCell to={routes.applicationDetail(r.id)}>{r.participant}</LinkCell> },
+    { key: 'merchant', header: 'Merchant Name', fw: 15, sortable: true, cell: (r) => <LinkCell to={routes.applicationDetail(r.id)}>{r.participant}</LinkCell> },
     { key: 'type', header: 'Type', fw: 6, sortable: true, cell: (r) => <TypeBadge value={r.type} /> },
     { key: 'agent', header: 'Agent Name', fw: 11, sortable: true },
     { key: 'assignedTo', header: 'Assigned To', fw: 11, sortable: true, cell: (r) => (r.assignedTo ? r.assignedTo : <Muted>-</Muted>) },
@@ -62,8 +62,8 @@ export function Applications() {
   return (
     <>
       <ListPage
-        title="Participant Applications"
-        description="Manage and track participant application submissions and contract status"
+        title="Merchant Applications"
+        description="Manage and track merchant application submissions and contract status"
         tabs={tabs}
         tab={tab}
         onTabChange={setTab}
@@ -74,8 +74,8 @@ export function Applications() {
         ]}
         columns={columns}
         rows={visible}
-        searchPlaceholder="Search participant applications"
-        exportName="participant-applications"
+        searchPlaceholder="Search merchant applications"
+        exportName="merchant-applications"
         onAdvanced={() => setAdvancedOpen((v) => !v)}
         advancedOpen={advancedOpen}
         advanced={(

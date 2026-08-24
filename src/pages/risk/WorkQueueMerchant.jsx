@@ -16,7 +16,7 @@ import { useToast } from '@/context/ToastContext';
  *
  * Reached from Work Queue > row menu > View transactions. The reference opens
  * a bare grid with a Hold Merchant button floating above it; the merchant it
- * belongs to is a line of grey text and nothing tells you why the row was
+ * belongs to is a line of gray text and nothing tells you why the row was
  * flagged beyond the same unexplained codes.
  *
  * Here the merchant's exposure leads the page, the decision buttons act on the
@@ -28,7 +28,7 @@ import { useToast } from '@/context/ToastContext';
 function Probability({ value }) {
   const tone = value >= 60 ? 'danger' : value >= 30 ? 'warning' : 'neutral';
   return (
-    <Tooltip label="Modelled likelihood this transaction becomes a chargeback, from the severity of the rules it tripped">
+    <Tooltip label="Modeled likelihood this transaction becomes a chargeback, from the severity of the rules it tripped">
       <span className={`prob prob--${tone}`}>
         <span className="prob__bar"><span className="prob__fill" style={{ width: `${Math.min(value, 100)}%` }} /></span>
         <span className="prob__value">{value.toFixed(1)}%</span>

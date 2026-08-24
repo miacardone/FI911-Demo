@@ -25,7 +25,7 @@ import brand from '@/brand/brand.config';
  */
 
 const ADVANCED_FIELDS = [
-  { name: 'participant', label: 'Participant Name' },
+  { name: 'merchant', label: 'Merchant Name' },
   { name: 'type', label: 'Type', type: 'select', options: brand.participantTypes.map((t) => ({ value: t.label, label: t.label })) },
   { name: 'agent', label: 'Agent Name' },
   { name: 'assignedTo', label: 'Assigned To' },
@@ -85,7 +85,7 @@ export function LiveParticipants() {
   );
 
   const columns = [
-    { key: 'participant', header: 'Participant Name', fw: 14, sortable: true, cell: (r) => <LinkCell to={routes.liveParticipantDetail(r.id)}>{r.participant}</LinkCell> },
+    { key: 'merchant', header: 'Merchant Name', fw: 14, sortable: true, cell: (r) => <LinkCell to={routes.liveParticipantDetail(r.id)}>{r.participant}</LinkCell> },
     { key: 'type', header: 'Type', fw: 5, sortable: true, cell: (r) => <TypeBadge value={r.type} /> },
     {
       key: 'highest',
@@ -111,16 +111,16 @@ export function LiveParticipants() {
       { label: 'Statements', icon: 'file', onSelect: () => setModal({ kind: 'statements', row }) },
       { label: 'Residuals', icon: 'pound', onSelect: () => navigate(routes.portfolioPayoutDetails) },
       { label: 'Ticketing', icon: 'inbox', onSelect: () => navigate(routes.ert) },
-      { label: 'Participant Agreement', icon: 'checklist', onSelect: () => navigate(routes.liveParticipantDetail(row.id)) },
-      { label: 'Participant Merchants', icon: 'users', onSelect: () => navigate(routes.participantMerchants(row.id)) },
+      { label: 'Merchant Agreement', icon: 'checklist', onSelect: () => navigate(routes.liveParticipantDetail(row.id)) },
+      { label: 'Merchant Merchants', icon: 'users', onSelect: () => navigate(routes.participantMerchants(row.id)) },
     ]),
   ];
 
   return (
     <>
       <ListPage
-        title="Live Participants"
-        description="Manage and track live participant status and onboarding progress"
+        title="Live Merchants"
+        description="Manage and track live merchant status and onboarding progress"
         tabs={tabs}
         tab={tab}
         onTabChange={setTab}
@@ -131,8 +131,8 @@ export function LiveParticipants() {
         ]}
         columns={columns}
         rows={visible}
-        searchPlaceholder="Search live participants"
-        exportName="live-participants"
+        searchPlaceholder="Search live merchants"
+        exportName="live-merchants"
         onAdvanced={() => setAdvancedOpen((v) => !v)}
         advancedOpen={advancedOpen}
         advanced={(
@@ -144,8 +144,8 @@ export function LiveParticipants() {
             onClear={() => { setCriteria({}); setApplied({}); }}
           />
         )}
-        leftExtra={<Button variant="primary" size="sm" icon="upload" onClick={() => toast.notify('Import — choose a participant file to upload.')}>Import</Button>}
-        empty="No live participants match these criteria."
+        leftExtra={<Button variant="primary" size="sm" icon="upload" onClick={() => toast.notify('Import — choose a merchant file to upload.')}>Import</Button>}
+        empty="No live merchants match these criteria."
       />
 
       <AttachmentsModal open={modal?.kind === 'attachments'} onClose={() => setModal(null)} attachments={modal?.row ? attachmentsFor(modal.row.id) : []} />

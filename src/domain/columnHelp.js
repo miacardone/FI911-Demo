@@ -2,7 +2,7 @@
  * COLUMN HELP — what each column actually means.
  *
  * These grids are dense and full of payments jargon: MID, TRN, ARN, MCC,
- * BuyRate, PassThru, sort codes, four different date columns that all look
+ * BuyRate, PassThru, routing numbers, four different date columns that all look
  * alike. An operator who has not been trained on the product cannot tell
  * "Auth Date" from "Settle Date" from "Process Date" by looking.
  *
@@ -29,7 +29,7 @@ const BY_KEY = {
   contactName: "The participant's own named contact",
   partner: 'Acquiring partner or portfolio the record settles through',
   processor: 'Payment processor handling this traffic',
-  isoId: 'Independent Sales Organisation identifier',
+  isoId: 'Independent Sales Organization identifier',
   agentId: 'Agent identifier on the processor platform',
   institutionId: 'Financial institution identifier',
   mid: 'Merchant ID — the merchant’s account number with the processor',
@@ -39,7 +39,7 @@ const BY_KEY = {
   region: 'Region, channel or department that owns the relationship',
 
   /* Codes */
-  sortCode: 'UK sort code identifying the bank branch (nn-nn-nn)',
+  routingNumber: 'UK routing number identifying the bank branch (nn-nn-nn)',
   receivingSortCode: 'Sort code of the account receiving the funds',
   accountNumber: 'Bank account number, masked to the last four digits',
   bankAccount: 'Bank account number, masked to the last four digits',
@@ -50,7 +50,7 @@ const BY_KEY = {
   caseNumber: 'Unique dispute case reference',
   batchId: 'Settlement batch this transaction belongs to',
   transactionId: 'Unique identifier for this transaction',
-  authCode: 'Authorisation code returned by the issuer',
+  authCode: 'Authorization code returned by the issuer',
   typeReference: 'Processor reference for this dispute type',
   cardLast4: 'Last four digits of the card number',
   profileId: 'Residual profile the agent is paid under',
@@ -62,7 +62,7 @@ const BY_KEY = {
   fundingStatus: 'Whether the funding transfer completed',
   reserveStatus: 'Whether the withheld reserve is still held or released',
   payStatus: 'Whether the released reserve has actually been paid out',
-  authResponse: 'Issuer response — Declined means the authorisation failed',
+  authResponse: 'Issuer response — Declined means the authorization failed',
   outcome: 'How the dispute was ultimately resolved',
   cycle: 'Stage the dispute has reached in the escalation chain',
   priority: 'Urgency — arrow up is high, down is low',
@@ -75,8 +75,8 @@ const BY_KEY = {
   created: 'When the record was first created',
   creationDate: 'When the record was first created',
   statusChanged: 'When the status last changed',
-  authDate: 'When the transaction was authorised',
-  authDateTime: 'Date and time the authorisation was requested',
+  authDate: 'When the transaction was authorized',
+  authDateTime: 'Date and time the authorization was requested',
   settleDate: 'When the funds actually settled',
   processDate: 'When the funding entry was processed',
   postDate: 'When the dispute was posted to the account',
@@ -159,33 +159,33 @@ const BY_KEY = {
 /** Fallback keyed by header text, for columns whose key is generic. */
 const BY_HEADER = {
   'Auth (#)': 'Number of authorisations',
-  'Auth (£)': 'Value of authorisations',
+  'Auth ($)': 'Value of authorisations',
   'Refund (#)': 'Number of refunds',
-  'Refund (£)': 'Value of refunds',
+  'Refund ($)': 'Value of refunds',
   'Net (#)': 'Authorisations less refunds, by count',
-  'Net (£)': 'Authorisations less refunds, by value',
+  'Net ($)': 'Authorisations less refunds, by value',
   'Sales (#)': 'Number of sales in the batch',
-  'Sales (£)': 'Value of sales in the batch',
+  'Sales ($)': 'Value of sales in the batch',
   'Dispute #': 'Number of disputes raised',
   'Dispute £': 'Value of disputes raised',
   'Transaction (#)': 'Number of transactions processed',
-  'Transaction (£)': 'Value of transactions processed',
+  'Transaction ($)': 'Value of transactions processed',
   'Credits (#)': 'Number of ACH credits',
   'Debits (#)': 'Number of ACH debits',
   'Held Transactions (#)': 'Number of transactions withheld',
-  'Held Amount (£)': 'Value withheld pending review',
+  'Held Amount ($)': 'Value withheld pending review',
   'Total Rules': 'Number of risk rules tripped',
   'Risk Profile': 'Risk tier — red up is high, amber up is medium, green down is low',
   Tagged: 'Flagged for manual review',
   Actions: 'Row actions available for this record',
 };
 
-const normalise = (h) => String(h ?? '').replace(/\.\.\.$/, '').replace(/…$/, '').trim();
+const normalize = (h) => String(h ?? '').replace(/\.\.\.$/, '').replace(/…$/, '').trim();
 
 /** Look up help for a column, preferring an explicit `description`. */
 export function helpFor(column) {
   if (column.description) return column.description;
-  return BY_KEY[column.key] ?? BY_HEADER[normalise(column.header)] ?? null;
+  return BY_KEY[column.key] ?? BY_HEADER[normalize(column.header)] ?? null;
 }
 
 /** Attach fallback descriptions to a column list. */
@@ -249,7 +249,7 @@ const STATUS_HELP = {
   'in progress ': 'Currently running.',
   'completed with errors': 'Finished, but some rows failed and were skipped.',
   'failed': 'Did not finish. Nothing was written.',
-  'cancelled': 'Stopped before completion by an operator.',
+  'canceled': 'Stopped before completion by an operator.',
   'scheduled': 'Not started yet — waiting for its start date.',
   'recalculating': 'Figures are being rebuilt and may move.',
   'calculated': 'Figures are final for this cycle.',

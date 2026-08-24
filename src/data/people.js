@@ -71,7 +71,7 @@ export const NOTE_AUTHORS = [
 const slug = (name) => name.toLowerCase().replace(/[^a-z]+/g, '.');
 
 /** Deterministic work email for any person, on the tenant's domain. */
-export const emailFor = (name, domain = 'ukpaymentsops.co.uk') => `${slug(name)}@${domain}`;
+export const emailFor = (name, domain = 'ukpaymentsops.com') => `${slug(name)}@${domain}`;
 
 export const initialsFor = (name) =>
   name.split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();

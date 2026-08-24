@@ -4,10 +4,10 @@ import { readPref, writePref } from '@/utils/storage';
 /**
  * USER PREFERENCES — theme and density.
  *
- * Theme is applied by stamping `data-theme="dark"` on <html>. Every colour in
+ * Theme is applied by stamping `data-theme="dark"` on <html>. Every color in
  * this console is already a CSS custom property, so a dark palette is a second
  * block of variable values in tokens.css and NOT a single component change —
- * that is the whole payoff of the no-hard-coded-colour rule.
+ * that is the whole payoff of the no-hard-coded-color rule.
  *
  * "System" is a real third option rather than a synonym for light: it follows
  * `prefers-color-scheme` live, so a machine that flips to dark at sunset takes

@@ -20,7 +20,7 @@ import brand, { findScheme } from '@/brand/brand.config';
 /* ---------- Identity ---------- */
 
 /** Primary line plus a muted sub-line. The workhorse of this console:
- *  "Lloyds Bank / [30-96-35]", "Ashton & Partners Ltd / MID: 8895…". */
+ *  "Wells Fargo Bank / [121000248]", "Ashton & Partners LLC / MID: 8895…". */
 export function TwoLine({ primary, secondary, to }) {
   return (
     <span className="cell-2l">
@@ -87,8 +87,8 @@ export function TypeBadge({ value }) {
 }
 
 /* ---------- Risk ---------- *
- * A solid triangle, pointing up for elevated risk and down for low. Colour
- * alone would not survive a colour-vision deficiency, so direction carries the
+ * A solid triangle, pointing up for elevated risk and down for low. Color
+ * alone would not survive a color-vision deficiency, so direction carries the
  * same information redundantly. */
 
 export function RiskTriangle({ tier }) {
@@ -117,7 +117,7 @@ export function TaggedFlag({ on }) {
 }
 
 /* ---------- Priority ---------- *
- * ERT shows priority as a bare coloured arrow, no text. */
+ * ERT shows priority as a bare colored arrow, no text. */
 
 export function PriorityArrow({ value }) {
   const meta = priorityMeta(value);

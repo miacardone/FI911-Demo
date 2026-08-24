@@ -15,7 +15,7 @@ import { useToast } from '@/context/ToastContext';
  * The reference renders the value as a plain string ("-$100.00", "$15.00") in
  * a right-aligned column, which makes a credit and a debit look identical at a
  * glance. Since the whole point is reconciliation, credits and debits are
- * coloured and totalled separately here, and a recurring adjustment is marked
+ * colored and totalled separately here, and a recurring adjustment is marked
  * as such — the reference stores a start and end month and leaves you to
  * notice that Dec-2029 means "forever".
  */

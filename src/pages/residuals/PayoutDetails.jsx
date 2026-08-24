@@ -27,8 +27,8 @@ export function PayoutDetails() {
       text: (r) => `${r.agent} ${r.profileId}`,
     },
     {
-      key: 'participants', header: 'Participants', fw: 8, align: 'right', sortable: true,
-      cell: (r) => <LinkCell onClick={() => toast.notify(`${r.participants} participants under ${r.agent}.`)}>{r.participants}</LinkCell>,
+      key: 'merchants', header: 'Merchants', fw: 8, align: 'right', sortable: true,
+      cell: (r) => <LinkCell onClick={() => toast.notify(`${r.merchants} merchants under ${r.agent}.`)}>{r.participants}</LinkCell>,
     },
     { key: 'transactions', header: 'Transactions', fw: 9, align: 'right', sortable: true, cell: (r) => formatNumber(r.transactions) },
     money('volume', 'Volume', 10),

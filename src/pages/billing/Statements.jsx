@@ -16,12 +16,12 @@ import brand from '@/brand/brand.config';
  */
 
 const ADVANCED_FIELDS = [
-  { name: 'participant', label: 'Participant Name' },
+  { name: 'merchant', label: 'Merchant Name' },
   { name: 'merchant', label: 'Merchant' },
   { name: 'mid', label: 'MID' },
   { name: 'processor', label: 'Processor', type: 'select', options: brand.processors.map((p) => ({ value: p, label: p })) },
   { name: 'month', label: 'Month', type: 'date' },
-  { name: 'currency', label: 'Currency', type: 'select', options: [{ value: 'GBP', label: 'GBP' }] },
+  { name: 'currency', label: 'Currency', type: 'select', options: [{ value: 'USD', label: 'USD' }] },
 ];
 
 export function Statements() {
@@ -36,12 +36,12 @@ export function Statements() {
 
   const columns = [
     {
-      key: 'participant',
-      header: 'Participant Name',
+      key: 'merchant',
+      header: 'Merchant Name',
       fw: 22,
       sortable: true,
       cell: (r) => <TwoLine primary={r.participant} secondary={`${r.merchant} • MID:${r.mid}`} />,
-      text: (r) => `${r.participant} ${r.merchant} ${r.mid}`,
+      text: (r) => `${r.merchant} ${r.merchant} ${r.mid}`,
     },
     { key: 'processor', header: 'Processor', fw: 10, sortable: true },
     { key: 'month', header: 'Month', fw: 9, sortable: true },

@@ -12,7 +12,7 @@ import { ALERT_CODES, alertCode } from '@/data/riskQueue';
  * you nothing, and the legend disappears the moment you move the mouse toward
  * the row you were reading about.
  *
- * Here each badge carries its own meaning on hover, and its dot is coloured by
+ * Here each badge carries its own meaning on hover, and its dot is colored by
  * severity, so a row with three high-severity alerts LOOKS different from a
  * row with three low ones without reading a single code. The full legend is
  * still available, but as a pinned toolbar panel you can leave open while you
@@ -107,7 +107,7 @@ export function AlertLegend({ onClose }) {
       ))}
 
       <span className="alert-legend__foot">
-        Dot colour is severity — <span className="acode acode--high"><span className="acode__dot" />high</span>
+        Dot color is severity — <span className="acode acode--high"><span className="acode__dot" />high</span>
         <span className="acode acode--medium"><span className="acode__dot" />medium</span>
         <span className="acode acode--low"><span className="acode__dot" />low</span>
       </span>

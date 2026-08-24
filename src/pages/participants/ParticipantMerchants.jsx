@@ -10,10 +10,10 @@ import { routes } from '@/data/navigation';
 import { useToast } from '@/context/ToastContext';
 
 /** The merchant book beneath one live participant, reached from that row's
- *  "Participant Merchants" action. */
+ *  "Merchant Merchants" action. */
 
 const ADVANCED_FIELDS = [
-  { name: 'name', label: 'Participant Name' },
+  { name: 'name', label: 'Merchant Name' },
   { name: 'agent', label: 'Agent Name' },
   { name: 'contact', label: 'Contact Name' },
   { name: 'mid', label: 'MID' },
@@ -37,7 +37,7 @@ export function ParticipantMerchants() {
   const visible = useMemo(() => applyFilters(rows, ADVANCED_FIELDS, applied), [rows, applied]);
 
   const columns = [
-    { key: 'name', header: 'Participant Name', fw: 14, sortable: true },
+    { key: 'name', header: 'Merchant Name', fw: 14, sortable: true },
     { key: 'type', header: 'Type', fw: 7, cell: (r) => <TypeBadge value={r.type} /> },
     { key: 'agent', header: 'Agent Name', fw: 11, sortable: true },
     { key: 'contact', header: 'Contact Name', fw: 11, sortable: true },
@@ -58,7 +58,7 @@ export function ParticipantMerchants() {
       columns={columns}
       rows={visible}
       searchPlaceholder="Search merchants"
-      exportName="participant-merchants"
+      exportName="merchant-merchants"
       onAdvanced={() => setAdvancedOpen((v) => !v)}
       advancedOpen={advancedOpen}
       advanced={(
@@ -76,7 +76,7 @@ export function ParticipantMerchants() {
           <Button variant="secondary" size="sm" onClick={() => navigate(routes.liveParticipants)}>Back to participants</Button>
         </>
       )}
-      empty="No merchants for this participant."
+      empty="No merchants for this merchant."
     />
   );
 }

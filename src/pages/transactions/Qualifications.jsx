@@ -13,14 +13,14 @@ const columns = [
   secondary(text('bankName', 'Bank Name', 10)),
   {
     hiddenByDefault: true,
-    key: 'accountNumber', header: 'Account Number / Sort Code', fw: 12, sortable: true,
+    key: 'accountNumber', header: 'Account Number / Routing Number', fw: 12, sortable: true,
     cell: (r) => (
       <span className="cell-2l">
         <span className="cell-2l__main">{r.accountNumber}</span>
-        <span className="cell-2l__sub">{r.sortCode}</span>
+        <span className="cell-2l__sub">{r.routingNumber}</span>
       </span>
     ),
-    text: (r) => `${r.accountNumber} ${r.sortCode}`,
+    text: (r) => `${r.accountNumber} ${r.routingNumber}`,
   },
   text('qualification', 'Qualification', 12),
   percent('feePercent', 'Fee Percen...', 9),
@@ -35,7 +35,7 @@ const columns = [
 ];
 
 const CUSTOM_FIELDS = [
-  { name: 'merchant', label: 'Participant Name / MID' },
+  { name: 'merchant', label: 'Merchant Name / MID' },
   { name: 'groupName', label: 'Group Name', type: 'select', options: [{ value: 'All', label: 'All' }] },
   { name: 'region', label: 'Region / Channel-Department' },
   { name: 'type', label: 'Type', type: 'select', options: [{ value: 'PSP', label: 'PSP' }] },

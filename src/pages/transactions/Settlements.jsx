@@ -14,11 +14,11 @@ const summaryColumns = [
   { key: 'settleDate', header: 'Settle Date', fw: 9, sortable: true, cell: (r) => <span className="cell-link">{r.settleDate}</span> },
   text('terminalId', 'Terminal ID', 11),
   count('salesCount', 'Sales (#)', 7),
-  money('salesValue', 'Sales (£)', 10),
+  money('salesValue', 'Sales ($)', 10),
   count('refundCount', 'Refund (#)', 7),
-  money('refundValue', 'Refund (£)', 9),
+  money('refundValue', 'Refund ($)', 9),
   count('netCount', 'Net (#)', 6),
-  money('netValue', 'Net (£)', 10),
+  money('netValue', 'Net ($)', 10),
   text('processor', 'Processor', 8),
 ];
 
@@ -27,14 +27,14 @@ const detailColumns = [
   text('merchant', 'Merchant / MID', 20),
   text('transactionType', 'Transaction Type', 10),
   {
-    key: 'accountNumber', header: 'Account Number / Sort Code', fw: 12, sortable: true,
+    key: 'accountNumber', header: 'Account Number / Routing Number', fw: 12, sortable: true,
     cell: (r) => (
       <span className="cell-2l">
         <span className="cell-2l__main">{r.accountNumber}</span>
-        <span className="cell-2l__sub">{r.sortCode}</span>
+        <span className="cell-2l__sub">{r.routingNumber}</span>
       </span>
     ),
-    text: (r) => `${r.accountNumber} ${r.sortCode}`,
+    text: (r) => `${r.accountNumber} ${r.routingNumber}`,
   },
   text('terminalId', 'Terminal ID', 10),
   text('currency', 'Currency', 7),

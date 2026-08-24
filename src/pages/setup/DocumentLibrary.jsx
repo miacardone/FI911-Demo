@@ -127,7 +127,7 @@ function DocumentsTab() {
           <TwoLine primary={r.name} secondary={r.participant} />
         </span>
       ),
-      text: (r) => `${r.name} ${r.participant}`,
+      text: (r) => `${r.name} ${r.merchant}`,
     },
     { key: 'type', header: 'Category', fw: 14, sortable: true },
     { key: 'retentionYears', header: 'Retention', fw: 8, align: 'center', sortable: true, cell: (r) => `${r.retentionYears} yr` },
@@ -145,7 +145,7 @@ function DocumentsTab() {
     <ListTable
       columns={columns}
       rows={DOCUMENTS}
-      searchPlaceholder="Search document or participant"
+      searchPlaceholder="Search document or merchant"
       exportName="documents"
       totals={['sizeMb']}
       note="Configuration view. Browsing and downloading day to day happens in Document Center on the main rail."

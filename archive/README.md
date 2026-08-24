@@ -25,28 +25,28 @@ different names.
 
 | Page | Route it used to serve |
 |---|---|
-| Participants › Onboarding | `/participants/onboarding` |
-| Participants › Onboarding detail | `/participants/onboarding/:id` |
+| Merchants › Onboarding | `/merchants/onboarding` (was `/participants/onboarding`) |
+| Participants › Onboarding detail | `/merchants/onboarding/:id` |
 | Residuals › Trending Report | `/residuals/trending-report` |
-| Risk Management › Dashboard | `/risk-management/dashboard` |
-| Risk Management › Merchants | `/risk-management/merchants` |
-| Risk Management › Alert Action | `/risk-management/alert-action` |
-| Risk Management › Merchant Risk Profile | `/risk-management/merchant-risk-profile` |
-| Risk Management › Held Volume | `/risk-management/held-volume` |
+| Risk › Dashboard | `/risk/dashboard` |
+| Risk › Merchants | `/risk/merchants` |
+| Risk › Alert Action | `/risk/alert-action` |
+| Risk › Merchant Risk Profile | `/risk/merchant-risk-profile` |
+| Risk › Held Volume | `/risk/held-volume` |
 | Transactions › Account Holder | `/transactions/account-holder` |
 | Transactions › Gateway | `/transactions/gateway` |
 | Transactions › Funding Category | `/transactions/funding-category` |
 
 ### Also changed, without archiving a file
 
-**Risk Management › Rules** left the main rail but was *not* archived. Clive
+**Risk › Rules** left the main rail but was *not* archived. Clive
 lists it under Setup › Risk › Rules Setup, and both entries rendered the same
 `src/pages/risk/Rules.jsx`. Only the main-rail route and nav entry went; the
 page is still live at `/setup/rules`.
 
 **Two section landings were re-pointed** at pages that still exist:
 
-- `/risk-management` → Work Queue (was Risk Dashboard)
+- `/risk` → Work Queue (was Risk Dashboard)
 - `/transactions` → ACH Listings (was Account Holder)
 
 ### Kept deliberately — these are Clive's under another name
@@ -55,18 +55,25 @@ Worth knowing before anyone "tidies up" further:
 
 | Ours | Clive's list calls it |
 |---|---|
+These have since been RENAMED to Clive's vocabulary (2026/08/24), so the demo
+now reads in his nouns throughout — rail, page titles, column headers, URLs:
+
+| Was | Now |
+|---|---|
 | Participants › Invitations | Merchants › Proposals |
 | Participants › Applications | Merchants › Contracts |
 | Participants › Live Participants | Merchants › Live Merchants |
 | Customer Services › ERT | Customer Services › Tickets |
-| Residuals › General Ledger | Residuals › Payout Splits *(its tabs are Splits Detail / My Splits)* |
+| Residuals › General Ledger | Residuals › Payout Splits |
 | Residuals › Fee Adjustments | Residuals › Payout Adjustments |
 | Residuals › Participant Status | Residuals › Merchant Status |
-| Residuals › Income / Expense | Residuals › Inc/Exp |
 | Disputes › Disputes | Disputes › Chargebacks |
+| Risk Management | Risk |
 
-The demo still uses our vocabulary. Renaming the rail to Clive's is a separate
-job and touches only `src/data/navigation.js` plus each page's `title`.
+Component and file names still use the old nouns (`Invitations.jsx`,
+`ParticipantStatus.jsx`). That is deliberate — renaming files would have
+churned every import for no visible gain, and the route KEYS in
+`navigation.js` (`routes.invitations`) are internal identifiers, not copy.
 
 ---
 

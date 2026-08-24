@@ -21,29 +21,29 @@ export const routes = {
   dashboard: '/dashboard',
 
   /* Participants */
-  invitations: '/participants/invitations',
-  invitationDetail: (id = ':id') => `/participants/invitations/${id}`,
-  applications: '/participants/applications',
-  applicationDetail: (id = ':id') => `/participants/applications/${id}`,
-  underwriting: '/participants/underwriting',
-  underwritingDetail: (id = ':id') => `/participants/underwriting/${id}`,
-  liveParticipants: '/participants/live',
-  liveParticipantDetail: (id = ':id') => `/participants/live/${id}`,
-  participantMerchants: (id = ':id') => `/participants/live/${id}/merchants`,
+  invitations: '/merchants/proposals',
+  invitationDetail: (id = ':id') => `/merchants/proposals/${id}`,
+  applications: '/merchants/contracts',
+  applicationDetail: (id = ':id') => `/merchants/contracts/${id}`,
+  underwriting: '/merchants/underwriting',
+  underwritingDetail: (id = ':id') => `/merchants/underwriting/${id}`,
+  liveParticipants: '/merchants/live',
+  liveParticipantDetail: (id = ':id') => `/merchants/live/${id}`,
+  participantMerchants: (id = ':id') => `/merchants/live/${id}/locations`,
 
   /* Customer Services */
-  ert: '/customer-services/ert',
+  ert: '/customer-services/tickets',
 
   /* Reports */
   merchantGlobal: '/reports/merchant-global',
   productivityReport: '/reports/productivity',
 
   /* Residuals */
-  generalLedger: '/residuals/general-ledger',
-  feeAdjustments: '/residuals/fee-adjustments',
+  generalLedger: '/residuals/payout-splits',
+  feeAdjustments: '/residuals/payout-adjustments',
   agentPayoutSummary: '/residuals/agent-payout-summary',
   payoutDetails: '/residuals/payout-details',
-  participantStatus: '/residuals/participant-status',
+  participantStatus: '/residuals/merchant-status',
   incomeExpense: '/residuals/income-expense',
   portfolioPayoutDetails: '/residuals/portfolio-payout-details',
 
@@ -53,10 +53,10 @@ export const routes = {
   chargebacksAlerts: '/disputes/alerts',
 
   /* Risk Management */
-  workQueue: '/risk-management/work-queue',
+  workQueue: '/risk/work-queue',
   workQueueMerchant: (mid = ':mid') => `/risk-management/work-queue/${mid}`,
-  actionHistory: '/risk-management/action-history',
-  unactionedQueue: '/risk-management/unactioned-queue',
+  actionHistory: '/risk/action-history',
+  unactionedQueue: '/risk/unactioned-queue',
 
   /* Transactions */
   achListings: '/transactions/ach-listings',
@@ -117,15 +117,15 @@ export const nav = [
     crumb: 'Dashboard',
   },
   {
-    label: 'Participants',
-    path: '/participants',
+    label: 'Merchants',
+    path: '/merchants',
     icon: 'users',
-    crumb: 'Participants',
+    crumb: 'Merchants',
     children: [
-      { label: 'Invitations', path: routes.invitations, permission: 'Invitations', area: 'Participants', crumb: 'Invitations' },
-      { label: 'Applications', path: routes.applications, permission: 'Applications', area: 'Participants', crumb: 'Applications' },
-      { label: 'Underwriting', path: routes.underwriting, permission: 'Underwriting', area: 'Participants', crumb: 'Underwriting' },
-      { label: 'Live Participants', path: routes.liveParticipants, permission: 'Live Participants', area: 'Participants', crumb: 'Live Participants' },
+      { label: 'Proposals', path: routes.invitations, permission: 'Proposals', area: 'Merchants', crumb: 'Proposals' },
+      { label: 'Contracts', path: routes.applications, permission: 'Contracts', area: 'Merchants', crumb: 'Contracts' },
+      { label: 'Underwriting', path: routes.underwriting, permission: 'Underwriting', area: 'Merchants', crumb: 'Underwriting' },
+      { label: 'Live Merchants', path: routes.liveParticipants, permission: 'Live Merchants', area: 'Merchants', crumb: 'Live Merchants' },
     ],
   },
   {
@@ -134,7 +134,7 @@ export const nav = [
     icon: 'calendar',
     crumb: 'customer-services',
     children: [
-      { label: 'ERT', path: routes.ert, permission: 'ERT', area: 'Customer Services', crumb: 'ERT' },
+      { label: 'Tickets', path: routes.ert, permission: 'Tickets', area: 'Customer Services', crumb: 'Tickets' },
     ],
   },
   {
@@ -143,11 +143,11 @@ export const nav = [
     icon: 'pound',
     crumb: 'Residuals',
     children: [
-      { label: 'General Ledger', path: routes.generalLedger, permission: 'General Ledger', area: 'Residuals', crumb: 'General Ledger' },
-      { label: 'Fee Adjustments', path: routes.feeAdjustments, permission: 'Fee Adjustments', area: 'Residuals', crumb: 'Fee Adjustments' },
+      { label: 'Payout Splits', path: routes.generalLedger, permission: 'Payout Splits', area: 'Residuals', crumb: 'Payout Splits' },
+      { label: 'Payout Adjustments', path: routes.feeAdjustments, permission: 'Payout Adjustments', area: 'Residuals', crumb: 'Payout Adjustments' },
       { label: 'Agent Payout Summary', path: routes.agentPayoutSummary, permission: 'Agent Payout Summary', area: 'Residuals', crumb: 'Agent Payout Summary' },
       { label: 'Payout Details', path: routes.payoutDetails, permission: 'Payout Details', area: 'Residuals', crumb: 'Payout Details' },
-      { label: 'Participant Status', path: routes.participantStatus, permission: 'Participant Status', area: 'Residuals', crumb: 'Participant Status' },
+      { label: 'Merchant Status', path: routes.participantStatus, permission: 'Merchant Status', area: 'Residuals', crumb: 'Merchant Status' },
       { label: 'Income / Expense', path: routes.incomeExpense, permission: 'Income / Expense', area: 'Residuals', crumb: 'Income / Expense' },
       { label: 'Portfolio Payout Details', path: routes.portfolioPayoutDetails, permission: 'Portfolio Payout Details', area: 'Residuals', crumb: 'Portfolio Payout Details' },
     ],
@@ -168,19 +168,19 @@ export const nav = [
     icon: 'alert',
     crumb: 'Disputes',
     children: [
-      { label: 'Disputes', path: routes.disputes, permission: 'Disputes', area: 'Disputes', crumb: 'Disputes', end: true },
+      { label: 'Chargebacks', path: routes.disputes, permission: 'Chargebacks', area: 'Disputes', crumb: 'Chargebacks', end: true },
       { label: 'Chargebacks & Alerts', path: routes.chargebacksAlerts, permission: 'Chargebacks & Alerts', area: 'Disputes', crumb: 'Chargebacks & Alerts' },
     ],
   },
   {
-    label: 'Risk Management',
-    path: '/risk-management',
+    label: 'Risk',
+    path: '/risk',
     icon: 'shield',
-    crumb: 'risk-management',
+    crumb: 'risk',
     children: [
-      { label: 'Work Queue', path: routes.workQueue, permission: 'Work Queue', area: 'Risk Management', crumb: 'Work Queue' },
-      { label: 'Action History', path: routes.actionHistory, permission: 'Action History', area: 'Risk Management', crumb: 'Action History' },
-      { label: 'Unactioned Queue', path: routes.unactionedQueue, permission: 'Unactioned Queue', area: 'Risk Management', crumb: 'Unactioned Queue' },
+      { label: 'Work Queue', path: routes.workQueue, permission: 'Work Queue', area: 'Risk', crumb: 'Work Queue' },
+      { label: 'Action History', path: routes.actionHistory, permission: 'Action History', area: 'Risk', crumb: 'Action History' },
+      { label: 'Unactioned Queue', path: routes.unactionedQueue, permission: 'Unactioned Queue', area: 'Risk', crumb: 'Unactioned Queue' },
     ],
   },
   {
@@ -311,7 +311,7 @@ export const PERMISSION_AREAS = [...new Set(ALL_LEAVES.map((l) => l.area))];
  * Always starts at Home. A leaf match contributes its parent crumb (when the
  * leaf sits inside a group) then its own. A detail route appends the record
  * label the caller passes in, so "Home > Participants > Invitations >
- * Alderton Medical Supplies Ltd" comes out of one call rather than three
+ * Alderton Medical Supply LLC" comes out of one call rather than three
  * bespoke header props.
  */
 export function crumbsFor(pathname, detailLabel) {

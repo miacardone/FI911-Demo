@@ -379,10 +379,10 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 .dt-wrap--fit { overflow-x: auto; overflow-y: visible; }
 
 .dt { width: 100%; border-collapse: collapse; font-size: var(--fs-small); }
-/* `auto` rather than `fixed`: fixed layout honours the declared width and
+/* `auto` rather than `fixed`: fixed layout honors the declared width and
    nothing else, so a money cell gets truncated at whatever share it was
    allotted. Auto layout respects a nowrap cell's content width and takes the
-   difference out of the flexible columns, which is the behaviour we want. */
+   difference out of the flexible columns, which is the behavior we want. */
 .dt--fit { table-layout: auto; width: 100%; font-size: var(--fs-micro); }
 
 /* Numbers: shrink-to-content, never wrap, never ellipsize. `width: 1%` is the
@@ -1107,7 +1107,7 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 
 /* `align-items: inherit` is what lets a two-line cell follow its column's
    text-align — as a flex container it would otherwise always pack left,
-   leaving identity columns ragged while every other column centred. */
+   leaving identity columns ragged while every other column centered. */
 .cell-2l { display: flex; flex-direction: column; gap: 1px; min-width: 0; line-height: 1.35; align-items: inherit; }
 .cell-2l__main { font-weight: 500; color: var(--c-ink); }
 .cell-2l__sub { font-size: var(--fs-micro); color: var(--c-ink-subtle); }
@@ -2170,8 +2170,8 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 .doc-cat { display: inline-flex; align-items: center; gap: 5px; }
 .doc-name { display: inline-flex; align-items: center; gap: 7px; min-width: 0; }
 
-/* ---------- Centred cells that outgrow their column ----------
-   A centred box clips text at BOTH ends: "Ashton & Partners Ltd" loses its A
+/* ---------- Centered cells that outgrow their column ----------
+   A centered box clips text at BOTH ends: "Ashton & Partners Ltd" loses its A
    as well as its d. The fix needs no measurement at all —
 
      width: fit-content   the box hugs its text …
@@ -2181,7 +2181,7 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
      text-align: left     so once clamped, the text starts at the left and the
                           ellipsis lands at the end
 
-   Short values therefore appear centred and long values truncate from the
+   Short values therefore appear centered and long values truncate from the
    right, with no JS, no observers, and none of the feedback loop that comes
    from measuring an element whose own width you then change. */
 
@@ -2201,3 +2201,10 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 /* The flex container must stretch, or its children are sized as flex items
    and `fit-content` never gets the chance to clamp. */
 .dt tbody td .cell-2l { align-items: stretch; }
+
+/* The legend was sitting right against the ring; a donut and its key read as
+   two things, not one. */
+.donut { gap: var(--s-3); }
+.donut .legend { margin-top: var(--s-1); }
+.donut-center__label { font-size: 9px; fill: var(--c-ink-subtle); }
+.tooltip__sub { display: block; font-size: var(--fs-micro); color: var(--c-ink-subtle); margin-top: 1px; }

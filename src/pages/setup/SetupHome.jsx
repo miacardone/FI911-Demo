@@ -212,7 +212,7 @@ export function SetupHome() {
       to: setupRoutes.tenant,
       stats: [
         { label: 'Processors', value: 6 },
-        { label: 'Currency', value: 'GBP' },
+        { label: 'Currency', value: 'USD' },
         { label: 'Timezone', value: 'London' },
       ],
     },

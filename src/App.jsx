@@ -100,31 +100,31 @@ export function App() {
               <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
                 <Route path="dashboard" element={<Dashboard />} />
 
-                <Route path="participants">
+                <Route path="merchants">
                   <Route index element={<Navigate to={routes.invitations} replace />} />
-                  <Route path="invitations" element={<Invitations />} />
-                  <Route path="invitations/:id" element={<InvitationDetail />} />
-                  <Route path="applications" element={<Applications />} />
-                  <Route path="applications/:id" element={<ApplicationDetail />} />
+                  <Route path="proposals" element={<Invitations />} />
+                  <Route path="proposals/:id" element={<InvitationDetail />} />
+                  <Route path="contracts" element={<Applications />} />
+                  <Route path="contracts/:id" element={<ApplicationDetail />} />
                   <Route path="underwriting" element={<Underwriting />} />
                   <Route path="underwriting/:id" element={<UnderwritingDetail />} />
                   <Route path="live" element={<LiveParticipants />} />
                   <Route path="live/:id" element={<LiveParticipantDetail />} />
-                  <Route path="live/:id/merchants" element={<ParticipantMerchants />} />
+                  <Route path="live/:id/locations" element={<ParticipantMerchants />} />
                 </Route>
 
                 <Route path="customer-services">
                   <Route index element={<Navigate to={routes.ert} replace />} />
-                  <Route path="ert" element={<Ert />} />
+                  <Route path="tickets" element={<Ert />} />
                 </Route>
 
                 <Route path="residuals">
                   <Route index element={<Navigate to={routes.generalLedger} replace />} />
-                  <Route path="general-ledger" element={<GeneralLedger />} />
-                  <Route path="fee-adjustments" element={<FeeAdjustments />} />
+                  <Route path="payout-splits" element={<GeneralLedger />} />
+                  <Route path="payout-adjustments" element={<FeeAdjustments />} />
                   <Route path="agent-payout-summary" element={<AgentPayoutSummary />} />
                   <Route path="payout-details" element={<PayoutDetails />} />
-                  <Route path="participant-status" element={<ParticipantStatus />} />
+                  <Route path="merchant-status" element={<ParticipantStatus />} />
                   <Route path="income-expense" element={<IncomeExpense />} />
                   <Route path="portfolio-payout-details" element={<PortfolioPayoutDetails />} />
                 </Route>
@@ -141,7 +141,7 @@ export function App() {
                   <Route path=":id" element={<DisputeDetail />} />
                 </Route>
 
-                <Route path="risk-management">
+                <Route path="risk">
                   <Route index element={<Navigate to={routes.workQueue} replace />} />
                   <Route path="work-queue" element={<WorkQueue />} />
                   <Route path="work-queue/:mid" element={<WorkQueueMerchant />} />

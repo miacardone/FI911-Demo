@@ -321,10 +321,11 @@ export function AreaChart({
 export function Donut({
   data, centerValue, centerLabel, size = 170, thickness = 22,
   legend = true, colorOffset = 0, formatValue = formatNumber, variant = 'donut',
-  /** Print each slice's share on the slice itself. The status donuts are read
-   *  at a glance across five cards, and a centre total answers a question
-   *  nobody asked of a percentage breakdown. Slices under 4% are skipped —
-   *  the label would not fit and would collide with its neighbour. */
+  /** Print each slice's COUNT on the slice itself. A percentage tells you the
+   *  shape but never the size — "20%" of what? The number is the answer, and
+   *  the share is one hover away. Slices under 6% are skipped: a four-digit
+   *  number does not fit an arc that thin and would collide with its
+   *  neighbor. */
   arcLabels = false,
 }) {
   if (variant === 'pie') thickness = size / 2;
@@ -353,6 +354,14 @@ export function Donut({
 
   const active = hover != null ? arcs[hover] : null;
 
+  /* The center answers "what is the headline here". A total is the wrong
+     headline for a breakdown — every slice already sums to it. The LARGEST
+     slice is the thing worth reading first, so that is what sits in the hole,
+     with its name underneath in smaller type. Hovering swaps in whichever
+     slice is under the cursor. */
+  const biggest = arcs.reduce((best, a) => (a.value > (best?.value ?? -1) ? a : best), null);
+  const focus = active ?? biggest;
+
   return (
     <div className="donut">
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={`${data.length} segments, ${total} total`}>
@@ -370,13 +379,13 @@ export function Donut({
               style={{ transition: 'stroke-width 120ms var(--ease)', cursor: 'pointer' }}
               onMouseEnter={() => setHover(i)}
               onMouseLeave={() => setHover(null)}
-            >
-              <title>{`${arc.label}: ${formatValue(arc.value)} (${Math.round(arc.fraction * 100)}%)`}</title>
-            </circle>
+              /* No <title> here — the styled tooltip below already covers this
+                 slice, and a native title on top of it renders both at once. */
+            />
           ))}
         </g>
         {arcLabels && arcs.map((arc) => {
-          if (arc.fraction < 0.04) return null;
+          if (arc.fraction < 0.06) return null;
           const mid = (arc.offset + arc.length / 2) / circumference;
           const angle = mid * 2 * Math.PI - Math.PI / 2;
           return (
@@ -387,18 +396,18 @@ export function Donut({
               className="donut-arc__label"
               textAnchor="middle"
             >
-              {Math.round(arc.fraction * 100)}%
+              {formatAxis(arc.value)}
             </text>
           );
         })}
 
-        {variant !== 'pie' && !arcLabels && (
+        {variant !== 'pie' && focus && (
           <>
             <text x={c} y={c - 1} className="donut-center__value" textAnchor="middle">
-              {active ? formatValue(active.value) : (centerValue ?? formatNumber(total))}
+              {active ? formatValue(active.value) : (centerValue ?? formatValue(focus.value))}
             </text>
             <text x={c} y={c + 13} className="donut-center__label" textAnchor="middle">
-              {active ? active.label : centerLabel}
+              {active ? active.label : (centerLabel ?? focus.label)}
             </text>
           </>
         )}
@@ -410,7 +419,8 @@ export function Donut({
             <span className="legend__swatch" style={{ background: active.color }} />
             <span className="tooltip__title" style={{ marginBottom: 0 }}>{active.label}</span>
           </span>
-          <span className="mono strong">{formatValue(active.value)} ({Math.round(active.fraction * 100)}%)</span>
+          <span className="mono strong">{formatValue(active.value)}</span>
+          <span className="tooltip__sub">{(active.fraction * 100).toFixed(1)}% of {formatValue(total)}</span>
         </div>
       )}
 

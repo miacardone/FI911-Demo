@@ -11,7 +11,7 @@ import { useEffect, useRef, useState } from 'react';
  * Two things this gets right that a naive version does not:
  *
  * 1. ROW HEIGHT IS MEASURED, NOT ASSUMED. Rows are not a uniform height —
- *    a two-line identity cell ("Alderton Medical Supplies Ltd" over its
+ *    a two-line identity cell ("Alderton Medical Supply LLC" over its
  *    account number) is half again as tall as a plain one, and density
  *    changes it too. Assuming a constant overshoots on some grids and
  *    undershoots on others, so the real rendered height is sampled and only

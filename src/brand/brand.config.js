@@ -53,11 +53,11 @@ export const fi911Brand = {
   id: 'fi911',
   name: 'Fi911',
   productName: 'Operator Console',
-  legalName: 'Fi911 Ltd.',
+  legalName: 'Fi911 Inc.',
   shortName: 'FI911',
   tagline: 'Participant onboarding, residuals, risk and disputes in one operator console.',
   supportEmail: 'ops@fi911.example',
-  emailDomain: 'ukpaymentsops.co.uk',
+  emailDomain: 'uspaymentsops.com',
 
   /** Paths only — never imported into a component. Served from /public.
    *  The lockup already spells out "Fi911", so no text renders beside it.
@@ -149,11 +149,11 @@ export const fi911Brand = {
   },
 
   /* --- Chart ramp ------------------------------------------------------- *
-   * Brand teal leads, brand grey is the comparison series, brand yellow is
-   * third. The dashboards deliberately pair a saturated series against a grey
+   * Brand teal leads, brand gray is the comparison series, brand yellow is
+   * third. The dashboards deliberately pair a saturated series against a gray
    * one (see "PSP Onboarding Summary" and "Transactions YTD & YOY", where the
-   * prior year is grey so the current year reads first). Separation comes from
-   * lightness as well as hue, so the ramp survives colour-vision deficiency
+   * prior year is gray so the current year reads first). Separation comes from
+   * lightness as well as hue, so the ramp survives color-vision deficiency
    * and greyscale printing. Assign in fixed order, never cycle — a sixth
    * category folds into "Other" and takes chartContrast. */
   chartSeries: ['#00AAB4', '#3C4146', '#FFC300', '#00646B', '#9AA3AB'],
@@ -168,9 +168,9 @@ export const fi911Brand = {
   ],
 
   /* --- Money, locale, markets ------------------------------------------- */
-  currency: 'GBP',
-  locale: 'en-GB',
-  timezone: 'Europe/London',
+  currency: 'USD',
+  locale: 'en-US',
+  timezone: 'America/New_York',
   markets: ['GB'],
 
   /** The console is demoed against a fixed "today" so every seeded date,

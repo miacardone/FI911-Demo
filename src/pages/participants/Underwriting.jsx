@@ -15,7 +15,7 @@ import brand from '@/brand/brand.config';
  *  participant carries an assessed tier rather than just a status. */
 
 const ADVANCED_FIELDS = [
-  { name: 'participant', label: 'Participant Name' },
+  { name: 'merchant', label: 'Merchant Name' },
   { name: 'type', label: 'Type', type: 'select', options: brand.participantTypes.map((t) => ({ value: t.label, label: t.label })) },
   { name: 'agent', label: 'Agent' },
   { name: 'assignedTo', label: 'Assigned To' },
@@ -43,7 +43,7 @@ export function Underwriting() {
   );
 
   const columns = [
-    { key: 'participant', header: 'Participant Name', fw: 15, sortable: true, cell: (r) => <LinkCell to={routes.underwritingDetail(r.id)}>{r.participant}</LinkCell> },
+    { key: 'merchant', header: 'Merchant Name', fw: 15, sortable: true, cell: (r) => <LinkCell to={routes.underwritingDetail(r.id)}>{r.participant}</LinkCell> },
     { key: 'type', header: 'Type', fw: 6, sortable: true, cell: (r) => <TypeBadge value={r.type} /> },
     { key: 'agent', header: 'Agent', fw: 11, sortable: true },
     { key: 'assignedTo', header: 'Assigned To', fw: 11, sortable: true, cell: (r) => (r.assignedTo ? r.assignedTo : <Muted>-</Muted>) },
@@ -65,15 +65,15 @@ export function Underwriting() {
   return (
     <>
       <ListPage
-        title="Participant Underwriting"
-        description="Monitor and manage participant underwriting processes with risk profile assessment and status tracking"
+        title="Merchant Underwriting"
+        description="Monitor and manage merchant underwriting processes with risk profile assessment and status tracking"
         tabs={tabs}
         tab={tab}
         onTabChange={setTab}
         columns={columns}
         rows={visible}
-        searchPlaceholder="Search participant underwriting"
-        exportName="participant-underwriting"
+        searchPlaceholder="Search merchant underwriting"
+        exportName="merchant-underwriting"
         onAdvanced={() => setAdvancedOpen((v) => !v)}
         advancedOpen={advancedOpen}
         advanced={(

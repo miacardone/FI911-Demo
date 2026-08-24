@@ -19,7 +19,7 @@ const columns = [
 ];
 
 const CUSTOM_FIELDS = [
-  { name: 'merchant', label: 'Participant Name / MID' },
+  { name: 'merchant', label: 'Merchant Name / MID' },
   { name: 'groupName', label: 'Group Name', type: 'select', options: [{ value: 'All', label: 'All' }] },
   { name: 'region', label: 'Region / Channel-Department' },
   { name: 'type', label: 'Type', type: 'select', options: [{ value: 'PSP', label: 'PSP' }, { value: 'Merchant', label: 'Merchant' }] },

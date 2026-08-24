@@ -17,7 +17,7 @@ import brand from '@/brand/brand.config';
  *
  * Run the month, watch it land.
  *
- * The reference shows a bare percentage bar labelled "Calculation Progress…"
+ * The reference shows a bare percentage bar labeled "Calculation Progress…"
  * with no stage names and no estimate — a 14% that could mean four minutes or
  * forty. Here the run reports which STAGE it is in, so the number means
  * something, and the summary tab records how long each past run took, which is

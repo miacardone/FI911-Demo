@@ -12,7 +12,7 @@ import { useToast } from '@/context/ToastContext';
  * Document Center — every file held against a participant, in one place.
  *
  * Files otherwise live inside the Attachments modal of whichever record they
- * were uploaded to, which makes "find me that participant's KYC pack" a hunt
+ * were uploaded to, which makes "find me that merchant's KYC pack" a hunt
  * through five funnel stages. This is the flat view.
  *
  * RETENTION IS THE REASON THIS SCREEN EARNS ITS PLACE. Each document carries a
@@ -35,7 +35,7 @@ const stamp = (d) => `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, 
 
 const ADVANCED_FIELDS = [
   { name: 'name', label: 'File Name' },
-  { name: 'participant', label: 'Participant', type: 'select', options: INSTITUTIONS.map((i) => ({ value: i.name, label: i.name })) },
+  { name: 'merchant', label: 'Merchant', type: 'select', options: INSTITUTIONS.map((i) => ({ value: i.name, label: i.name })) },
   { name: 'type', label: 'Document Type', type: 'select', options: DOCUMENT_TYPES.map((t) => ({ value: t.label, label: t.label })) },
   { name: 'uploadedBy', label: 'Uploaded By' },
   { name: 'uploaded', label: 'Uploaded', type: 'date' },
@@ -81,9 +81,9 @@ export function DocumentCenter() {
     },
     { key: 'type', header: 'Document Type', fw: 12, sortable: true },
     {
-      key: 'participant', header: 'Participant', fw: 15, sortable: true,
-      cell: (r) => <TwoLine primary={r.participant} secondary={r.sortCode} />,
-      text: (r) => `${r.participant} ${r.sortCode}`,
+      key: 'merchant', header: 'Merchant', fw: 15, sortable: true,
+      cell: (r) => <TwoLine primary={r.participant} secondary={r.routingNumber} />,
+      text: (r) => `${r.merchant} ${r.routingNumber}`,
     },
     { key: 'uploadedBy', header: 'Uploaded By', fw: 12, sortable: true },
     { key: 'uploaded', header: 'Uploaded', fw: 9, sortable: true },
@@ -124,7 +124,7 @@ export function DocumentCenter() {
   return (
     <ListPage
       title="Document Center"
-      description="Every document held against a participant, with its retention position"
+      description="Every document held against a merchant, with its retention position"
       tabs={tabs}
       tab={tab}
       onTabChange={setTab}

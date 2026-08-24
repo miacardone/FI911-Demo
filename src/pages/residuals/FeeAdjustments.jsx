@@ -9,7 +9,7 @@ import { FEE_ADJUSTMENTS, myAdjustments } from '@/data/residuals';
 
 const columns = [
   { key: 'month', header: 'Month', fw: 9, sortable: true },
-  { key: 'participant', header: 'Participant Name', fw: 18, sortable: true },
+  { key: 'merchant', header: 'Merchant Name', fw: 18, sortable: true },
   { key: 'type', header: 'Type', fw: 6, sortable: true },
   {
     key: 'agent', header: 'Agent Name', fw: 13, sortable: true,
@@ -34,7 +34,7 @@ export function FeeAdjustments() {
 
   return (
     <ListPage
-      title="Fee Adjustments"
+      title="Payout Adjustments"
       description="View and manage residual fee adjustments"
       tabs={[{ value: 'all', label: 'Adjustments' }, { value: 'mine', label: 'My Adjustments' }]}
       tab={tab}

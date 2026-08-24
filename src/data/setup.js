@@ -337,7 +337,7 @@ export const CALCULATION_RUNS = (() => {
   const d = createDraw(6209);
 
   return Array.from({ length: 14 }, (_, i) => {
-    const status = i === 0 ? 'In Progress' : d.weighted([['Completed', 8], ['Failed', 1], ['Cancelled', 1]]);
+    const status = i === 0 ? 'In Progress' : d.weighted([['Completed', 8], ['Failed', 1], ['Canceled', 1]]);
     const month = `${MONTHS[(7 - Math.floor(i / 2) + 12) % 12]}-2026`;
     return {
       id: `cr-${i}`,

@@ -229,7 +229,7 @@ export function ComplianceSection({ form, long = false }) {
 
 const RISK_GROUPS = [
   ['volume', 'Volume'],
-  ['value', 'Value £'],
+  ['value', 'Value $'],
   ['account', 'Account'],
   ['email', 'Email'],
   ['ipDevice', 'IP / Device'],
@@ -456,7 +456,7 @@ function RateRow({ label, form, name }) {
         onChange={(e) => set(`${name}Pct`, e.target.value)}
         aria-label={`${label} percentage`}
       />
-      <span className="rate-row__op">% + £</span>
+      <span className="rate-row__op">% + $</span>
       <input
         className="input rate-row__num"
         type="number" step="0.001"
@@ -484,7 +484,7 @@ export function PricingSection({ form }) {
             <span className="rate-row__label">RATE</span>
             <span className="rate-row__num">%</span>
             <span className="rate-row__op" />
-            <span className="rate-row__num">£ per txn</span>
+            <span className="rate-row__num">$ per txn</span>
           </div>
           {CARD_RATES.map(([name, label]) => <RateRow key={name} name={name} label={label} form={form} />)}
         </div>
@@ -509,7 +509,7 @@ export function PricingSection({ form }) {
             <span className="rate-row__label">RATE</span>
             <span className="rate-row__num">%</span>
             <span className="rate-row__op" />
-            <span className="rate-row__num">£ per txn</span>
+            <span className="rate-row__num">$ per txn</span>
           </div>
           {PIN_RATES.map(([name, label]) => <RateRow key={name} name={name} label={label} form={form} />)}
         </div>

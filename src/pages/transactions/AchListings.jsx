@@ -15,18 +15,18 @@ const summaryColumns = [
   count('creditCount', 'Credits ...', 7),
   money('creditValue', 'Credits ...', 9),
   count('debitCount', 'Debits (#)', 7),
-  money('debitValue', 'Debits (£)', 8),
+  money('debitValue', 'Debits ($)', 8),
   count('creditReturnCount', 'Credit R...', 7),
   money('creditReturnValue', 'Credit R...', 8),
   count('debitReturnCount', 'Debit Re...', 7),
   money('debitReturnValue', 'Debit Re...', 8),
   count('transactions', 'Transac...', 7),
-  money('net', 'Net (£)', 8),
+  money('net', 'Net ($)', 8),
   text('processor', 'Processor', 8),
 ];
 
 const detailColumns = [
-  text('participant', 'Participant Name', 14),
+  text('merchant', 'Merchant Name', 14),
   text('partner', 'Partner', 10),
   text('terminalId', 'Terminal ID', 11),
   { key: 'transactionId', header: 'Transaction ID', fw: 13, sortable: true, cell: (r) => <span className="cell-link">{r.transactionId}</span> },

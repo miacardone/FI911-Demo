@@ -5,7 +5,7 @@
  * → Funding Deposits, with ACH Listings, Qualifications and Merchant Reserves
  * alongside. Each screen is the same payments story at a different point in
  * the lifecycle, which is why they share reference data (merchants, partners,
- * sort codes) rather than each inventing its own.
+ * routing numbers) rather than each inventing its own.
  *
  * All of these are seeded from rng.js with a per-dataset seed, so the grids
  * are large enough to paginate and stable across reloads.
@@ -14,7 +14,7 @@
 import { createDraw } from '@/data/rng';
 import {
   ISO_PORTFOLIOS, MERCHANTS, PARTNERS, PROCESSOR_MERCHANTS, REGIONS,
-  INSTITUTIONS, maskAccount, midFor, sortCodeFor,
+  INSTITUTIONS, maskAccount, midFor, routingNumberFor,
 } from '@/data/reference';
 import brand from '@/brand/brand.config';
 
@@ -47,7 +47,7 @@ export const ACCOUNT_HOLDER_SUMMARY = (() => {
       accountName: merchant,
       accountNumber: d.digits(16),
       sendingPsp: inst.name,
-      sendingCode: inst.sortCode,
+      sendingCode: inst.routingNumber,
       disputeCount: disputes,
       disputeValue: d.money(1, 12),
       authDate: stamp(18),
@@ -76,7 +76,7 @@ export const ACCOUNT_HOLDER_DETAILS = (() => {
       disputeCount: d.int(0, 2),
       disputeValue: d.money(0.25, 2.5),
       bankAccount: `${d.digits(4)}****${d.digits(4)}`,
-      sortCode: d.pick(INSTITUTIONS).sortCode,
+      routingNumber: d.pick(INSTITUTIONS).routingNumber,
       bankName: inst.name,
       transactionType: 'AuthOnly',
       authResponse: 'Declined',
@@ -106,7 +106,7 @@ export const GATEWAY = (() => {
       partner: partner.name,
       transactionId: `${d.digits(4)}.${d.digits(4)}.${d.digits(4)}`,
       accountNumber: `****${d.digits(8)}`,
-      sortCode: `${d.digits(2)}-${d.digits(2)}-${d.digits(2)}`,
+      routingNumber: `${d.digits(2)}-${d.digits(2)}-${d.digits(2)}`,
       transactionType: d.pick(['Sale', 'Refund', 'Authorization']),
       transactionDate: stamp(20),
       amount: d.money(12, 260),
@@ -122,7 +122,7 @@ export const GATEWAY = (() => {
 
 export const ACH_SUMMARY = (() => {
   const d = createDraw(6301);
-  const isoIds = ['ISO_6109', 'HSBC_UK', 'ISO_1116', 'ISO_6897', 'ISO_7679', 'ISO_0787', 'ISO_9106', 'ISO_7558', 'ISO_5101', 'BOS_UK'];
+  const isoIds = ['ISO_6109', 'U.S. Bank_UK', 'ISO_1116', 'ISO_6897', 'ISO_7679', 'ISO_0787', 'ISO_9106', 'ISO_7558', 'ISO_5101', 'BOS_UK'];
   return Array.from({ length: 15 }, (_, i) => {
     const iso = isoIds[i % isoIds.length];
     const completed = d.bool(0.78);
@@ -179,7 +179,7 @@ export const ACH_DETAILS = (() => {
 
 export const AUTH_SUMMARY = (() => {
   const d = createDraw(6401);
-  const merchants = ['Hargreaves & Sons Ltd', 'Dunmore Travel Ltd', 'Whitmore Building Supplies', 'Lakeside Garden Centre', 'Pennine Textiles Ltd', 'Bridgford Food Services'];
+  const merchants = ['Harrington & Sons LLC', 'Dunmore Travel LLC', 'Whitmore Building Supplies', 'Lakeside Garden Center', 'Summit Textiles Inc', 'Bridgeport Food Services'];
   return Array.from({ length: 12 }, (_, i) => {
     const isRefund = d.bool(0.3);
     const value = d.money(120, 12000);
@@ -237,12 +237,12 @@ export const AUTH_DETAILS = (() => {
 export const SETTLEMENT_SUMMARY = (() => {
   const d = createDraw(6501);
   const rows = [
-    { iso: 'PERSONIFY_INC', merchant: 'Pemberton Retail Group', mid: '559909667570001', bank: 'HSBC', terminal: 'IFKQJQBYQ0Q', sales: 7, salesValue: 129251.25, refunds: 0, refundValue: 0 },
-    { iso: 'MERCHANT_PREFERRED_Z', merchant: 'Highfield Sports Direct', mid: '557978610570016', bank: 'HSBC', terminal: '100859927728', sales: 5, salesValue: 91255.75, refunds: 0, refundValue: 0 },
-    { iso: 'ATM_ONE_INC', merchant: 'Kingsway Electronics Ltd', mid: '876595895970182', bank: 'HSBC', terminal: 'OKDMVENIDT08', sales: 4, salesValue: 88600.00, refunds: 1, refundValue: -1890.00 },
-    { iso: 'ATM_ONE_INC', merchant: 'Kingsway Electronics Ltd', mid: '876595895970182', bank: 'Lloyds Bank', terminal: 'OKDMVENIDT07', sales: 5, salesValue: 134721.80, refunds: 1, refundValue: -3420.00 },
-    { iso: 'ATM_ONE_INC', merchant: 'Kingsway Electronics Ltd', mid: '876595895970182', bank: 'Lloyds Bank', terminal: 'OKDMVENIDT06', sales: 6, salesValue: 87317.05, refunds: 0, refundValue: 0 },
-    { iso: 'ATM_ONE_INC', merchant: 'Kingsway Electronics Ltd', mid: '876595895970182', bank: 'Barclays', terminal: 'OKDMVENIDT05', sales: 6, salesValue: 47420.25, refunds: 0, refundValue: 0 },
+    { iso: 'PERSONIFY_INC', merchant: 'Pemberton Retail Group', mid: '559909667570001', bank: 'U.S. Bank', terminal: 'IFKQJQBYQ0Q', sales: 7, salesValue: 129251.25, refunds: 0, refundValue: 0 },
+    { iso: 'MERCHANT_PREFERRED_Z', merchant: 'Highfield Sports Direct', mid: '557978610570016', bank: 'U.S. Bank', terminal: '100859927728', sales: 5, salesValue: 91255.75, refunds: 0, refundValue: 0 },
+    { iso: 'ATM_ONE_INC', merchant: 'Kingsport Electronics Ltd', mid: '876595895970182', bank: 'U.S. Bank', terminal: 'OKDMVENIDT08', sales: 4, salesValue: 88600.00, refunds: 1, refundValue: -1890.00 },
+    { iso: 'ATM_ONE_INC', merchant: 'Kingsport Electronics Ltd', mid: '876595895970182', bank: 'Wells Fargo Bank', terminal: 'OKDMVENIDT07', sales: 5, salesValue: 134721.80, refunds: 1, refundValue: -3420.00 },
+    { iso: 'ATM_ONE_INC', merchant: 'Kingsport Electronics Ltd', mid: '876595895970182', bank: 'Wells Fargo Bank', terminal: 'OKDMVENIDT06', sales: 6, salesValue: 87317.05, refunds: 0, refundValue: 0 },
+    { iso: 'ATM_ONE_INC', merchant: 'Kingsport Electronics Ltd', mid: '876595895970182', bank: 'Citibank', terminal: 'OKDMVENIDT05', sales: 6, salesValue: 47420.25, refunds: 0, refundValue: 0 },
   ];
 
   return rows.map((r, i) => ({
@@ -277,9 +277,9 @@ export const SETTLEMENT_DETAILS = (() => {
       merchant: `${base.merchant} MID: ${base.mid}`,
       transactionType: isRefund ? 'Refund (Credit)' : d.pick(['Sale', 'Capture']),
       accountNumber: d.digits(8),
-      sortCode: d.pick(INSTITUTIONS).sortCode,
+      routingNumber: d.pick(INSTITUTIONS).routingNumber,
       terminalId: base.terminalId,
-      currency: 'GBP',
+      currency: 'USD',
       transactionId: `TXN-20250617-000${101 + i}`,
       authCode: `${String.fromCharCode(65 + d.int(0, 3))}${d.digits(5)}`,
       authDate: stamp(19),
@@ -308,7 +308,7 @@ export const FUNDING_CATEGORY_SUMMARY = (() => {
       id: `fc-${i}`,
       merchant,
       mid: midFor(merchant, 15),
-      partner: 'Barclays Merchant Services',
+      partner: 'Citi Merchant Services',
       partnerCode: 'Code:int01',
       fundingCategory: category,
       processDate: stamp(14 + (i % 7)),
@@ -327,11 +327,11 @@ export const FUNDING_CATEGORY_DETAILS = (() => {
       id: `fcd-${i}`,
       merchant,
       mid: midFor(merchant, 15),
-      partner: 'Barclays Merchant Services',
+      partner: 'Citi Merchant Services',
       partnerCode: 'Code:int01',
       fundingCategory: d.pick(FUNDING_CATEGORIES),
       accountNumber: `****${d.digits(4)}`,
-      sortCode: d.pick(INSTITUTIONS).sortCode,
+      routingNumber: d.pick(INSTITUTIONS).routingNumber,
       amount: d.money(60, 630),
       processDate: stamp(14 + (i % 7)),
       type: d.pick(['PSP', 'Merchant']),
@@ -346,10 +346,10 @@ export const FUNDING_CATEGORY_DETAILS = (() => {
 export const FUNDING_DEPOSITS = (() => {
   const d = createDraw(6701);
   const merchants = [
-    'Ruthin Timber Merchants', 'Colwyn Bay Catering Supplies', 'Merthyr Tydfil Steel Fabricators',
-    'Brecon Beacons Holiday Park', 'Abergavenny Bakers Ltd', 'Pontypool Packaging Ltd',
+    'Riverton Timber Supply', 'Clearwater Catering Supply', 'Monroe Steel Fabricators',
+    'Blue Ridge Holiday Park', 'Arbor Hill Bakers LLC', 'Pontypool Packaging Ltd',
     'Tredegar Office Interiors Ltd', 'Tredegar Office Interiors Ltd', 'Caerphilly Cheese & Deli Ltd',
-    'Ebbw Vale Engineering Ltd', 'Monmouth River Cruises', 'Llandrindod Wells Spa Ltd',
+    'Elmwood Engineering Ltd', 'Monmouth River Cruises', 'Lakewood Springs Spa LLC',
     'Welshpool Agricultural Traders', 'Newtown Furniture Makers Ltd', 'Aberystwyth Marine Chandlery',
   ];
 
@@ -362,7 +362,7 @@ export const FUNDING_DEPOSITS = (() => {
       id: `fd-${i}`,
       merchant,
       fundingDate: stamp(10 + (i % 11)),
-      currency: 'GBP',
+      currency: 'USD',
       settleBankcards: settle,
       settleNonBankcards: 0,
       chargebacks,
@@ -385,8 +385,8 @@ const QUALIFICATIONS = [
 
 export const QUALIFICATION_ROWS = (() => {
   const d = createDraw(6801);
-  const merchants = ['Corsham Print & Design Ltd', 'Bradford-on-Avon Stone Masons', 'Kendal Outdoor Supplies Ltd'];
-  const partners = ['Barclays Merchant Services', 'Lloyds Cardnet', 'Worldpay from FIS'];
+  const merchants = ['Corsham Print & Design Ltd', 'Bradford-on-Avon Stone Masons', 'Kenwood Outdoor Supply LLC'];
+  const partners = ['Citi Merchant Services', 'Wells Fargo Merchant Services', 'Worldpay from FIS'];
 
   return Array.from({ length: 10 }, (_, i) => {
     const amount = d.money(40, 250);
@@ -401,7 +401,7 @@ export const QUALIFICATION_ROWS = (() => {
       trn: d.digits(24),
       bankName: d.pick(INSTITUTIONS).name,
       accountNumber: d.digits(8),
-      sortCode: d.pick(INSTITUTIONS).sortCode,
+      routingNumber: d.pick(INSTITUTIONS).routingNumber,
       qualification: QUALIFICATIONS[i % QUALIFICATIONS.length],
       feePercent: feePct,
       baseFee: 0,
@@ -423,7 +423,7 @@ export const QUALIFICATION_ROWS = (() => {
 export const MERCHANT_RESERVES = [
   { id: 'mr-1', institutionId: 'WF001', isoId: 'WORLDPAY001', merchant: 'Corsham Print & Design Ltd', partner: 'Global Payment Solutions', rate: 5.0, reserveStatus: 'Held', payStatus: 'Pending', contractDate: '2026/08/15', processDate: '2026/08/17', processor: 'Fiserv' },
   { id: 'mr-2', institutionId: 'BOA001', isoId: 'GPS001', merchant: 'Bradford-on-Avon Stone Masons', partner: 'Mercury Payment Systems', rate: 7.5, reserveStatus: 'Released', payStatus: 'Paid', contractDate: '2026/08/07', processDate: '2026/08/17', processor: 'Fiserv' },
-  { id: 'mr-3', institutionId: 'FISERV001', isoId: 'VANTIVISO', merchant: 'Kendal Outdoor Supplies Ltd', partner: 'Heartland Payment Systems', rate: 10.0, reserveStatus: 'Held', payStatus: 'Pending', contractDate: '2026/08/15', processDate: '2026/08/17', processor: 'Fiserv' },
+  { id: 'mr-3', institutionId: 'FISERV001', isoId: 'VANTIVISO', merchant: 'Kenwood Outdoor Supply LLC', partner: 'Heartland Payment Systems', rate: 10.0, reserveStatus: 'Held', payStatus: 'Pending', contractDate: '2026/08/15', processDate: '2026/08/17', processor: 'Fiserv' },
   { id: 'mr-4', institutionId: 'TSYS001', isoId: 'ELAVONISO', merchant: 'Fernbrook Hospitality Ltd', partner: 'Priority Payment Systems', rate: 6.0, reserveStatus: 'Partial', payStatus: 'Processing', contractDate: '2026/08/15', processDate: '2026/08/17', processor: 'TSYS' },
   { id: 'mr-5', institutionId: 'TSYS001', isoId: 'PAYSIMPLE001', merchant: 'Highfield Sports Direct', partner: 'Paymentech Solutions', rate: 8.5, reserveStatus: 'Released', payStatus: 'Paid', contractDate: '2026/08/15', processDate: '2026/08/17', processor: 'TSYS' },
   { id: 'mr-6', institutionId: 'TSYS001', isoId: 'GPS001', merchant: 'Redwood Pharmacy Group', partner: 'Global Payment Solutions', rate: 4.5, reserveStatus: 'Held', payStatus: 'On Hold', contractDate: '2026/08/15', processDate: '2026/08/17', processor: 'TSYS' },

@@ -17,7 +17,7 @@ const SIDEBAR_KEY = 'fi911.sidebarCollapsed';
  * The trail itself is derived from the URL by crumbsFor(), so a list page
  * never has to declare it. Detail pages are the one case the URL can't
  * answer — "/participants/invitations/inv-3" has no way to know the record is
- * called "Alderton Medical Supplies Ltd" — so they push that one label up
+ * called "Alderton Medical Supply LLC" — so they push that one label up
  * through this context. Everything else stays automatic.
  */
 const CrumbContext = createContext(() => {});
