@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Surface';
 import { ListPage } from '@/components/fi911/ListPage';
 import { AdvancedSearchPanel, applyFilters } from '@/components/fi911/Filters';
 import { AttachmentsModal, NotesModal } from '@/components/fi911/RecordModals';
-import { LinkCell, Muted, StatusBadge, TrendValue, TypeBadge, menuColumn } from '@/components/fi911/cells';
+import { LinkCell, MccCell, Money, Muted, StatusBadge, TrendValue, TypeBadge, menuColumn, moneyText, moneyTotal } from '@/components/fi911/cells';
 import {
   LIVE_PARTICIPANTS, LIVE_STATUS, attachmentsFor, filterStage, notesFor, stageTabs, statementsFor,
 } from '@/data/participants';
@@ -86,7 +86,10 @@ export function LiveParticipants() {
 
   const columns = [
     { key: 'merchant', header: 'Merchant Name', fw: 14, sortable: true, cell: (r) => <LinkCell to={routes.liveParticipantDetail(r.id)}>{r.participant}</LinkCell> },
-    { key: 'type', header: 'Type', fw: 5, sortable: true, cell: (r) => <TypeBadge value={r.type} /> },
+      { key: 'mcc', header: 'MCC', fw: 6, align: 'center', sortable: true, cell: (r) => <MccCell code={r.mcc} label={r.mccLabel} />, text: (r) => `${r.mcc} ${r.mccLabel}` },
+    { key: 'merchantType', header: 'Merchant Type', fw: 9, align: 'center', sortable: true, cell: (r) => <TypeBadge value={r.merchantType} /> },
+    { key: 'processor', header: 'Processor', fw: 9, align: 'center', sortable: true },
+    { key: 'monthlyVolume', header: 'Monthly Volume', fw: 10, align: 'right', sortable: true, cell: (r) => <Money value={r.monthlyVolume} />, text: (r) => moneyText(r.monthlyVolume), totalCell: moneyTotal },
     {
       key: 'highest',
       header: 'Highest Transaction',
@@ -96,11 +99,11 @@ export function LiveParticipants() {
       cell: (r) => <TrendValue value={r.highest} direction={r.trend} />,
     },
     { key: 'agent', header: 'Agent Name', fw: 11, sortable: true },
-    { key: 'assignedTo', header: 'Assigned To', fw: 10, sortable: true, cell: (r) => (r.assignedTo ? r.assignedTo : <Muted>-</Muted>) },
-    { key: 'contact', header: 'Contact Name', fw: 10, sortable: true },
-    { key: 'phone', header: 'Phone', fw: 9 },
-    { key: 'email', header: 'Email', fw: 15 },
-    { key: 'created', header: 'Creation Date', fw: 9, sortable: true },
+    { hiddenByDefault: true, key: 'assignedTo', header: 'Assigned To', fw: 10, sortable: true, cell: (r) => (r.assignedTo ? r.assignedTo : <Muted>-</Muted>) },
+    { hiddenByDefault: true, key: 'contact', header: 'Contact Name', fw: 10, sortable: true },
+    { hiddenByDefault: true, key: 'phone', header: 'Phone', fw: 9 },
+    { hiddenByDefault: true, key: 'email', header: 'Email', fw: 15 },
+    { hiddenByDefault: true, key: 'created', header: 'Creation Date', fw: 9, sortable: true },
     { key: 'statusChanged', header: 'Status Change Date', fw: 10, sortable: true },
     { key: 'status', header: 'Status', fw: 9, sortable: true, cell: (r) => <StatusBadge value={r.status} /> },
     menuColumn((row) => [
@@ -114,7 +117,7 @@ export function LiveParticipants() {
       { label: 'Merchant Agreement', icon: 'checklist', onSelect: () => navigate(routes.liveParticipantDetail(row.id)) },
       { label: 'Merchant Merchants', icon: 'users', onSelect: () => navigate(routes.participantMerchants(row.id)) },
     ]),
-  ];
+];
 
   return (
     <>

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ListPage } from '@/components/fi911/ListPage';
 import { AdvancedSearchPanel, applyFilters } from '@/components/fi911/Filters';
 import { AttachmentsModal, ChangeStatusModal, NotesModal } from '@/components/fi911/RecordModals';
-import { LinkCell, Muted, StatusBadge, TypeBadge, menuColumn } from '@/components/fi911/cells';
+import { LinkCell, MccCell, Money, Muted, StatusBadge, TypeBadge, menuColumn, moneyText, moneyTotal } from '@/components/fi911/cells';
 import {
   APPLICATIONS, APPLICATION_STATUS, attachmentsFor, filterStage, notesFor, stageTabs, statusOptionsFor,
 } from '@/data/participants';
@@ -42,13 +42,16 @@ export function Applications() {
 
   const columns = [
     { key: 'merchant', header: 'Merchant Name', fw: 15, sortable: true, cell: (r) => <LinkCell to={routes.applicationDetail(r.id)}>{r.participant}</LinkCell> },
-    { key: 'type', header: 'Type', fw: 6, sortable: true, cell: (r) => <TypeBadge value={r.type} /> },
+      { key: 'mcc', header: 'MCC', fw: 6, align: 'center', sortable: true, cell: (r) => <MccCell code={r.mcc} label={r.mccLabel} />, text: (r) => `${r.mcc} ${r.mccLabel}` },
+    { key: 'merchantType', header: 'Merchant Type', fw: 9, align: 'center', sortable: true, cell: (r) => <TypeBadge value={r.merchantType} /> },
+    { key: 'processor', header: 'Processor', fw: 9, align: 'center', sortable: true },
+    { key: 'monthlyVolume', header: 'Monthly Volume', fw: 10, align: 'right', sortable: true, cell: (r) => <Money value={r.monthlyVolume} />, text: (r) => moneyText(r.monthlyVolume), totalCell: moneyTotal },
     { key: 'agent', header: 'Agent Name', fw: 11, sortable: true },
-    { key: 'assignedTo', header: 'Assigned To', fw: 11, sortable: true, cell: (r) => (r.assignedTo ? r.assignedTo : <Muted>-</Muted>) },
-    { key: 'contact', header: 'Contact Name', fw: 11, sortable: true },
-    { key: 'phone', header: 'Phone', fw: 10 },
-    { key: 'email', header: 'Email', fw: 16 },
-    { key: 'created', header: 'Creation Date', fw: 9, sortable: true },
+    { hiddenByDefault: true, key: 'assignedTo', header: 'Assigned To', fw: 11, sortable: true, cell: (r) => (r.assignedTo ? r.assignedTo : <Muted>-</Muted>) },
+    { hiddenByDefault: true, key: 'contact', header: 'Contact Name', fw: 11, sortable: true },
+    { hiddenByDefault: true, key: 'phone', header: 'Phone', fw: 10 },
+    { hiddenByDefault: true, key: 'email', header: 'Email', fw: 16 },
+    { hiddenByDefault: true, key: 'created', header: 'Creation Date', fw: 9, sortable: true },
     { key: 'statusChanged', header: 'Status Change D...', fw: 9, sortable: true },
     { key: 'status', header: 'Status', fw: 10, sortable: true, cell: (r) => <StatusBadge value={r.status} /> },
     menuColumn((row) => [
@@ -57,7 +60,7 @@ export function Applications() {
       { label: 'Attachments', icon: 'paperclip', onSelect: () => setModal({ kind: 'attachments', row }) },
       { label: 'Notes', icon: 'message', onSelect: () => setModal({ kind: 'notes', row }) },
     ]),
-  ];
+];
 
   return (
     <>

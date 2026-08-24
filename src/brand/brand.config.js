@@ -21,20 +21,43 @@
  */
 
 /* ------------------------------------------------------------------ *
- * Dispute reason categories — scheme constants, not tenant vocabulary.
+ * Chargeback reason codes — scheme constants, not tenant vocabulary.
  * ------------------------------------------------------------------ *
- * Fi911's dispute book is UK bank-to-bank (Faster Payments / APP claims)
- * rather than card-scheme chargebacks, so the categories are the FCA-aligned
- * consumer set the Disputes donut rolls up by.
+ * This is a card-acquiring book, so the reasons are the card-scheme codes an
+ * acquirer actually receives. They are grouped into the four families the
+ * schemes themselves report on — fraud, authorization, processing error and
+ * consumer dispute — because that grouping is what tells a risk desk whether
+ * the problem is the merchant's fraud screening or its fulfilment.
+ *
+ * Visa and Mastercard number the same dispute differently (Visa 13.1 is
+ * Mastercard 4855), so both are carried and the row shows whichever scheme
+ * the transaction was on.
  */
 
 export const REASON_CATEGORIES = [
-  { id: 'not_received', label: 'Goods/Services Not Received', category: 'consumer' },
-  { id: 'not_described', label: 'Goods/Services Not As Described', category: 'consumer' },
-  { id: 'misrepresentation', label: 'Misrepresentation', category: 'fraud' },
-  { id: 'refund_not_provided', label: 'Refund Not Provided', category: 'consumer' },
-  { id: 'not_provided', label: 'Services Not Provided', category: 'consumer' },
+  { id: 'fraud_cnp', label: 'Fraud — Card Not Present', category: 'fraud', visa: '10.4', mastercard: '4837', amex: 'F29' },
+  { id: 'fraud_cp', label: 'Fraud — Card Present', category: 'fraud', visa: '10.1', mastercard: '4870', amex: 'F24' },
+  { id: 'no_auth', label: 'No Authorization', category: 'authorization', visa: '11.2', mastercard: '4808', amex: 'A02' },
+  { id: 'late_presentment', label: 'Late Presentment', category: 'processing', visa: '12.1', mastercard: '4834', amex: 'P03' },
+  { id: 'duplicate', label: 'Duplicate Processing', category: 'processing', visa: '12.6', mastercard: '4834', amex: 'P08' },
+  { id: 'incorrect_amount', label: 'Incorrect Transaction Amount', category: 'processing', visa: '12.5', mastercard: '4831', amex: 'P05' },
+  { id: 'not_received', label: 'Merchandise / Services Not Received', category: 'consumer', visa: '13.1', mastercard: '4855', amex: 'C08' },
+  { id: 'cancelled_recurring', label: 'Canceled Recurring Transaction', category: 'consumer', visa: '13.2', mastercard: '4841', amex: 'C28' },
+  { id: 'not_as_described', label: 'Not As Described or Defective', category: 'consumer', visa: '13.3', mastercard: '4853', amex: 'C31' },
+  { id: 'credit_not_processed', label: 'Credit Not Processed', category: 'consumer', visa: '13.6', mastercard: '4860', amex: 'C02' },
 ];
+
+/** The four families the schemes report on. Drives the reason donut. */
+export const REASON_FAMILIES = [
+  { id: 'fraud', label: 'Fraud' },
+  { id: 'authorization', label: 'Authorization' },
+  { id: 'processing', label: 'Processing Error' },
+  { id: 'consumer', label: 'Consumer Dispute' },
+];
+
+/** The scheme's own code for a reason, given the card it arrived on. */
+export const reasonCodeFor = (reason, scheme) =>
+  (scheme === 'mastercard' ? reason.mastercard : scheme === 'amex' ? reason.amex : reason.visa);
 
 /** Dispute cycles, in escalation order. Drives the Cycle column on Disputes. */
 export const DISPUTE_CYCLES = [
@@ -206,9 +229,14 @@ export const fi911Brand = {
   /* --- Participant types --------------------------------------------------- *
    * Fi911 onboards two kinds of participant, and the Type column badges them
    * differently everywhere they appear. */
+  /* What kind of merchant this is. Card-not-present and high-risk MCCs price
+     and underwrite differently from a card-present retailer, which is why the
+     type sits next to the name on every grid. */
   participantTypes: [
-    { id: 'psp', label: 'PSP', tone: 'info' },
-    { id: 'bank', label: 'Bank', tone: 'success' },
+    { id: 'retail', label: 'Retail', tone: 'success' },
+    { id: 'ecommerce', label: 'E-Commerce', tone: 'info' },
+    { id: 'moto', label: 'MOTO', tone: 'warning' },
+    { id: 'services', label: 'Services', tone: 'neutral' },
   ],
 
   /* --- Processors ---------------------------------------------------------- */
@@ -256,7 +284,7 @@ export const fi911Brand = {
   /* --- Business + pricing reference data ----------------------------------- */
   businessTypes: ['Proprietary', 'Corporation', 'LLC', 'Partnership', 'Government', 'Non-Profit'],
   ownerTitles: ['CEO', 'CFO', 'COO', 'Director', 'Partner', 'Owner'],
-  idTypes: ['Passport', 'Driving License', 'National ID', 'Residence Permit'],
+  idTypes: ['Passport', 'Driver’s License', 'State ID', 'Permanent Resident Card'],
   accountUses: ['Direct Credit Authority', 'Direct Debit Authority', 'Both', 'Fee Account Only'],
   pricingTypes: ['Interchange Plus', 'Tiered', 'Blended', 'Flat Rate'],
   terminalMakes: ['Ingenico', 'Verifone', 'PAX', 'Castles', 'Clover'],

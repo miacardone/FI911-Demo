@@ -12,6 +12,7 @@ import {
 } from '@/data/disputes';
 import { routes } from '@/data/navigation';
 import { formatNumber, formatPercent } from '@/utils/format';
+import brand from '@/brand/brand.config';
 
 /**
  * Disputes — Summary, Details and a saveable Custom Filter.
@@ -23,23 +24,22 @@ import { formatNumber, formatPercent } from '@/utils/format';
 
 const SUMMARY_FIELDS = [
   { name: 'merchant', label: 'Merchant Name' },
-  { name: 'type', label: 'Type', type: 'select', options: [{ value: 'Bank', label: 'Bank' }, { value: 'PSP', label: 'PSP' }] },
-  { name: 'pspType', label: 'PSP Type' },
+  { name: 'type', label: 'Merchant Type', type: 'select', options: brand.participantTypes.map((t) => ({ value: t.label, label: t.label })) },
+  { name: 'pspType', label: 'Merchant Type' },
 ];
 
 const DETAIL_FIELDS = [
   { name: 'caseNumber', label: 'Case Number' },
   { name: 'merchant', label: 'Merchant Name' },
-  { name: 'bankName', label: 'Bank Name' },
-  { name: 'routingNumber', label: 'Routing Number' },
-  { name: 'accountNumber', label: 'Account Number' },
-  { name: 'trn', label: 'TRN' },
+  { name: 'mid', label: 'MID' },
+  { name: 'arn', label: 'ARN' },
+  { name: 'reasonCode', label: 'Reason Code' },
   { name: 'reasonCategory', label: 'Reason Category', type: 'select', options: DISPUTE_REASONS.map((r) => ({ value: r, label: r })) },
   { name: 'status', label: 'Status', type: 'select', options: DISPUTE_STATUSES.map((s) => ({ value: s, label: s })) },
   { name: 'cycle', label: 'Cycle', type: 'select', options: DISPUTE_CYCLE_LABELS.map((c) => ({ value: c, label: c })) },
   { name: 'postDate', label: 'Post Date', type: 'date' },
   { name: 'dueDate', label: 'Due Date', type: 'date' },
-  { name: 'type', label: 'Type', type: 'select', options: [{ value: 'PSP', label: 'PSP' }, { value: 'Bank', label: 'Bank' }] },
+  { name: 'type', label: 'Merchant Type', type: 'select', options: brand.participantTypes.map((t) => ({ value: t.label, label: t.label })) },
 ];
 
 /* A ratio is only meaningful against the threshold it is measured for, so the
@@ -76,10 +76,10 @@ export function Disputes() {
   const summaryColumns = [
     {
       key: 'merchant', header: 'Merchant Name', fw: 16, sortable: true,
-      cell: (r) => <TwoLine primary={<LinkCell onClick={() => setTab('details')}>{r.participant}</LinkCell>} secondary={`[${r.routingNumber}]`} />,
-      text: (r) => `${r.merchant} ${r.routingNumber}`,
+      cell: (r) => <TwoLine primary={<LinkCell onClick={() => setTab('details')}>{r.participant}</LinkCell>} secondary={`MID: ${r.mid}`} />,
+      text: (r) => `${r.participant} ${r.mid}`,
     },
-    { key: 'pspType', header: 'PSP Type', fw: 9, cell: () => <Badge tone="primary">Sending PSP</Badge> },
+    { key: 'pspType', header: 'Merchant Type', fw: 9, align: 'center', sortable: true, cell: (r) => <TypeBadge value={r.pspType} /> },
     { key: 'transactions', header: 'Transaction (#)', fw: 9, align: 'right', sortable: true, cell: (r) => <LinkCell onClick={() => setTab('details')}>{formatNumber(r.transactions)}</LinkCell> },
     { key: 'disputes', header: 'Dispute (#)', fw: 8, align: 'right', sortable: true },
     { key: 'countRatio', header: 'Count Ratio', fw: 8, align: 'right', sortable: true, cell: (r) => formatPercent(r.countRatio, 2) },
@@ -90,23 +90,28 @@ export function Disputes() {
   ];
 
   const detailColumns = [
-    { key: 'caseNumber', header: 'Case Numb...', fw: 10, sortable: true, cell: (r) => <LinkCell to={routes.disputeDetail(r.caseNumber)}>{r.caseNumber}</LinkCell> },
-    { key: 'merchant', header: 'Merchant Name', fw: 14, sortable: true },
-    { key: 'bankName', header: 'Bank Name', fw: 12, sortable: true },
-    { key: 'routingNumber', header: 'Routing Number', fw: 8, sortable: true },
-    { key: 'accountNumber', header: 'Account Num...', fw: 10 },
-    { key: 'trn', header: 'TRN', fw: 14 },
-    { key: 'reasonCategory', header: 'Reason Category', fw: 14, sortable: true },
-    { key: 'postDate', header: 'Post Date', fw: 9, sortable: true },
-    { key: 'typeReference', header: 'Type Reference Nu...', fw: 11 },
-    { key: 'gatewayMatch', header: 'Gateway Mat...', fw: 8, align: 'center', cell: (r) => <GatewayMatch matched={r.gatewayMatch} />, text: (r) => (r.gatewayMatch ? 'matched' : 'no match') },
-    { key: 'disputeAmount', header: 'Dispute A...', fw: 9, align: 'right', sortable: true, sortValue: (r) => r.disputeAmount, text: (r) => moneyText(r.disputeAmount), cell: (r) => <Money value={r.disputeAmount} /> },
+    { key: 'caseNumber', header: 'Case Number', fw: 10, sortable: true, cell: (r) => <LinkCell to={routes.disputeDetail(r.caseNumber)}>{r.caseNumber}</LinkCell> },
+    {
+      key: 'participant', header: 'Merchant', fw: 16, sortable: true,
+      cell: (r) => <TwoLine primary={r.participant} secondary={`MID: ${r.mid}`} />,
+      text: (r) => `${r.participant} ${r.mid}`,
+    },
+    { key: 'scheme', header: 'Card Type', fw: 8, align: 'center', sortable: true, cell: (r) => <CardBrand scheme={r.scheme} />, text: (r) => r.scheme },
+    { key: 'cardNumber', header: 'Card Number', fw: 11, align: 'center' },
+    {
+      key: 'reasonCode', header: 'Reason Code', fw: 7, align: 'center', sortable: true,
+      description: 'The card scheme’s own code for this reason — Visa and Mastercard number the same dispute differently',
+    },
+    { key: 'reasonCategory', header: 'Reason', fw: 16, sortable: true },
+    { hiddenByDefault: true, key: 'arn', header: 'ARN', fw: 16, description: 'Acquirer Reference Number — matches the chargeback back to its original presentment' },
+    { key: 'postDate', header: 'Post Date', fw: 9, align: 'center', sortable: true },
+    { key: 'gatewayMatch', header: 'Gateway Match', fw: 8, align: 'center', cell: (r) => <GatewayMatch matched={r.gatewayMatch} />, text: (r) => (r.gatewayMatch ? 'matched' : 'no match') },
+    { key: 'disputeAmount', header: 'Chargeback Amount', fw: 9, align: 'right', sortable: true, sortValue: (r) => r.disputeAmount, text: (r) => moneyText(r.disputeAmount), cell: (r) => <Money value={r.disputeAmount} /> },
     { key: 'status', header: 'Status', fw: 9, sortable: true, cell: (r) => <StatusBadge value={r.status} /> },
-    { key: 'cycle', header: 'Cycle', fw: 11, sortable: true },
-    { key: 'dueDate', header: 'Due Date', fw: 9, sortable: true },
-    { key: 'type', header: 'Type', fw: 6, sortable: true },
+    { key: 'cycle', header: 'Cycle', fw: 11, align: 'center', sortable: true },
+    { key: 'dueDate', header: 'Due Date', fw: 9, align: 'center', sortable: true },
     { key: 'outcome', header: 'Outcome', fw: 8, sortable: true, cell: (r) => (r.outcome ? r.outcome : <Muted>—</Muted>) },
-    { key: 'pspType', header: 'PSP Type', fw: 9 },
+    { key: 'pspType', header: 'Merchant Type', fw: 9, align: 'center', cell: (r) => <TypeBadge value={r.pspType} /> },
     menuColumn((row) => [{ label: 'View', icon: 'eye', onSelect: () => navigate(routes.disputeDetail(row.caseNumber)) }]),
   ];
 
@@ -153,8 +158,8 @@ export function Disputes() {
 
   return (
     <ListPage
-      title="Disputes"
-      description="Monitor and analyze dispute data across PSPs, banks, and merchants"
+      title="Chargebacks"
+      description="Chargeback volume and ratios across the merchant book"
       tabs={tabs}
       tab={tab}
       onTabChange={setTab}

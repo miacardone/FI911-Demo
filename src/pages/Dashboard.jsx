@@ -83,16 +83,16 @@ export function Dashboard() {
     <>
       <PageHeader
         title="Operator Summary"
-        description="Active PSP growth, onboarding volume, and current status mix."
+        description="Active merchant growth, boarding volume, and current status mix."
       />
 
       {/* ---------- Band 1: the participant funnel ---------- */}
       <section className="dash-band">
         <div className="dash-grid dash-grid--2">
           <ChartCard
-            title="Active PSPs"
+            title="Active Merchants"
             action={<CardTools range={pspRange} onRange={setPspRange} />}
-            table={{ columns: [{ key: 'period', label: 'Date' }, { key: 'value', label: 'Active PSPs', format: num }], rows: pspSeries }}
+            table={{ columns: [{ key: 'period', label: 'Date' }, { key: 'value', label: 'Active Merchants', format: num }], rows: pspSeries }}
           >
             <div className="spark-tile__head">
               <span className="dash-figure">{formatNumber(ACTIVE_PSPS)}</span>
@@ -102,7 +102,7 @@ export function Dashboard() {
           </ChartCard>
 
           <ChartCard
-            title="PSP Onboarding Summary"
+            title="Merchant Onboarding Summary"
             action={<CardTools range={funnelRange} onRange={setFunnelRange} />}
             table={{
               columns: [{ key: 'period', label: 'Stage' }, ...FUNNEL_SERIES.map((x) => ({ key: x.key, label: x.label, format: num }))],
@@ -160,8 +160,8 @@ export function Dashboard() {
 
       {/* ---------- Band 3: the dispute book ---------- */}
       <section className="dash-band">
-        <h2 className="dash-band__title">Dispute Claims Summary</h2>
-        <p className="dash-band__desc">Current dispute totals, review states, and underlying reason/funding mix.</p>
+        <h2 className="dash-band__title">Chargeback Summary</h2>
+        <p className="dash-band__desc">Current chargeback totals, review states, and the reason mix behind them.</p>
 
         <div className="dash-grid dash-grid--3">
           {CLAIM_KPIS.map((k) => (
@@ -171,13 +171,13 @@ export function Dashboard() {
 
         <div className="dash-grid dash-grid--2" style={{ marginTop: 'var(--s-4)' }}>
           <ChartCard
-            title="Dispute Claims by Reason Category"
+            title="Chargebacks by Reason"
             table={{ columns: [{ key: 'label', label: 'Reason' }, { key: 'value', label: 'Share', format: pct }], rows: REASON_SPLIT }}
           >
             <Donut data={REASON_SPLIT} size={220} thickness={56} arcLabels formatValue={formatNumber} />
           </ChartCard>
           <ChartCard
-            title="Dispute Funding by Sending and Receiving PSP"
+            title="Chargeback Volume by Processor"
             action={<span className="date-chip">Last 6 Months</span>}
             table={{
               columns: [{ key: 'period', label: 'Month' }, ...DISPUTE_FUNDING_SERIES.map((x) => ({ key: x.key, label: x.label, format: gbp }))],

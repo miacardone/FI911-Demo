@@ -72,7 +72,22 @@ export function StatusBadge({ value, tone }) {
   return help ? <Tooltip label={`${statusLabel(value)} — ${help}`}>{badge}</Tooltip> : badge;
 }
 
-/** PSP / Bank / Merchant — the participant Type column. */
+/**
+ * MCC — the four-digit merchant category code.
+ *
+ * The code alone is unreadable to anyone who has not memorised the list, and
+ * the description alone is too wide for a grid. The code shows, the
+ * description is on hover — which is also how an underwriter reads it: the
+ * number is the identifier, the words are the sanity check.
+ */
+export function MccCell({ code, label }) {
+  if (!code) return <span className="subtle">—</span>;
+  return label
+    ? <Tooltip label={`MCC ${code} — ${label}`}><span className="mono">{code}</span></Tooltip>
+    : <span className="mono">{code}</span>;
+}
+
+/** Retail / E-Commerce / MOTO / Services — the merchant Type column. */
 const TYPE_HELP = {
   bank: 'A bank participant — holds accounts directly and settles in its own name.',
   psp: 'A payment service provider — settles through a sponsoring bank.',

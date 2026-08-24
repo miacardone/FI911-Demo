@@ -54,7 +54,7 @@ function labelsFor(range) {
 }
 
 /* ------------------------------------------------------------------ *
- * Active PSPs
+ * Active Merchants
  * ------------------------------------------------------------------ */
 
 export const ACTIVE_PSPS = 2005;
@@ -167,12 +167,12 @@ export const TOP_ROUTING_SPLIT = [
  * ------------------------------------------------------------------ */
 
 export const CLAIM_KPIS = [
-  { id: 'active', title: 'Dispute Claims - Total Active', value: 502_159.06, count: 2186, spark: spark(2401, sparkDays, 500_000, 20_000) },
-  { id: 'total', title: 'Dispute Claims - Total', value: 572_159.06, spark: spark(2402, sparkMonths, 570_000, 26_000) },
-  { id: 'settled', title: 'Dispute Claims - Total Settled', value: 72_159.06, spark: spark(2403, sparkMonths, 66_000, 9_000) },
-  { id: 'new', title: 'Dispute Claims - New', value: 72_159.06, count: 2186, spark: spark(2404, sparkDays, 71_000, 8_000) },
-  { id: 'review', title: 'Dispute Claims - In Review', value: 72_159.06, count: 2186, spark: spark(2405, sparkDays, 72_000, 5_000) },
-  { id: 'rejected', title: 'Dispute Claims - Total Rejected', value: 72_159.06, spark: spark(2406, sparkMonths, 70_000, 11_000) },
+  { id: 'active', title: 'Chargebacks - Total Active', value: 502_159.06, count: 2186, spark: spark(2401, sparkDays, 500_000, 20_000) },
+  { id: 'total', title: 'Chargebacks - Total', value: 572_159.06, spark: spark(2402, sparkMonths, 570_000, 26_000) },
+  { id: 'settled', title: 'Chargebacks - Total Settled', value: 72_159.06, spark: spark(2403, sparkMonths, 66_000, 9_000) },
+  { id: 'new', title: 'Chargebacks - New', value: 72_159.06, count: 2186, spark: spark(2404, sparkDays, 71_000, 8_000) },
+  { id: 'review', title: 'Chargebacks - In Review', value: 72_159.06, count: 2186, spark: spark(2405, sparkDays, 72_000, 5_000) },
+  { id: 'rejected', title: 'Chargebacks - Total Rejected', value: 72_159.06, spark: spark(2406, sparkMonths, 70_000, 11_000) },
 ];
 
 /* Claim counts by reason, not shares — same reasoning as the routing split. */

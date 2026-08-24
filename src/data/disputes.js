@@ -3,11 +3,11 @@
  *
  * Two views of one book, which is why they live in one module:
  *
- *   · SUMMARY  — one row per participant, with dispute counts and values
+ *   · SUMMARY  — one row per MERCHANT, with chargeback counts and values
  *                expressed as ratios against total throughput. This is the
- *                risk view: a participant with 18 transactions and 4 disputes
+ *                risk view: a merchant with 18 transactions and 4 chargebacks
  *                (22%) matters more than one with 3,122 and 3 (0.1%).
- *   · DETAILS  — one row per claim, at account level.
+ *   · DETAILS  — one row per chargeback case, at transaction level.
  *
  * The summary is NOT derived from the details: the reference shows 112 summary
  * rows against 110 detail rows, because the summary counts every dispute
@@ -17,45 +17,43 @@
 
 import { createDraw } from '@/data/rng';
 import { INSTITUTIONS, MERCHANTS, midFor, routingNumberFor } from '@/data/reference';
-import brand, { DISPUTE_CYCLES, REASON_CATEGORIES } from '@/brand/brand.config';
+import brand, { DISPUTE_CYCLES, REASON_CATEGORIES, reasonCodeFor } from '@/brand/brand.config';
 
 /* ------------------------------------------------------------------ *
  * Summary
  * ------------------------------------------------------------------ */
 
 const SUMMARY_SHAPES = [
-  { id: 'lloyds', transactions: 3122, disputes: 3, txnValue: 81163551.22, disputeValue: 16342.34, type: 'Bank' },
-  { id: 'barclays', transactions: 780, disputes: 1, txnValue: 2760644.40, disputeValue: 2810.00, type: 'Bank' },
-  { id: 'first_direct', transactions: 428, disputes: 1, txnValue: 1070862.00, disputeValue: 123.00, type: 'PSP' },
-  { id: 'bony', transactions: 364, disputes: 8, txnValue: 871542.00, disputeValue: 667.54, type: 'Bank' },
-  { id: 'bos', transactions: 92, disputes: 1, txnValue: 16841.93, disputeValue: 59.99, type: 'Bank' },
-  { id: 'monzo', transactions: 80, disputes: 3, txnValue: 227070.00, disputeValue: 287.00, type: 'PSP' },
-  { id: 'hsbc', transactions: 40, disputes: 2, txnValue: 62400.00, disputeValue: 70.00, type: 'Bank' },
-  { id: 'halifax', transactions: 28, disputes: 1, txnValue: 326400.00, disputeValue: 4000.00, type: 'Bank' },
-  { id: 'santander', transactions: 20, disputes: 2, txnValue: 33300.48, disputeValue: 60.00, type: 'Bank' },
-  { id: 'revolut', transactions: 18, disputes: 4, txnValue: 23112.19, disputeValue: 251.39, type: 'PSP' },
-  { id: 'natwest', transactions: 2140, disputes: 6, txnValue: 44210880.10, disputeValue: 9902.15, type: 'Bank' },
-  { id: 'starling', transactions: 512, disputes: 2, txnValue: 1880431.55, disputeValue: 480.20, type: 'PSP' },
+  { merchant: 'Peach State Auto Spa', transactions: 3122, disputes: 3, txnValue: 811_635.22, disputeValue: 16_342.34, type: 'Retail' },
+  { merchant: 'CloudCart Solutions', transactions: 780, disputes: 1, txnValue: 276_064.40, disputeValue: 2_810.00, type: 'E-Commerce' },
+  { merchant: 'Liberty Bell Tutoring', transactions: 428, disputes: 1, txnValue: 107_086.00, disputeValue: 123.00, type: 'Services' },
+  { merchant: 'Tropical Flavors Bistro', transactions: 364, disputes: 8, txnValue: 87_154.20, disputeValue: 667.54, type: 'Retail' },
+  { merchant: 'Stone Mountain BBQ', transactions: 92, disputes: 1, txnValue: 16_841.93, disputeValue: 59.99, type: 'Retail' },
+  { merchant: 'Bluegrass Direct Sales', transactions: 80, disputes: 3, txnValue: 22_707.00, disputeValue: 287.00, type: 'MOTO' },
+  { merchant: 'Deep Dish Delights', transactions: 40, disputes: 2, txnValue: 6_240.00, disputeValue: 70.00, type: 'Retail' },
+  { merchant: 'Sunshine Pool & Spa', transactions: 28, disputes: 1, txnValue: 32_640.00, disputeValue: 4_000.00, type: 'Services' },
+  { merchant: 'Lakeside Event Rentals', transactions: 20, disputes: 2, txnValue: 33_300.48, disputeValue: 60.00, type: 'Services' },
+  { merchant: 'Evergreen Digital Agency', transactions: 18, disputes: 4, txnValue: 23_112.19, disputeValue: 251.39, type: 'E-Commerce' },
+  { merchant: 'Cascade Mountain Sports', transactions: 2140, disputes: 6, txnValue: 442_108.10, disputeValue: 9_902.15, type: 'Retail' },
+  { merchant: 'Brooklyn Web Studios', transactions: 512, disputes: 2, txnValue: 188_043.55, disputeValue: 480.20, type: 'E-Commerce' },
 ];
 
 const pct = (a, b) => (b === 0 ? 0 : Math.round((a / b) * 10000) / 100);
 
-export const DISPUTE_SUMMARY = SUMMARY_SHAPES.map((s, i) => {
-  const inst = INSTITUTIONS.find((x) => x.id === s.id);
-  return {
-    id: `ds-${i}`,
-    participant: inst?.short === 'BNY' ? 'Bank of New York Mellon' : (inst?.name ?? s.id),
-    routingNumber: inst?.routingNumber ?? routingNumberFor(s.id),
-    pspType: 'Sending PSP',
-    transactions: s.transactions,
-    disputes: s.disputes,
-    countRatio: pct(s.disputes, s.transactions),
-    txnValue: s.txnValue,
-    disputeValue: s.disputeValue,
-    amountRatio: pct(s.disputeValue, s.txnValue),
-    type: s.type,
-  };
-});
+export const DISPUTE_SUMMARY = SUMMARY_SHAPES.map((s, i) => ({
+  id: `ds-${i}`,
+  participant: s.merchant,
+  mid: midFor(s.merchant, 14),
+  routingNumber: '',
+  pspType: s.type,
+  transactions: s.transactions,
+  disputes: s.disputes,
+  countRatio: pct(s.disputes, s.transactions),
+  txnValue: s.txnValue,
+  disputeValue: s.disputeValue,
+  amountRatio: pct(s.disputeValue, s.txnValue),
+  type: s.type,
+}));
 
 /* ------------------------------------------------------------------ *
  * Claim-level details
@@ -72,37 +70,48 @@ const DETAIL_PARTICIPANTS = [
 
 export const DISPUTE_DETAILS = (() => {
   const d = createDraw(2604);
-  const banks = INSTITUTIONS.slice(0, 12);
+  const book = MERCHANTS.slice(0, 24);
 
   return Array.from({ length: 110 }, (_, i) => {
-    const bank = d.pick(banks);
+    const merchant = d.pick(book);
     const reason = d.pick(REASON_CATEGORIES);
     const cycle = d.pick(DISPUTE_CYCLES);
+    const scheme = d.weighted([['visa', 5], ['mastercard', 4], ['amex', 2], ['discover', 1]]);
     const status = d.weighted([['New', 4], ['Completed', 4], ['Expired', 1], ['Do Not Represent', 1]]);
     const amount = d.money(20, 2900);
+    const postDay = d.int(1, 28);
 
     return {
       id: `dd-${i}`,
       caseNumber: String(686617660 - i),
-      participant: d.pick(DETAIL_PARTICIPANTS),
-      bankName: bank.name,
-      routingNumber: routingNumberFor(`${bank.id}-${i}`),
-      accountNumber: d.digits(10),
-      trn: d.digits(20),
+      /* `participant` is the field name the grids already bind to; the value
+         is a merchant, which is what this book is actually about. */
+      participant: merchant,
+      mid: midFor(merchant, 14),
+      dbaName: merchant,
+      scheme,
+      cardNumber: `${'X'.repeat(12)}${d.digits(4)}`,
+      cardLast4: d.digits(4),
+      /* The Acquirer Reference Number is how a chargeback is matched back to
+         its original presentment — the join key an acquirer actually works
+         from, which is why it leads the detail grid. */
+      arn: `74${d.digits(21)}`,
       reasonCategory: reason.label,
-      postDate: `2026/${String(d.int(1, 12)).padStart(2, '0')}/${String(d.int(1, 28)).padStart(2, '0')}`,
+      reasonFamily: reason.category,
+      reasonCode: reasonCodeFor(reason, scheme),
+      postDate: `2026/${String(d.int(1, 12)).padStart(2, '0')}/${String(postDay).padStart(2, '0')}`,
       typeReference: `PRN74${d.digits(8)}`,
       gatewayMatch: d.bool(0.25),
       disputeAmount: -amount,
       status,
       cycle: cycle.label,
       dueDate: `2026/${String(d.int(1, 12)).padStart(2, '0')}/${String(d.int(1, 28)).padStart(2, '0')}`,
-      type: d.pick(['PSP', 'Bank']),
+      type: d.pick(brand.participantTypes).label,
       outcome: status === 'Completed' ? d.pick(OUTCOMES.slice(1)) : '',
-      pspType: 'Receiving PSP',
+      pspType: d.pick(brand.participantTypes).label,
 
       /* Detail-page fields */
-      processor: d.pick(['Fiserv', 'TSYS', 'Chase Paymentech', 'Worldpay']),
+      processor: d.pick(brand.processors),
       transactionId: d.digits(22),
       transactionAmount: -amount,
       transactionDate: `2026/01/${String(d.int(1, 28)).padStart(2, '0')}`,
@@ -110,6 +119,12 @@ export const DISPUTE_DETAILS = (() => {
       retrievalDate: `2026/02/${String(d.int(1, 28)).padStart(2, '0')}`,
       completedDate: `2026/03/${String(d.int(1, 28)).padStart(2, '0')}`,
       currency: 'USD',
+      /* Kept so the account-level columns still resolve; an acquirer holds the
+         merchant's settlement account, not the cardholder's. */
+      bankName: '',
+      routingNumber: '',
+      accountNumber: '',
+      trn: '',
     };
   });
 })();

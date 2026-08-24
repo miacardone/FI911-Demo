@@ -6,7 +6,7 @@ import { SelectField, TextField } from '@/components/ui/Form';
 import { ListPage } from '@/components/fi911/ListPage';
 import { AdvancedSearchPanel, applyFilters } from '@/components/fi911/Filters';
 import { AttachmentsModal, ChangeStatusModal, NotesModal } from '@/components/fi911/RecordModals';
-import { LinkCell, StatusBadge, Muted, menuColumn } from '@/components/fi911/cells';
+import { LinkCell, MccCell, Money, Muted, StatusBadge, TypeBadge, menuColumn, moneyText, moneyTotal } from '@/components/fi911/cells';
 import { FieldGrid, Section } from '@/components/fi911/DetailPage';
 import {
   INVITATIONS, INVITATION_STATUS, attachmentsFor, filterStage, notesFor, stageTabs, statusOptionsFor,
@@ -172,10 +172,10 @@ export function Invitations() {
       sortable: true,
       cell: (r) => (r.assignedTo ? r.assignedTo : <Muted>-</Muted>),
     },
-    { key: 'contact', header: 'Contact', fw: 11, sortable: true },
-    { key: 'phone', header: 'Phone', fw: 10 },
-    { key: 'email', header: 'Email', fw: 18 },
-    { key: 'created', header: 'Creation Date', fw: 9, sortable: true },
+    { hiddenByDefault: true, key: 'contact', header: 'Contact', fw: 11, sortable: true },
+    { hiddenByDefault: true, key: 'phone', header: 'Phone', fw: 10 },
+    { hiddenByDefault: true, key: 'email', header: 'Email', fw: 18 },
+    { hiddenByDefault: true, key: 'created', header: 'Creation Date', fw: 9, sortable: true },
     { key: 'statusChanged', header: 'Status Change', fw: 9, sortable: true },
     {
       key: 'status',
@@ -191,7 +191,7 @@ export function Invitations() {
       { label: 'Notes', icon: 'message', onSelect: () => setModal({ kind: 'notes', row }) },
       { label: 'Delete', icon: 'trash', tone: 'danger', onSelect: () => removeRow(row) },
     ]),
-  ];
+];
 
   return (
     <>
