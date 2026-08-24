@@ -1,112 +1,56 @@
 # Archive
 
-Pages taken **off the demo** but kept in the repo. Nothing here is deleted and
-nothing here is built.
+## Eric's console has moved into the app
 
-## Why this folder works
+It is no longer a folder of dormant files. The whole of Eric's demo now lives
+at **`src/eric/`** and is reachable in the running app at **`/eric`** — same
+shell, its own rail, marked "ERIC — ARCHIVED DEMO", with a "Back to console"
+item to leave it.
 
-Vite only compiles what `index.html` reaches through `src/`, and the lint
-script targets `src` only (`eslint src --ext .js,.jsx`). A file sitting in
-`archive/` is therefore inert — it ships in no bundle, it fails no lint, and it
-costs nothing — while staying in version control where a normal `git mv` brings
-it straight back.
+That is a better archive than a folder nobody can run: the pages are
+demonstrable, not just recoverable.
 
-The files are unmodified. Their `@/...` imports still resolve, because `@` maps
-to `/src` and every module they depend on is still there.
+### What is in it
 
----
+Eric's complete product as of 2026/08/24 — a UK bank-to-bank participant
+console in GBP:
 
-## `eric-only/` — removed 2026/08/24
+- Participants: Invitations, Applications, Underwriting, **Onboarding**, Live
+  Participants
+- Customer Services: ERT
+- Residuals: all eight, including **Trending Report**
+- Disputes: APP-claim disputes, Chargebacks & Alerts
+- Risk Management: **Dashboard, Merchants, Alert Action, Merchant Risk
+  Profile, Held Volume**, Rules, and the three queues
+- Transactions: all nine, including **Account Holder, Gateway, Funding
+  Category**
+- Reports, Billing, Document Center, Setup
 
-Eric's page list and Clive's page list overlap heavily. These are the pages
-that appear in **Eric's list only**, with no counterpart in Clive's under any
-name. Everything Clive needs stayed, including the pages the two demos call by
-different names.
+The bold ones are the pages the live console no longer has at all.
 
-| Page | Route it used to serve |
-|---|---|
-| Merchants › Onboarding | `/merchants/onboarding` (was `/participants/onboarding`) |
-| Participants › Onboarding detail | `/merchants/onboarding/:id` |
-| Residuals › Trending Report | `/residuals/trending-report` |
-| Risk › Dashboard | `/risk/dashboard` |
-| Risk › Merchants | `/risk/merchants` |
-| Risk › Alert Action | `/risk/alert-action` |
-| Risk › Merchant Risk Profile | `/risk/merchant-risk-profile` |
-| Risk › Held Volume | `/risk/held-volume` |
-| Transactions › Account Holder | `/transactions/account-holder` |
-| Transactions › Gateway | `/transactions/gateway` |
-| Transactions › Funding Category | `/transactions/funding-category` |
+### Why it is a full copy rather than a shared one
 
-### Also changed, without archiving a file
+`src/eric/` carries its own `data/`, `domain/`, `pages/`, `navigation.js` and
+`brand.config.js`. It imports the shared shell — components, hooks, styles,
+context — but none of the live console's data or vocabulary.
 
-**Risk › Rules** left the main rail but was *not* archived. Clive
-lists it under Setup › Risk › Rules Setup, and both entries rendered the same
-`src/pages/risk/Rules.jsx`. Only the main-rail route and nav entry went; the
-page is still live at `/setup/rules`.
+That isolation is the whole point. The live console moved to a
+merchant-acquiring model in US dollars; Eric's depends on PSP/Bank participant
+types, FCA consumer dispute categories and GBP. Had it kept importing the live
+brand config, his book would have silently re-labelled itself with
+card-scheme reason codes the day that file changed. **An archive that drifts
+with the thing it archives preserves nothing.**
 
-**Two section landings were re-pointed** at pages that still exist:
+The practical consequence: changes to the live console do not reach `/eric`,
+and they are not supposed to. Do not "tidy" `src/eric/brand.config.js` into
+the live one.
 
-- `/risk` → Work Queue (was Risk Dashboard)
-- `/transactions` → ACH Listings (was Account Holder)
+### Restoring a page to the live console
 
-### Kept deliberately — these are Clive's under another name
+Copy it out of `src/eric/pages/`, repoint its `@/eric/data/...` imports at
+`@/data/...`, and add its route and nav entry as normal. Expect to reconcile
+the data model by hand — Eric's rows are participants and APP claims, the live
+console's are merchants and card chargebacks.
 
-Worth knowing before anyone "tidies up" further:
-
-| Ours | Clive's list calls it |
-|---|---|
-These have since been RENAMED to Clive's vocabulary (2026/08/24), so the demo
-now reads in his nouns throughout — rail, page titles, column headers, URLs:
-
-| Was | Now |
-|---|---|
-| Participants › Invitations | Merchants › Proposals |
-| Participants › Applications | Merchants › Contracts |
-| Participants › Live Participants | Merchants › Live Merchants |
-| Customer Services › ERT | Customer Services › Tickets |
-| Residuals › General Ledger | Residuals › Payout Splits |
-| Residuals › Fee Adjustments | Residuals › Payout Adjustments |
-| Residuals › Participant Status | Residuals › Merchant Status |
-| Disputes › Disputes | Disputes › Chargebacks |
-| Risk Management | Risk |
-
-Component and file names still use the old nouns (`Invitations.jsx`,
-`ParticipantStatus.jsx`). That is deliberate — renaming files would have
-churned every import for no visible gain, and the route KEYS in
-`navigation.js` (`routes.invitations`) are internal identifiers, not copy.
-
----
-
-## Restoring a page
-
-Three steps, all reversals of what was done:
-
-1. **Move the file back**
-
-   ```bash
-   git mv archive/eric-only/pages/risk/HeldVolume.jsx src/pages/risk/
-   ```
-
-2. **Re-add its route key** in `src/data/navigation.js` (inside `routes`) and
-   its **rail entry** in the matching `nav` group, e.g.
-
-   ```js
-   heldVolume: '/risk-management/held-volume',
-   ```
-   ```js
-   { label: 'Held Volume', path: routes.heldVolume, permission: 'Held Volume', area: 'Risk Management', crumb: 'Held Volume' },
-   ```
-
-3. **Re-add the import and `<Route>`** in `src/App.jsx`.
-
-Nothing else is needed. Breadcrumbs, the directory search, and Permissions all
-derive from `navigation.js`, so they pick the page up as soon as its nav entry
-is back.
-
-To restore **everything** at once, the commit that removed them is the fastest
-route:
-
-```bash
-git log --oneline -- archive/eric-only
-git revert <that-commit>
-```
+Git history remains the other route: `git log --oneline -- src/eric` and the
+commits before 2026/08/24 hold every earlier state.

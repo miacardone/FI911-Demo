@@ -6,6 +6,7 @@ import PreferencesProvider from '@/context/PreferencesContext';
 import AppLayout from '@/components/layout/AppLayout';
 import RequireAuth from '@/components/layout/RequireAuth';
 import { LOGIN_ROUTE, routes } from '@/data/navigation';
+import ericRoutes from '@/eric/routes';
 
 import Login from '@/pages/Login';
 import Dashboard from '@/pages/Dashboard';
@@ -163,6 +164,9 @@ export function App() {
                   <Route index element={<Navigate to={routes.statements} replace />} />
                   <Route path="statements" element={<Statements />} />
                 </Route>
+
+                {/* Eric's console, whole and frozen. See src/eric/routes.jsx. */}
+                {ericRoutes}
 
                 <Route path="document-center" element={<DocumentCenter />} />
                 <Route path="setup">

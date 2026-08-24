@@ -2208,3 +2208,9 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 .donut .legend { margin-top: var(--s-1); }
 .donut-center__label { font-size: 9px; fill: var(--c-ink-subtle); }
 .tooltip__sub { display: block; font-size: var(--fs-micro); color: var(--c-ink-subtle); margin-top: 1px; }
+
+/* An archived console should not look like the live one at a glance. */
+.rail__mode--archive {
+  background: color-mix(in srgb, var(--c-danger) 22%, transparent);
+  color: color-mix(in srgb, var(--c-danger) 55%, #fff);
+}

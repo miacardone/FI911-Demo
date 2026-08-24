@@ -1,0 +1,266 @@
+import { useMemo, useState } from 'react';
+import { ListPage, ListTable } from '@/components/fi911/ListPage';
+import { Muted, StatusBadge, TwoLine, menuColumn } from '@/components/fi911/cells';
+import { Badge, Button, Kpi } from '@/components/ui/Surface';
+import { Drawer, Tooltip } from '@/components/ui/Overlay';
+import { FieldGrid, Section } from '@/components/fi911/DetailPage';
+import { SelectField, TextField } from '@/components/ui/Form';
+import Icon from '@/components/ui/Icon';
+import {
+  LANDING_PAGES, PROFILE_TYPES, ROLES, SETUP_USERS, USER_GROUPS, USER_TABS,
+} from '@/eric/data/setup';
+import { PERMISSION_AREAS } from '@/eric/data/navigation';
+import { useToast } from '@/context/ToastContext';
+
+/**
+ * Setup > Admin > Users & Access Control.
+ *
+ * Three tabs, as in the reference: accounts, roles and groups.
+ *
+ * The reference's Users grid answers "who exists" and nothing else — status is
+ * Active or nothing, and there is no way to find the accounts that are a
+ * standing risk. The two questions an access review actually asks are "who has
+ * not logged in for months" and "who has no second factor", so both are
+ * columns and both are views. Roles carry their user count for the same
+ * reason: a role nobody holds is a permission surface with no owner.
+ */
+
+function Dormancy({ days, dormant }) {
+  if (days <= 1) return <span className="dorm dorm--fresh">Today</span>;
+  return (
+    <Tooltip label={dormant ? 'Dormant — an unused account is still a way in' : `Last signed in ${days} days ago`}>
+      <span className={`dorm ${dormant ? 'dorm--stale' : ''}`.trim()}>{days}d</span>
+    </Tooltip>
+  );
+}
+
+function RoleDrawer({ role, onClose }) {
+  const toast = useToast();
+  const [form, setForm] = useState(() => ({ ...role }));
+  if (!role) return null;
+
+  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  return (
+    <Drawer open onClose={onClose} title={`Role — ${role.name}`} width={420}>
+      <div className="fi-detail__body">
+        <Section title="Role" collapsible={false}>
+          <FieldGrid columns={1}>
+            <TextField label="Role Name" value={form.name} onChange={set('name')} required />
+            <SelectField label="Profile Type" value={form.profileType} onChange={set('profileType')} options={PROFILE_TYPES.map((v) => ({ value: v, label: v }))} required />
+            <SelectField label="Home Landing Page" value={form.homeLanding} onChange={set('homeLanding')} options={LANDING_PAGES.map((v) => ({ value: v, label: v }))} required />
+            <SelectField label="Setup Landing Page" value={form.setupLanding} onChange={set('setupLanding')} options={LANDING_PAGES.map((v) => ({ value: v, label: v }))} placeholder="None" />
+            <TextField label="Description" value={form.description} onChange={set('description')} />
+          </FieldGrid>
+        </Section>
+
+        <Section title={`Permission areas (${role.permissions})`} collapsible={false}>
+          {/* The reference's role editor has no permission surface at all — you
+              name a role and choose a landing page. The areas a role can reach
+              are the whole point of it. */}
+          <div className="setup-chips">
+            {PERMISSION_AREAS.map((a) => <span key={a} className="setup-chip">{a}</span>)}
+          </div>
+        </Section>
+
+        <Section title="Usage" collapsible={false}>
+          <p className="fi-note">
+            {role.userCount === 0
+              ? 'No users hold this role. A role with no holders is a permission surface with no owner — consider removing it.'
+              : `${role.userCount} user${role.userCount === 1 ? '' : 's'} hold this role. Changing it changes what they can reach immediately.`}
+          </p>
+        </Section>
+
+        <div className="fi-actions">
+          <Button variant="secondary" size="sm" onClick={onClose}>Back</Button>
+          <Button variant="primary" size="sm" icon="check" onClick={() => { toast.notify(`Role "${form.name}" updated.`); onClose(); }}>Update</Button>
+        </div>
+      </div>
+    </Drawer>
+  );
+}
+
+function UsersTab() {
+  const toast = useToast();
+  const [tab, setTab] = useState('all');
+  const rows = useMemo(
+    () => SETUP_USERS.filter((USER_TABS.find((t) => t.value === tab) ?? USER_TABS[0]).match),
+    [tab],
+  );
+
+  const dormant = SETUP_USERS.filter((u) => u.dormant && u.status === 'Active');
+  const noMfa = SETUP_USERS.filter((u) => !u.mfa);
+
+  const columns = [
+    menuColumn((r) => [
+      { label: 'Edit user', icon: 'edit', onSelect: () => toast.notify(`Editing ${r.name}.`) },
+      { label: 'Reset password', icon: 'refresh', onSelect: () => toast.notify(`Password reset sent to ${r.email}.`) },
+      !r.mfa && { label: 'Require MFA', icon: 'shieldCheck', onSelect: () => toast.notify(`${r.name} must enrol a second factor at next sign-in.`) },
+      { label: r.status === 'Locked' ? 'Unlock account' : 'Lock account', icon: 'lock', tone: r.status === 'Locked' ? undefined : 'danger', onSelect: () => toast.notify(`${r.name} ${r.status === 'Locked' ? 'unlocked' : 'locked'}.`) },
+    ]),
+    { key: 'name', header: 'User', fw: 16, sortable: true, cell: (r) => <TwoLine primary={r.name} secondary={r.email} />, text: (r) => `${r.name} ${r.email}` },
+    { key: 'role', header: 'Role', fw: 13, sortable: true, cell: (r) => <TwoLine primary={r.role} secondary={r.profileType} />, text: (r) => `${r.role} ${r.profileType}` },
+    {
+      key: 'lastActiveDays', header: 'Last Seen', fw: 7, align: 'center', sortable: true,
+      cell: (r) => <Dormancy days={r.lastActiveDays} dormant={r.dormant} />,
+      text: (r) => `${r.lastActiveDays}d`,
+      description: 'Days since last sign-in. The reference has no equivalent, so abandoned accounts look identical to working ones.',
+    },
+    {
+      key: 'mfa', header: 'MFA', fw: 5, align: 'center', sortable: true,
+      cell: (r) => (r.mfa
+        ? <Tooltip label="Second factor enrolled"><span><Icon name="shieldCheck" size={15} className="ok" /></span></Tooltip>
+        : <Tooltip label="No second factor — password alone gets in"><span><Icon name="alert" size={15} className="warn" /></span></Tooltip>),
+      text: (r) => (r.mfa ? 'mfa' : 'no mfa'),
+    },
+    { key: 'group', header: 'Group', fw: 14, sortable: true, cell: (r) => (r.group ? r.group : <Muted>—</Muted>) },
+    { key: 'partner', header: 'Partner', fw: 13, sortable: true, cell: (r) => (r.partner ? r.partner : <Muted>—</Muted>) },
+    { key: 'phone', header: 'Phone', fw: 11, align: 'center' },
+    { key: 'linkedProfiles', header: 'Linked Profiles', fw: 7, align: 'center', sortable: true },
+    { key: 'reportingUsers', header: 'Reports', fw: 6, align: 'center', sortable: true },
+    { key: 'startDate', header: 'Start Date', fw: 8, align: 'center', sortable: true },
+    { key: 'status', header: 'Status', fw: 7, align: 'center', sortable: true, cell: (r) => <StatusBadge value={r.status} /> },
+  ];
+
+  return (
+    <>
+      <div className="queue-kpis">
+        <Kpi label="Accounts" value={SETUP_USERS.length} meta={`${SETUP_USERS.filter((u) => u.status === 'Active').length} active`} />
+        <Kpi label="Dormant 90d+" value={dormant.length} meta="Still active, nobody signing in" invert />
+        <Kpi label="Without MFA" value={noMfa.length} meta="Password alone gets in" invert />
+        <Kpi label="Locked" value={SETUP_USERS.filter((u) => u.status === 'Locked').length} meta="Blocked from signing in" />
+      </div>
+
+      <ListTable
+        key={tab}
+        columns={columns}
+        rows={rows}
+        searchPlaceholder="Search name, email or role"
+        exportName="users"
+        leftExtra={(
+          <div className="wq-tabs" role="tablist" aria-label="User view">
+            {USER_TABS.map((t) => (
+              <button
+                key={t.value} type="button" role="tab" aria-selected={tab === t.value}
+                className={`wq-tab ${tab === t.value ? 'is-active' : ''}`.trim()}
+                onClick={() => setTab(t.value)}
+              >
+                {t.label}<span className="wq-tab__count">{SETUP_USERS.filter(t.match).length}</span>
+              </button>
+            ))}
+          </div>
+        )}
+        empty="No users in this view."
+      />
+    </>
+  );
+}
+
+function RolesTab() {
+  const toast = useToast();
+  const [editing, setEditing] = useState(null);
+
+  const columns = [
+    menuColumn((r) => [
+      { label: 'View / edit', icon: 'eye', onSelect: () => setEditing(r) },
+      { label: 'Clone role', icon: 'copy', onSelect: () => toast.notify(`"${r.name}" cloned.`) },
+      { label: 'Change status', icon: 'power', onSelect: () => toast.notify(`"${r.name}" status changed.`) },
+    ]),
+    { key: 'name', header: 'Role', fw: 16, sortable: true, cell: (r) => <TwoLine primary={r.name} secondary={r.profileType} />, text: (r) => `${r.name} ${r.profileType}` },
+    {
+      key: 'userCount', header: 'Users', fw: 7, align: 'center', sortable: true,
+      cell: (r) => (r.userCount
+        ? <strong>{r.userCount}</strong>
+        : <Tooltip label="Nobody holds this role — a permission surface with no owner"><Badge tone="neutral">None</Badge></Tooltip>),
+      text: (r) => String(r.userCount),
+      description: 'How many accounts hold this role. The reference omits it, so unused roles accumulate unnoticed.',
+    },
+    { key: 'permissions', header: 'Permissions', fw: 8, align: 'center', sortable: true, description: 'Number of areas this role can reach' },
+    { key: 'homeLanding', header: 'Home Landing Page', fw: 12, sortable: true },
+    { key: 'setupLanding', header: 'Setup Landing Page', fw: 12, sortable: true, cell: (r) => (r.setupLanding ? r.setupLanding : <Muted>—</Muted>) },
+    { key: 'created', header: 'Created', fw: 8, align: 'center', sortable: true },
+    { key: 'updated', header: 'Last Updated', fw: 8, align: 'center', sortable: true },
+    { key: 'status', header: 'Status', fw: 7, align: 'center', sortable: true, cell: (r) => <StatusBadge value={r.status} /> },
+  ];
+
+  return (
+    <>
+      <ListTable
+        columns={columns}
+        rows={ROLES}
+        searchPlaceholder="Search role name"
+        exportName="roles"
+        totals={['userCount']}
+        onRowClick={(r) => setEditing(r)}
+        empty="No roles configured."
+      />
+      <RoleDrawer role={editing} onClose={() => setEditing(null)} />
+    </>
+  );
+}
+
+function GroupsTab() {
+  const toast = useToast();
+
+  const columns = [
+    menuColumn((r) => [
+      { label: 'Edit group', icon: 'edit', onSelect: () => toast.notify(`Editing "${r.name}".`) },
+      { label: 'View members', icon: 'users', onSelect: () => toast.notify(`${r.users} users, ${r.merchants} merchants.`) },
+    ]),
+    { key: 'name', header: 'Group', fw: 18, sortable: true },
+    { key: 'type', header: 'Type', fw: 16, sortable: true, description: 'Whether the group scopes by business entity or by region/department' },
+    { key: 'region', header: 'Region', fw: 12, sortable: true },
+    {
+      key: 'users', header: '# Users', fw: 7, align: 'center', sortable: true,
+      cell: (r) => (r.users ? <strong>{r.users}</strong> : <Badge tone="neutral">None</Badge>),
+      text: (r) => String(r.users),
+    },
+    { key: 'merchants', header: '# Merchants', fw: 8, align: 'center', sortable: true },
+    { key: 'createdBy', header: 'Created By', fw: 11, sortable: true },
+    { key: 'created', header: 'Created On', fw: 8, align: 'center', sortable: true },
+    { key: 'updatedBy', header: 'Updated By', fw: 11, sortable: true },
+    { key: 'updated', header: 'Updated On', fw: 8, align: 'center', sortable: true },
+  ];
+
+  return (
+    <ListTable
+      columns={columns}
+      rows={USER_GROUPS}
+      searchPlaceholder="Search group name"
+      exportName="user-groups"
+      totals={['users', 'merchants']}
+      empty="No groups configured."
+    />
+  );
+}
+
+export function UsersAccess() {
+  const toast = useToast();
+  const [tab, setTab] = useState('users');
+
+  return (
+    <ListPage
+      title="Users & Access Control"
+      description="Accounts, roles, groups and what each of them can reach"
+      tabs={[
+        { value: 'users', label: 'Users', count: SETUP_USERS.length },
+        { value: 'roles', label: 'Roles', count: ROLES.length },
+        { value: 'groups', label: 'Groups', count: USER_GROUPS.length },
+      ]}
+      tab={tab}
+      onTabChange={setTab}
+      headerActions={(
+        <>
+          <Button variant="secondary" size="sm" icon="download" onClick={() => toast.notify('Access review exported.')}>Export</Button>
+          <Button variant="primary" size="sm" icon="plus" onClick={() => toast.notify('New account.')}>New</Button>
+        </>
+      )}
+    >
+      {tab === 'users' && <UsersTab />}
+      {tab === 'roles' && <RolesTab />}
+      {tab === 'groups' && <GroupsTab />}
+    </ListPage>
+  );
+}
+
+export default UsersAccess;

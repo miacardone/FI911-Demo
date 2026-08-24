@@ -5,7 +5,8 @@ import Icon from '@/components/ui/Icon';
 import Wordmark from '@/brand/Wordmark';
 import { Tooltip } from '@/components/ui/Overlay';
 import { useAuth } from '@/context/AuthContext';
-import { isSetupPath, navTreeFor } from '@/data/navigation';
+import { isEricPath, isSetupPath, navTreeFor } from '@/data/navigation';
+import { nav as ericNav } from '@/eric/data/navigation';
 
 /**
  * Deep-navy navigation rail with collapsible groups.
@@ -120,12 +121,13 @@ export function Sidebar({ collapsed, onToggle }) {
      operating the book, and folding fourteen config screens into the
      operating rail would bury the eight screens anyone opens daily. */
   const inSetup = isSetupPath(pathname);
-  const tree = navTreeFor(pathname);
+  const inEric = isEricPath(pathname);
+  const tree = navTreeFor(pathname, ericNav);
 
   return (
     <aside
-      className={`rail ${collapsed ? 'rail--collapsed' : ''} ${inSetup ? 'rail--setup' : ''}`.trim()}
-      aria-label={inSetup ? 'Setup navigation' : 'Main navigation'}
+      className={`rail ${collapsed ? 'rail--collapsed' : ''} ${inSetup || inEric ? 'rail--setup' : ''}`.trim()}
+      aria-label={inEric ? 'Eric archive navigation' : inSetup ? 'Setup navigation' : 'Main navigation'}
     >
       <div className="rail__head">
         {/* The collapsed head is 61px and the collapse button claims 26 of them,
@@ -144,10 +146,10 @@ export function Sidebar({ collapsed, onToggle }) {
         </Tooltip>
       </div>
 
-      {inSetup && !collapsed && (
-        <div className="rail__mode">
-          <Icon name="wrench" size={13} />
-          <span>Configuration</span>
+      {(inSetup || inEric) && !collapsed && (
+        <div className={`rail__mode ${inEric ? 'rail__mode--archive' : ''}`.trim()}>
+          <Icon name={inEric ? 'archive' : 'wrench'} size={13} />
+          <span>{inEric ? 'Eric — archived demo' : 'Configuration'}</span>
         </div>
       )}
 
