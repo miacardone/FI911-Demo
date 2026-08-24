@@ -70,6 +70,14 @@ function fitLabel(value, chars) {
   return `${str.slice(0, Math.max(1, chars - 1))}…`;
 }
 
+/**
+ * A tick at either end of the axis is centred on a point that sits ON the plot
+ * edge, so half the label hangs outside the chart and gets clipped by the
+ * card. Anchoring the first tick to its start and the last to its end keeps
+ * both inside the box without moving the tick itself.
+ */
+const anchorAt = (i, count) => (i === 0 ? 'start' : i === count - 1 ? 'end' : 'middle');
+
 /** Axis ticks: at most this many, so a 28-day series does not print 28 labels. */
 const maxTicks = (width) => Math.max(4, Math.floor(width / 90));
 
@@ -286,7 +294,7 @@ export function AreaChart({
         ))}
 
         {data.map((d, i) => (i % labelEvery === 0 ? (
-          <text key={`lbl-${d[xKey]}-${i}`} x={x(i)} y={H - (xLabel ? 20 : 6)} className="chart__axis" textAnchor="middle">
+          <text key={`lbl-${d[xKey]}-${i}`} x={x(i)} y={H - (xLabel ? 20 : 6)} className="chart__axis" textAnchor={anchorAt(i, data.length)}>
             {clip(d[xKey])}
             <title>{d[xKey]}</title>
           </text>
@@ -362,6 +370,34 @@ export function Donut({
   const biggest = arcs.reduce((best, a) => (a.value > (best?.value ?? -1) ? a : best), null);
   const focus = active ?? biggest;
 
+  /* The centre label has to live inside the HOLE, not the ring. "Fraud — Card
+     Not Present" ran straight through the doughnut and out the other side, so
+     it is measured against the hole's width and truncated to fit. The full
+     text is on hover. */
+  const holeWidth = Math.max(size - thickness * 2 - 10, 24);
+  const centreChars = Math.max(6, Math.floor(holeWidth / 4.6));
+  const fitCentre = (t) => {
+    const str = String(t ?? '');
+    return str.length > centreChars ? `${str.slice(0, centreChars - 1)}…` : str;
+  };
+
+  /* Tooltip sits OUTSIDE the ring, beside the slice it describes, rather than
+     on top of the doughnut where it covers the very numbers it is explaining.
+     Which side it flips to depends on the slice's angle. */
+  const tipAt = (() => {
+    if (!active) return null;
+    const mid = (active.offset + active.length / 2) / circumference;
+    const angle = mid * 2 * Math.PI - Math.PI / 2;
+    const dx = Math.cos(angle);
+    const dy = Math.sin(angle);
+    return {
+      left: c + dx * (size / 2 + 6),
+      top: c + dy * (size / 2 + 6),
+      /* Anchor the corner nearest the doughnut so the card grows outward. */
+      transform: `translate(${dx < -0.2 ? '-100%' : dx > 0.2 ? '0' : '-50%'}, ${dy < -0.2 ? '-100%' : dy > 0.2 ? '0' : '-50%'})`,
+    };
+  })();
+
   return (
     <div className="donut">
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={`${data.length} segments, ${total} total`}>
@@ -412,14 +448,15 @@ export function Donut({
               {active ? formatValue(active.value) : (centerValue ?? formatValue(focus.value))}
             </text>
             <text x={c} y={c + 13} className="donut-center__label" textAnchor="middle">
-              {active ? active.label : (centerLabel ?? focus.label)}
+              {fitCentre(active ? active.label : (centerLabel ?? focus.label))}
+              <title>{active ? active.label : (centerLabel ?? focus.label)}</title>
             </text>
           </>
         )}
       </svg>
 
-      {active && (
-        <div className="tooltip" style={{ position: 'absolute', left: '50%', top: 2, transform: 'translate(-50%, 0)' }}>
+      {active && tipAt && (
+        <div className="tooltip donut__tip" style={{ position: 'absolute', left: tipAt.left, top: tipAt.top, transform: tipAt.transform }}>
           <span className="row row--xtight row--nowrap" style={{ gap: 6 }}>
             <span className="legend__swatch" style={{ background: active.color }} />
             <span className="tooltip__title" style={{ marginBottom: 0 }}>{active.label}</span>
@@ -529,7 +566,7 @@ export function LineChart({
         ))}
 
         {data.map((d, i) => (i % labelEvery === 0 ? (
-          <text key={`lbl-${d[xKey]}-${i}`} x={x(i)} y={H - (xLabel ? 20 : 6)} className="chart__axis" textAnchor="middle">
+          <text key={`lbl-${d[xKey]}-${i}`} x={x(i)} y={H - (xLabel ? 20 : 6)} className="chart__axis" textAnchor={anchorAt(i, data.length)}>
             {clip(d[xKey])}
             <title>{d[xKey]}</title>
           </text>

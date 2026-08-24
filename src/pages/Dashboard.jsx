@@ -113,10 +113,10 @@ export function Dashboard() {
           </ChartCard>
         </div>
 
-        <div className="dash-grid dash-grid--5" style={{ marginTop: 'var(--s-4)' }}>
+        <div className="dash-grid dash-grid--auto" style={{ marginTop: 'var(--s-4)' }}>
           {STATUS_DONUTS.map((d) => (
             <Card key={d.id} title={d.title}>
-              <Donut data={d.data} size={150} thickness={38} arcLabels formatValue={formatNumber} />
+              <Donut data={d.data} size={186} thickness={44} arcLabels formatValue={formatNumber} />
             </Card>
           ))}
         </div>
