@@ -6,15 +6,15 @@ import { SelectField, TextField } from '@/components/ui/Form';
 import { ListPage } from '@/components/fi911/ListPage';
 import { AdvancedSearchPanel, applyFilters } from '@/components/fi911/Filters';
 import { AttachmentsModal, ChangeStatusModal, NotesModal } from '@/components/fi911/RecordModals';
-import { LinkCell, MccCell, Money, Muted, StatusBadge, TypeBadge, menuColumn, moneyText, moneyTotal } from '@/components/fi911/cells';
+import { LinkCell, StatusBadge, Muted, menuColumn } from '@/components/fi911/cells';
 import { FieldGrid, Section } from '@/components/fi911/DetailPage';
 import {
   INVITATIONS, INVITATION_STATUS, attachmentsFor, filterStage, notesFor, stageTabs, statusOptionsFor,
-} from '@/data/participants';
-import { AGENTS, ASSIGNEES } from '@/data/people';
-import { routes } from '@/data/navigation';
+} from '@/apm/data/participants';
+import { AGENTS, ASSIGNEES } from '@/apm/data/people';
+import { routes } from '@/apm/data/navigation';
 import { useToast } from '@/context/ToastContext';
-import brand from '@/brand/brand.config';
+import brand from '@/apm/brand.config';
 
 /**
  * Participant Invitations — stage 1 of the funnel.
@@ -25,22 +25,22 @@ import brand from '@/brand/brand.config';
  * matcher in Filters.js — a field that has no `match` falls back to a
  * substring test on the row key of the same name, and criteria that describe
  * a dispute rather than an invitation simply never match anything, which is
- * the honest behavior for a filter with nothing to filter on.
+ * the honest behaviour for a filter with nothing to filter on.
  */
 
 const ADVANCED_FIELDS = [
   { name: 'caseNumber', label: 'Case Number' },
   { name: 'cardScheme', label: 'Card Scheme', type: 'select', options: brand.schemes.map((s) => ({ value: s.id, label: s.label })) },
-  { name: 'merchant', label: 'Merchant Name' },
+  { name: 'participant', label: 'Merchant Name' },
   { name: 'transactionDate', label: 'Transaction Date Range', type: 'date' },
   { name: 'postDate', label: 'Post Date Range', type: 'date' },
   { name: 'txnAmountMin', label: 'Transaction Amount Min', type: 'number' },
   { name: 'txnAmountMax', label: 'Transaction Amount Max', type: 'number' },
-  { name: 'txnCurrency', label: 'Transaction Currency', type: 'select', options: [{ value: 'USD', label: 'USD' }, { value: 'EUR', label: 'EUR' }, { value: 'USD', label: 'USD' }] },
+  { name: 'txnCurrency', label: 'Transaction Currency', type: 'select', options: [{ value: 'GBP', label: 'GBP' }, { value: 'EUR', label: 'EUR' }, { value: 'USD', label: 'USD' }] },
   { name: 'reasonCodes', label: 'Reason Codes', type: 'select', options: [{ value: 'not_received', label: 'Goods/Services Not Received' }, { value: 'misrepresentation', label: 'Misrepresentation' }] },
   { name: 'caseAmountMin', label: 'Case Amount Min', type: 'number' },
   { name: 'caseAmountMax', label: 'Case Amount Max', type: 'number' },
-  { name: 'caseCurrency', label: 'Case Currency', type: 'select', options: [{ value: 'USD', label: 'USD' }] },
+  { name: 'caseCurrency', label: 'Case Currency', type: 'select', options: [{ value: 'GBP', label: 'GBP' }] },
   { name: 'caseAssigned', label: 'Case Assigned' },
   { name: 'reviewer', label: 'Reviewer' },
   { name: 'disputeCycle', label: 'Dispute Cycle', type: 'select', options: [{ value: 'retrieval', label: 'Retrieval' }, { value: 'first_cb', label: '1st Chargeback' }] },
@@ -112,7 +112,7 @@ function CreateInvitationModal({ open, onClose, onCreate }) {
               options={brand.participantTypes.map((t) => ({ value: t.label, label: t.label }))}
             />
             <TextField label="Legal Name" value={form.legalName} placeholder="Enter legal name" onChange={set('legalName')} />
-            <TextField label="Merchant Name" required value={form.participant} placeholder="Enter merchant name" onChange={set('merchant')} />
+            <TextField label="Participant Name" required value={form.participant} placeholder="Enter participant name" onChange={set('participant')} />
             <TextField label="Website" value={form.website} placeholder="Enter website" onChange={set('website')} />
             <TextField label="Contact Name" required value={form.contact} placeholder="Enter contact name" onChange={set('contact')} />
             <TextField label="Contact Phone" value={form.phone} placeholder="Enter phone number" onChange={set('phone')} />
@@ -149,7 +149,7 @@ export function Invitations() {
 
   const removeRow = (row) => {
     setRows((rs) => rs.filter((r) => r.id !== row.id));
-    toast.notify(`${row.merchant} removed.`);
+    toast.notify(`${row.participant} removed.`);
   };
 
   const changeStatus = (row) => ({ status }) => {
@@ -158,8 +158,8 @@ export function Invitations() {
 
   const columns = [
     {
-      key: 'merchant',
-      header: 'Merchant Name',
+      key: 'participant',
+      header: 'Participant Name',
       fw: 16,
       sortable: true,
       cell: (r) => <LinkCell to={routes.invitationDetail(r.id)}>{r.participant}</LinkCell>,
@@ -172,10 +172,10 @@ export function Invitations() {
       sortable: true,
       cell: (r) => (r.assignedTo ? r.assignedTo : <Muted>-</Muted>),
     },
-    { hiddenByDefault: true, key: 'contact', header: 'Contact', fw: 11, sortable: true },
-    { hiddenByDefault: true, key: 'phone', header: 'Phone', fw: 10 },
-    { hiddenByDefault: true, key: 'email', header: 'Email', fw: 18 },
-    { key: 'created', header: 'Created Date', fw: 9, align: 'center', sortable: true },
+    { key: 'contact', header: 'Contact', fw: 11, sortable: true },
+    { key: 'phone', header: 'Phone', fw: 10 },
+    { key: 'email', header: 'Email', fw: 18 },
+    { key: 'created', header: 'Creation Date', fw: 9, sortable: true },
     { key: 'statusChanged', header: 'Status Change', fw: 9, sortable: true },
     {
       key: 'status',
@@ -191,13 +191,13 @@ export function Invitations() {
       { label: 'Notes', icon: 'message', onSelect: () => setModal({ kind: 'notes', row }) },
       { label: 'Delete', icon: 'trash', tone: 'danger', onSelect: () => removeRow(row) },
     ]),
-];
+  ];
 
   return (
     <>
       <ListPage
-        title="Merchant Invitations"
-        description="Manage and track merchant invitation submissions and status"
+        title="Participant Invitations"
+        description="Manage and track participant invitation submissions and status"
         tabs={tabs}
         tab={tab}
         onTabChange={setTab}
@@ -209,8 +209,8 @@ export function Invitations() {
         columns={columns}
         rows={visible}
         rowKey={(r) => r.id}
-        searchPlaceholder="Search merchant invitations"
-        exportName="merchant-invitations"
+        searchPlaceholder="Search participant invitations"
+        exportName="participant-invitations"
         onAdvanced={() => setAdvancedOpen((v) => !v)}
         advancedOpen={advancedOpen}
         advanced={(
@@ -243,7 +243,7 @@ export function Invitations() {
             statusChanged: '2026/08/20',
             status: 'New Lead',
           }, ...rs]);
-          toast.notify(`Invitation created for ${form.merchant}.`);
+          toast.notify(`Invitation created for ${form.participant}.`);
         }}
       />
 

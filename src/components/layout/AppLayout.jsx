@@ -6,8 +6,8 @@ import Icon from '@/components/ui/Icon';
 import { Popover } from '@/components/ui/Overlay';
 import { useAuth } from '@/context/AuthContext';
 import { THEMES, usePreferences } from '@/context/PreferencesContext';
-import { crumbsFor, isEricPath } from '@/data/navigation';
-import { crumbsFor as ericCrumbsFor } from '@/eric/data/navigation';
+import { crumbsFor, isApmPath } from '@/data/navigation';
+import { crumbsFor as apmCrumbsFor } from '@/apm/data/navigation';
 import { readPref, writePref } from '@/utils/storage';
 
 const SIDEBAR_KEY = 'fi911.sidebarCollapsed';
@@ -135,7 +135,7 @@ function Topbar() {
 function Crumbbar({ detailLabel }) {
   const { pathname } = useLocation();
   const crumbs = useMemo(
-    () => (isEricPath(pathname) ? ericCrumbsFor(pathname, detailLabel) : crumbsFor(pathname, detailLabel)),
+    () => (isApmPath(pathname) ? apmCrumbsFor(pathname, detailLabel) : crumbsFor(pathname, detailLabel)),
     [pathname, detailLabel],
   );
 

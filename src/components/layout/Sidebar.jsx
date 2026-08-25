@@ -5,8 +5,8 @@ import Icon from '@/components/ui/Icon';
 import Wordmark from '@/brand/Wordmark';
 import { Tooltip } from '@/components/ui/Overlay';
 import { useAuth } from '@/context/AuthContext';
-import { isEricPath, isSetupPath, navTreeFor } from '@/data/navigation';
-import { nav as ericNav } from '@/eric/data/navigation';
+import { isApmPath, isSetupPath, navTreeFor } from '@/data/navigation';
+import { nav as apmNav } from '@/apm/data/navigation';
 
 /**
  * Deep-navy navigation rail with collapsible groups.
@@ -121,13 +121,13 @@ export function Sidebar({ collapsed, onToggle }) {
      operating the book, and folding fourteen config screens into the
      operating rail would bury the eight screens anyone opens daily. */
   const inSetup = isSetupPath(pathname);
-  const inEric = isEricPath(pathname);
-  const tree = navTreeFor(pathname, ericNav);
+  const inApm = isApmPath(pathname);
+  const tree = navTreeFor(pathname, apmNav);
 
   return (
     <aside
-      className={`rail ${collapsed ? 'rail--collapsed' : ''} ${inSetup || inEric ? 'rail--setup' : ''}`.trim()}
-      aria-label={inEric ? 'Eric archive navigation' : inSetup ? 'Setup navigation' : 'Main navigation'}
+      className={`rail ${collapsed ? 'rail--collapsed' : ''} ${inSetup || inApm ? 'rail--setup' : ''}`.trim()}
+      aria-label={inApm ? 'Alternative payment methods navigation' : inSetup ? 'Setup navigation' : 'Main navigation'}
     >
       <div className="rail__head">
         {/* The collapsed head is 61px and the collapse button claims 26 of them,
@@ -146,10 +146,10 @@ export function Sidebar({ collapsed, onToggle }) {
         </Tooltip>
       </div>
 
-      {(inSetup || inEric) && !collapsed && (
-        <div className={`rail__mode ${inEric ? 'rail__mode--archive' : ''}`.trim()}>
-          <Icon name={inEric ? 'archive' : 'wrench'} size={13} />
-          <span>{inEric ? 'Eric — archived demo' : 'Configuration'}</span>
+      {(inSetup || inApm) && !collapsed && (
+        <div className={`rail__mode ${inApm ? 'rail__mode--apm' : ''}`.trim()}>
+          <Icon name={inApm ? 'route' : 'wrench'} size={13} />
+          <span>{inApm ? 'Alternative Payment Methods' : 'Configuration'}</span>
         </div>
       )}
 
