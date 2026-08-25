@@ -114,6 +114,7 @@ export function UnderwritingDetail() {
         /* One section per step. The three-step version stacked two or three
            full sections into each, which still meant scrolling inside a
            wizard — the steps were chapter headings, not pages. */
+        values={form.values}
         steps={[
           {
             label: 'Merchant',

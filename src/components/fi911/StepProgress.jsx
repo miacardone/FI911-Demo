@@ -1,4 +1,5 @@
 import Icon from '@/components/ui/Icon';
+import { Tooltip } from '@/components/ui/Overlay';
 
 /**
  * PER-SECTION COMPLETION for the agreement wizards.
@@ -47,69 +48,59 @@ const LABEL = {
   none: '',
 };
 
-function Ring({ done, total, state }) {
-  const pct = total ? done / total : 0;
-  const r = 13;
-  const circumference = 2 * Math.PI * r;
-
+/**
+ * The stepper.
+ *
+ * Was a row of bordered cards, each carrying a progress ring, a title, a
+ * fraction and a state word. Seven of those side by side read as a wall of
+ * boxes rather than as progress, and they repeated in three ways what one
+ * mark can say: a step is done, current, or not yet.
+ *
+ * Now a single rail with a marker per step — filled and ticked when complete,
+ * ringed when current, hollow when untouched. The fraction moves to a tooltip,
+ * where it is available without competing with the label.
+ */
+function StepMark({ index, state, active }) {
+  if (state === 'complete') {
+    return (
+      <span className={`stepbar__mark stepbar__mark--done ${active ? 'is-active' : ''}`.trim()}>
+        <Icon name="check" size={13} />
+      </span>
+    );
+  }
   return (
-    <svg width="32" height="32" viewBox="0 0 32 32" className={`step-ring step-ring--${state}`} aria-hidden>
-      <circle cx="16" cy="16" r={r} className="step-ring__track" />
-      <circle
-        cx="16" cy="16" r={r}
-        className="step-ring__value"
-        strokeDasharray={`${pct * circumference} ${circumference}`}
-        transform="rotate(-90 16 16)"
-      />
-      {state === 'complete'
-        ? <path d="M11 16.2l3.2 3.2L21 12.6" className="step-ring__tick" />
-        : <text x="16" y="19.5" textAnchor="middle" className="step-ring__text">{done}</text>}
-    </svg>
+    <span className={`stepbar__mark stepbar__mark--${state} ${active ? 'is-active' : ''}`.trim()}>
+      {index + 1}
+    </span>
   );
 }
 
 export function StepProgress({ steps, values, current, onSelect, onJumpToField }) {
   return (
-    <div className="step-cards" role="tablist" aria-label="Agreement sections">
+    <div className="stepbar" role="tablist" aria-label="Agreement sections">
+      <div className="stepbar__rail" aria-hidden />
       {steps.map((step, i) => {
         const { total, done, state, missing } = stepStatus(step, values);
         const active = i === current;
+        const hint = total > 0
+          ? `${step.label} — ${done} of ${total} required fields complete`
+          : step.label;
 
         return (
-          <button
-            key={step.label}
-            type="button"
-            role="tab"
-            aria-selected={active}
-            className={`step-card step-card--${state} ${active ? 'is-active' : ''}`.trim()}
-            onClick={() => onSelect(i)}
-          >
-            <Ring done={done} total={total} state={state} />
-
-            <span className="step-card__text">
-              <span className="step-card__title">{step.label}</span>
-              <span className="step-card__meta">
-                {total > 0 && <span className="step-card__count">{done}/{total}</span>}
-                <span className="step-card__state">{LABEL[state]}</span>
-              </span>
-            </span>
-
-            {/* Only offer the jump when there is somewhere to jump to and the
-                user is already looking at this step — otherwise selecting the
-                step is the more obvious action. */}
-            {active && missing.length > 0 && onJumpToField && (
-              <span
-                className="step-card__jump"
-                role="button"
-                tabIndex={0}
-                title={`Go to first missing field (${missing.length} remaining)`}
-                onClick={(e) => { e.stopPropagation(); onJumpToField(missing[0]); }}
-                onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); onJumpToField(missing[0]); } }}
-              >
-                <Icon name="arrowRight" size={14} />
-              </span>
-            )}
-          </button>
+          <Tooltip key={step.label} label={hint}>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={active}
+              aria-label={hint}
+              className={`stepbar__step stepbar__step--${state} ${active ? 'is-active' : ''}`.trim()}
+              onClick={() => onSelect(i)}
+              onDoubleClick={() => (missing.length && onJumpToField ? onJumpToField(missing[0]) : null)}
+            >
+              <StepMark index={i} state={state} active={active} />
+              <span className="stepbar__label">{step.label}</span>
+            </button>
+          </Tooltip>
         );
       })}
     </div>
