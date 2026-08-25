@@ -82,7 +82,7 @@ export function DocumentCenter() {
     { key: 'type', header: 'Document Type', fw: 12, sortable: true },
     {
       key: 'merchant', header: 'Merchant', fw: 15, sortable: true,
-      cell: (r) => <TwoLine primary={r.participant} secondary={r.routingNumber} />,
+      cell: (r) => <TwoLine primary={r.merchant} secondary={r.routingNumber} />,
       text: (r) => `${r.merchant} ${r.routingNumber}`,
     },
     { key: 'uploadedBy', header: 'Uploaded By', fw: 12, sortable: true },

@@ -26,7 +26,7 @@ export function PortfolioPayoutDetails() {
       key: 'merchant', header: 'Merchant Name', fw: 14, sortable: true,
       cell: (r) => (
         <TwoLine
-          primary={r.participant}
+          primary={r.merchant}
           secondary={<LinkCell onClick={() => toast.notify(`MID ${r.mid}`)}>{r.mid}</LinkCell>}
         />
       ),

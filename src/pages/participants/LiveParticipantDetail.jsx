@@ -43,20 +43,20 @@ export function LiveParticipantDetail() {
   const navigate = useNavigate();
   const record = LIVE_PARTICIPANTS.find((r) => r.id === id) ?? LIVE_PARTICIPANTS[0];
 
-  useDetailCrumb(record.participant);
+  useDetailCrumb(record.merchant);
 
   const [modal, setModal] = useState(null);
 
-  const institution = institutionByName(record.participant);
-  const routingNumber = institution?.routingNumber ?? routingNumberFor(record.participant);
+  const institution = institutionByName(record.merchant);
+  const routingNumber = institution?.routingNumber ?? routingNumberFor(record.merchant);
 
   const form = useForm({
     agentName: record.agent,
     agentEmail: `Clooney@ukpaymentsops.com`,
     type: record.type,
     region: '',
-    legalName: record.participant,
-    participant: record.participant,
+    legalName: record.merchant,
+    merchant: record.merchant,
     website: 'www.nikesportstest.com',
     contact: record.contact,
     phone: record.phone,
@@ -95,7 +95,7 @@ export function LiveParticipantDetail() {
     storesCardData: false, storesTrack: false, storesCvv: false,
     accessLimited: true, noUnencrypted: true,
 
-    bankAccounts: [{ bankName: record.participant, accountNumber: '28473910', routing: routingNumber, use: 'Direct Credit Authority' }],
+    bankAccounts: [{ bankName: record.merchant, accountNumber: '28473910', routing: routingNumber, use: 'Direct Credit Authority' }],
     individuals: [{ name: record.contact, phone: record.phone, email: record.email, city: 'Duluth', ownership: '100', isSignatory: true, isOfficer: true }],
     terminals: [{}],
     shipping: 'Ship to Merchant Address',
@@ -121,7 +121,7 @@ export function LiveParticipantDetail() {
             <header className="fi-section__head"><span className="fi-section__title">Participant Details</span></header>
             <div className="fi-section__body">
               <div className="fi-summary">
-                <SummaryRow label="Merchant Name">{record.participant}</SummaryRow>
+                <SummaryRow label="Merchant Name">{record.merchant}</SummaryRow>
                 <SummaryRow label="Business Type">LLC</SummaryRow>
                 <SummaryRow label="Routing Number">{routingNumber}</SummaryRow>
                 <SummaryRow label="Status"><Badge tone={statusTone(record.status)}>{record.status}</Badge></SummaryRow>

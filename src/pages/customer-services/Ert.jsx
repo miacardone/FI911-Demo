@@ -33,12 +33,12 @@ const ADVANCED_FIELDS = [
 ];
 
 function CreateTicketModal({ open, onClose, onCreate }) {
-  const blank = { participant: '', department: '', topic: '', subTopic: '', title: '', description: '' };
+  const blank = { merchant: '', department: '', topic: '', subTopic: '', title: '', description: '' };
   const [form, setForm] = useState(blank);
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
   const remaining = DESCRIPTION_LIMIT - form.description.length;
-  const valid = form.participant.trim() && form.department && form.topic && form.subTopic && form.title.trim();
+  const valid = form.merchant.trim() && form.department && form.topic && form.subTopic && form.title.trim();
 
   const submit = () => { onCreate(form); setForm(blank); onClose(); };
 
@@ -56,7 +56,7 @@ function CreateTicketModal({ open, onClose, onCreate }) {
       )}
     >
       <div className="stack">
-        <TextField label="Merchant Name" required value={form.participant} placeholder="Enter merchant name" onChange={set('merchant')} />
+        <TextField label="Merchant Name" required value={form.merchant} placeholder="Enter merchant name" onChange={set('merchant')} />
         <SelectField label="Department" required value={form.department} onChange={set('department')} placeholder="Select" options={brand.ertDepartments.map((d) => ({ value: d, label: d }))} />
         <SelectField label="Topic" required value={form.topic} onChange={set('topic')} placeholder="Select" options={brand.ertTopics.map((d) => ({ value: d, label: d }))} />
         <SelectField label="Sub Topic" required value={form.subTopic} onChange={set('subTopic')} placeholder="Select" options={brand.ertSubTopics.map((d) => ({ value: d, label: d }))} />

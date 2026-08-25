@@ -60,13 +60,13 @@ const ADVANCED_FIELDS = [
 function CreateInvitationModal({ open, onClose, onCreate }) {
   const blank = {
     agent: '', agentContact: '', agentEmail: '', assignedTo: '',
-    type: '', legalName: '', participant: '', website: '',
+    type: '', legalName: '', merchant: '', website: '',
     contact: '', phone: '', serviceNumber: '', email: '',
   };
   const [form, setForm] = useState(blank);
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
-  const valid = form.agent.trim() && form.participant.trim() && form.contact.trim() && form.email.trim();
+  const valid = form.agent.trim() && form.merchant.trim() && form.contact.trim() && form.email.trim();
 
   const submit = () => {
     onCreate(form);
@@ -112,7 +112,7 @@ function CreateInvitationModal({ open, onClose, onCreate }) {
               options={brand.participantTypes.map((t) => ({ value: t.label, label: t.label }))}
             />
             <TextField label="Legal Name" value={form.legalName} placeholder="Enter legal name" onChange={set('legalName')} />
-            <TextField label="Merchant Name" required value={form.participant} placeholder="Enter merchant name" onChange={set('merchant')} />
+            <TextField label="Merchant Name" required value={form.merchant} placeholder="Enter merchant name" onChange={set('merchant')} />
             <TextField label="Website" value={form.website} placeholder="Enter website" onChange={set('website')} />
             <TextField label="Contact Name" required value={form.contact} placeholder="Enter contact name" onChange={set('contact')} />
             <TextField label="Contact Phone" value={form.phone} placeholder="Enter phone number" onChange={set('phone')} />
@@ -162,7 +162,7 @@ export function Invitations() {
       header: 'Merchant Name',
       fw: 16,
       sortable: true,
-      cell: (r) => <LinkCell to={routes.invitationDetail(r.id)}>{r.participant}</LinkCell>,
+      cell: (r) => <LinkCell to={routes.invitationDetail(r.id)}>{r.merchant}</LinkCell>,
     },
     { key: 'agent', header: 'Agent', fw: 11, sortable: true },
     {
@@ -233,7 +233,7 @@ export function Invitations() {
           const id = `inv-${Date.now()}`;
           setRows((rs) => [{
             id,
-            participant: form.participant,
+            merchant: form.merchant,
             agent: form.agent,
             assignedTo: form.assignedTo,
             contact: form.contact,

@@ -41,7 +41,7 @@ export function Applications() {
   );
 
   const columns = [
-    { key: 'merchant', header: 'Merchant Name', fw: 15, sortable: true, cell: (r) => <LinkCell to={routes.applicationDetail(r.id)}>{r.participant}</LinkCell> },
+    { key: 'merchant', header: 'Merchant Name', fw: 15, sortable: true, cell: (r) => <LinkCell to={routes.applicationDetail(r.id)}>{r.merchant}</LinkCell> },
       { key: 'mcc', header: 'MCC', fw: 6, align: 'center', sortable: true, cell: (r) => <MccCell code={r.mcc} label={r.mccLabel} />, text: (r) => `${r.mcc} ${r.mccLabel}` },
     { key: 'merchantType', header: 'Merchant Type', fw: 9, align: 'center', sortable: true, cell: (r) => <TypeBadge value={r.merchantType} /> },
     { key: 'processor', header: 'Processor', fw: 9, align: 'center', sortable: true },

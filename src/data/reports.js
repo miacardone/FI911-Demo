@@ -158,7 +158,7 @@ export const DOCUMENTS = (() => {
       typeId: type.id,
       type: type.label,
       icon: type.icon,
-      participant: owner.name,
+      merchant: owner.name,
       routingNumber: owner.routingNumber,
       uploadedBy: d.pick([CURRENT_USER.name, ...ASSIGNEES.slice(0, 5)]),
       uploaded: `2026/0${d.int(4, 8)}/${String(d.int(1, 28)).padStart(2, '0')}`,

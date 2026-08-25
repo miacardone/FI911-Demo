@@ -23,7 +23,7 @@ export function AgentPayoutSummary() {
     },
     {
       key: 'merchants', header: 'Merchants', fw: 9, align: 'right', sortable: true,
-      cell: (r) => <LinkCell onClick={() => toast.notify(`${r.merchants} merchants under ${r.agent}.`)}>{r.participants}</LinkCell>,
+      cell: (r) => <LinkCell onClick={() => toast.notify(`${r.merchants} merchants under ${r.agent}.`)}>{r.merchants}</LinkCell>,
     },
     { key: 'transactions', header: 'Transactions', fw: 9, align: 'right', sortable: true, cell: (r) => formatNumber(r.transactions) },
     { key: 'volume', header: 'Volume', fw: 10, align: 'right', sortable: true, sortValue: (r) => r.volume, text: (r) => moneyText(r.volume), cell: (r) => <Money value={r.volume} /> },

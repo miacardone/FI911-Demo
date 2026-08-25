@@ -23,8 +23,8 @@ const columns = [
   },
   {
     key: 'merchant', header: 'Merchants', fw: 14, sortable: true,
-    cell: (r) => <TwoLine primary={r.participant} secondary={r.participantMid} />,
-    text: (r) => `${r.merchant} ${r.participantMid}`,
+    cell: (r) => <TwoLine primary={r.merchant} secondary={r.mid} />,
+    text: (r) => `${r.merchant} ${r.mid}`,
   },
   {
     key: 'partner', header: 'Partner', fw: 12, sortable: true,

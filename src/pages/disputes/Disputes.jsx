@@ -76,8 +76,8 @@ export function Disputes() {
   const summaryColumns = [
     {
       key: 'merchant', header: 'Merchant Name', fw: 16, sortable: true,
-      cell: (r) => <TwoLine primary={<LinkCell onClick={() => setTab('details')}>{r.participant}</LinkCell>} secondary={`MID: ${r.mid}`} />,
-      text: (r) => `${r.participant} ${r.mid}`,
+      cell: (r) => <TwoLine primary={<LinkCell onClick={() => setTab('details')}>{r.merchant}</LinkCell>} secondary={`MID: ${r.mid}`} />,
+      text: (r) => `${r.merchant} ${r.mid}`,
     },
     { key: 'pspType', header: 'Merchant Type', fw: 9, align: 'center', sortable: true, cell: (r) => <TypeBadge value={r.pspType} /> },
     { key: 'transactions', header: 'Transaction (#)', fw: 9, align: 'right', sortable: true, cell: (r) => <LinkCell onClick={() => setTab('details')}>{formatNumber(r.transactions)}</LinkCell> },
@@ -92,9 +92,9 @@ export function Disputes() {
   const detailColumns = [
     { key: 'caseNumber', header: 'Case Number', fw: 10, sortable: true, cell: (r) => <LinkCell to={routes.disputeDetail(r.caseNumber)}>{r.caseNumber}</LinkCell> },
     {
-      key: 'participant', header: 'Merchant', fw: 16, sortable: true,
-      cell: (r) => <TwoLine primary={r.participant} secondary={`MID: ${r.mid}`} />,
-      text: (r) => `${r.participant} ${r.mid}`,
+      key: 'merchant', header: 'Merchant', fw: 16, sortable: true,
+      cell: (r) => <TwoLine primary={r.merchant} secondary={`MID: ${r.mid}`} />,
+      text: (r) => `${r.merchant} ${r.mid}`,
     },
     { key: 'scheme', header: 'Card Type', fw: 8, align: 'center', sortable: true, cell: (r) => <CardBrand scheme={r.scheme} />, text: (r) => r.scheme },
     { key: 'cardNumber', header: 'Card Number', fw: 11, align: 'center' },

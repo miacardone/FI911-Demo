@@ -8,7 +8,7 @@ import { PARTICIPANT_STATUS } from '@/data/residuals';
 const columns = [
   {
     key: 'merchant', header: 'Merchant Name', fw: 18, sortable: true,
-    cell: (r) => <TwoLine primary={r.participant} secondary={r.routingNumber} />,
+    cell: (r) => <TwoLine primary={r.merchant} secondary={r.routingNumber} />,
     text: (r) => `${r.merchant} ${r.routingNumber}`,
   },
   {

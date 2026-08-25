@@ -26,7 +26,7 @@ export function InvitationDetail() {
   const navigate = useNavigate();
   const record = INVITATIONS.find((r) => r.id === id) ?? INVITATIONS[0];
 
-  useDetailCrumb(record.participant);
+  useDetailCrumb(record.merchant);
 
   const [status, setStatus] = useState(record.status);
   const [modal, setModal] = useState(null);
@@ -37,8 +37,8 @@ export function InvitationDetail() {
     agentContactEmail: `Dm@${brand.emailDomain}`,
     assignedTo: record.assignedTo,
     type: '',
-    legalName: record.participant,
-    participant: record.participant,
+    legalName: record.merchant,
+    merchant: record.merchant,
     website: 'www.johnsmith.com',
     contact: record.contact,
     phone: record.phone,

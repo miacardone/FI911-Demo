@@ -44,7 +44,7 @@ export function BusinessInformationSection({ form, variant = 'application' }) {
         <TextField {...field('region', 'Region / Channel-Department')} placeholder="Region / Channel-Department" />
         {variant === 'application' && <TextField {...field('legalProduct', 'Legal Product Sold')} />}
         <TextField {...field('legalName', 'Legal Name')} />
-        <TextField {...field('participant', 'Participant Name')} required />
+        <TextField {...field('merchant', 'Participant Name')} required />
         <TextField {...field('website', 'Website')} required />
         <TextField {...field('contact', 'Contact Name')} required />
         <TextField {...field('phone', 'Contact Phone')} />

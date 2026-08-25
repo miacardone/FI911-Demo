@@ -27,7 +27,7 @@ export function ParticipantMerchants() {
   const toast = useToast();
   const participant = LIVE_PARTICIPANTS.find((r) => r.id === id) ?? LIVE_PARTICIPANTS[0];
 
-  useDetailCrumb(participant.participant);
+  useDetailCrumb(participant.merchant);
 
   const rows = useMemo(() => participantMerchants(participant), [participant]);
   const [advancedOpen, setAdvancedOpen] = useState(false);
@@ -53,7 +53,7 @@ export function ParticipantMerchants() {
 
   return (
     <ListPage
-      title={participant.participant}
+      title={participant.merchant}
       description="Participating Merchants"
       columns={columns}
       rows={visible}

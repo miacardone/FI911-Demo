@@ -29,7 +29,7 @@ export function ApplicationDetail() {
   const toast = useToast();
   const record = APPLICATIONS.find((r) => r.id === id) ?? APPLICATIONS[0];
 
-  useDetailCrumb(record.participant);
+  useDetailCrumb(record.merchant);
 
   const [status, setStatus] = useState(record.status);
   const [modal, setModal] = useState(null);
@@ -43,7 +43,7 @@ export function ApplicationDetail() {
     region: 'EMEA',
     legalProduct: 'Business Banking & Payment Processing',
     legalName: `${record.merchant.replace(/ (Payments|Business|Commercial)$/, '')} Platform Ltd`,
-    participant: record.participant,
+    merchant: record.merchant,
     website: 'www.tide.co',
     contact: record.contact,
     phone: record.phone,

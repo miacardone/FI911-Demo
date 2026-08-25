@@ -72,7 +72,7 @@ export const ACCOUNT_HOLDER_DETAILS = (() => {
       id: `ahd-${i}`,
       accountName: merchant,
       accountNumber: d.digits(16),
-      participant: d.pick(['Fiserv Wells', 'TSYS Merrick', 'Chase Direct']),
+      merchant: d.pick(['Fiserv Wells', 'TSYS Merrick', 'Chase Direct']),
       disputeCount: d.int(0, 2),
       disputeValue: d.money(0.25, 2.5),
       bankAccount: `${d.digits(4)}****${d.digits(4)}`,
@@ -102,7 +102,7 @@ export const GATEWAY = (() => {
     const approved = d.bool(0.78);
     return {
       id: `gw-${i}`,
-      participant: merchant,
+      merchant: merchant,
       partner: partner.name,
       transactionId: `${d.digits(4)}.${d.digits(4)}.${d.digits(4)}`,
       accountNumber: `****${d.digits(8)}`,
@@ -158,7 +158,7 @@ export const ACH_DETAILS = (() => {
   const d = createDraw(6302);
   return Array.from({ length: 38 }, (_, i) => ({
     id: `achd-${i}`,
-    participant: d.pick(MERCHANTS),
+    merchant: d.pick(MERCHANTS),
     partner: d.digits(10),
     terminalId: `${d.pick(['OV5RLROX9K0E', 'SOUTHDAKO001', 'ICARECRED004', 'CLEARINVE001', 'GEEKS-ONSI02', 'PERSONAL-M01'])}`,
     transactionId: d.digits(18),

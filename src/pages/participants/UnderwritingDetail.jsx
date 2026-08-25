@@ -31,7 +31,7 @@ export function UnderwritingDetail() {
   const navigate = useNavigate();
   const record = UNDERWRITING.find((r) => r.id === id) ?? UNDERWRITING[0];
 
-  useDetailCrumb(record.participant);
+  useDetailCrumb(record.merchant);
   const [modal, setModal] = useState(null);
 
   const form = useForm({

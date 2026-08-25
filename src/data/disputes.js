@@ -42,7 +42,7 @@ const pct = (a, b) => (b === 0 ? 0 : Math.round((a / b) * 10000) / 100);
 
 export const DISPUTE_SUMMARY = SUMMARY_SHAPES.map((s, i) => ({
   id: `ds-${i}`,
-  participant: s.merchant,
+  merchant: s.merchant,
   mid: midFor(s.merchant, 14),
   routingNumber: '',
   pspType: s.type,
@@ -86,7 +86,7 @@ export const DISPUTE_DETAILS = (() => {
       caseNumber: String(686617660 - i),
       /* `participant` is the field name the grids already bind to; the value
          is a merchant, which is what this book is actually about. */
-      participant: merchant,
+      merchant: merchant,
       mid: midFor(merchant, 14),
       dbaName: merchant,
       scheme,

@@ -299,7 +299,7 @@ export function DataTable({
                   <span className="truncate">{c.header}</span>
                   <Icon
                     name={active ? (sort.dir === 'asc' ? 'arrowUp' : 'arrowDown') : 'chevronsUpDown'}
-                    size={fit ? 9 : 11}
+                    size={fit ? 13 : 14}
                     className={active ? 'dt__caret' : 'dt__caret dt__caret--idle'}
                   />
                 </button>
@@ -338,7 +338,7 @@ export function DataTable({
                   onDragLeave={draggableCol ? () => setDragOverCol((p) => (p?.key === c.key ? null : p)) : undefined}
                   onDragEnd={draggableCol ? clearColDrag : undefined}
                 >
-                  {draggableCol && <Icon name="drag" size={11} className="dt__th-handle" aria-hidden />}
+                  {draggableCol && <Icon name="drag" size={13} className="dt__th-handle" aria-hidden />}
                   {headerTooltip ? <Tooltip label={headerTooltip}>{header}</Tooltip> : header}
                 </th>
               );
@@ -384,7 +384,7 @@ export function DataTable({
                 >
                   {rowDrag && (
                     <td className="dt__lead">
-                      <span className="drag-handle" aria-hidden><Icon name="drag" size={13} /></span>
+                      <span className="drag-handle" aria-hidden><Icon name="drag" size={15} /></span>
                     </td>
                   )}
 
@@ -411,7 +411,7 @@ export function DataTable({
                         aria-label={expanded ? 'Collapse row' : 'Expand row'}
                         aria-expanded={expanded}
                       >
-                        <Icon name="chevron" size={13} style={{ transform: expanded ? 'rotate(90deg)' : 'none', transition: 'transform var(--dur) var(--ease)' }} />
+                        <Icon name="chevron" size={15} style={{ transform: expanded ? 'rotate(90deg)' : 'none', transition: 'transform var(--dur) var(--ease)' }} />
                       </button>
                     </td>
                   )}

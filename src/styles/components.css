@@ -469,8 +469,7 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
   min-height: 18px; align-items: center;
 }
 .dt__sort-btn:hover { color: var(--c-ink); }
-.dt__sort-btn .dt__caret { flex: none; color: var(--c-primary); }
-.dt__caret--idle { color: var(--c-ink-subtle); opacity: 0.55; }
+.dt__sort-btn .dt__caret { flex: none; }
 
 .dt tbody td {
   padding: 7px var(--s-4);
@@ -2237,3 +2236,32 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
   background: color-mix(in srgb, var(--c-primary) 26%, transparent);
   color: color-mix(in srgb, var(--c-primary) 45%, #fff);
 }
+
+/* ---------- Table controls need to be seen before they can be used ----------
+   The select box, the row menu, the sort caret and the drag handles were all
+   drawn in --c-ink-subtle at 9-11px: correct as "quiet chrome", wrong for
+   controls someone is hunting for. They are bigger and carry real ink now,
+   with the accent reserved for hover so the grid still reads calm at rest. */
+
+.checkbox { width: 17px; height: 17px; border-width: 2px; border-color: var(--c-ink-subtle); }
+.checkbox:hover { border-color: var(--c-primary); }
+.checkbox:checked::after { left: 5px; top: 1px; }
+
+.row-menu__btn { width: 28px; height: 28px; color: var(--c-ink-muted); }
+.row-menu__btn:hover { color: var(--c-primary-deep); }
+
+/* Idle carets were nearly invisible, so a sortable column did not look
+   sortable until you found it by accident. */
+/* The ACTIVE sort carries the accent; an idle one is grey. Both teal meant
+   every column looked sorted, which is the same as none of them looking
+   sorted. */
+.dt__sort-btn .dt__caret { color: var(--c-primary); flex: none; }
+.dt__sort-btn .dt__caret--idle { color: var(--c-ink-muted); opacity: 0.9; }
+.dt thead th:hover .dt__sort-btn .dt__caret--idle { color: var(--c-primary); opacity: 1; }
+
+.dt__th-handle { color: var(--c-ink-subtle); }
+.dt__th--draggable:hover .dt__th-handle { color: var(--c-primary); }
+.drag-handle { color: var(--c-ink-muted); }
+
+.icon-btn { color: var(--c-ink-muted); width: 28px; height: 28px; }
+.icon-btn:hover { color: var(--c-primary-deep); background: var(--c-primary-wash); }

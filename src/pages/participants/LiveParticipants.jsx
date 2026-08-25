@@ -48,7 +48,7 @@ function StatementDetailsModal({ open, onClose, row }) {
         <tbody>
           {rows.map((s) => (
             <tr key={s.month}>
-              <td>{s.participant}</td>
+              <td>{s.merchant}</td>
               <td>{s.month}</td>
               <td className="fi-mini-table__actions">
                 <button
@@ -85,7 +85,7 @@ export function LiveParticipants() {
   );
 
   const columns = [
-    { key: 'merchant', header: 'Merchant Name', fw: 14, sortable: true, cell: (r) => <LinkCell to={routes.liveParticipantDetail(r.id)}>{r.participant}</LinkCell> },
+    { key: 'merchant', header: 'Merchant Name', fw: 14, sortable: true, cell: (r) => <LinkCell to={routes.liveParticipantDetail(r.id)}>{r.merchant}</LinkCell> },
       { key: 'mcc', header: 'MCC', fw: 6, align: 'center', sortable: true, cell: (r) => <MccCell code={r.mcc} label={r.mccLabel} />, text: (r) => `${r.mcc} ${r.mccLabel}` },
     { key: 'merchantType', header: 'Merchant Type', fw: 9, align: 'center', sortable: true, cell: (r) => <TypeBadge value={r.merchantType} /> },
     { key: 'processor', header: 'Processor', fw: 9, align: 'center', sortable: true },

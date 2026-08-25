@@ -44,7 +44,7 @@ export const SPLITS = (() => {
       id: `gl-${i}`,
       reserveMonth: MONTH,
       payoutMonth: MONTH,
-      participant: internal ? 'Internal settlement' : 'Citi Merchant Services',
+      merchant: internal ? 'Internal settlement' : 'Citi Merchant Services',
       type: 'PSP',
       splitTo: 'ACI admin',
       splitFrom: internal ? 'Internal settlement' : 'Citi Merchant Services',
@@ -66,10 +66,10 @@ export const mySplits = () => SPLITS.filter((r) => r.mine);
  * ------------------------------------------------------------------ */
 
 export const FEE_ADJUSTMENTS = [
-  { id: 'fa-1', month: MONTH, participant: 'Citi Merchant Services BMS01', type: 'PSP', agent: '1st Grafton', profileId: 'A3213-1', item: 'Residual payout adjustment', description: 'Quarterly true-up credit', amount: 18.75, mine: true },
-  { id: 'fa-2', month: MONTH, participant: 'Citi Merchant Services BMS01', type: 'PSP', agent: '1st Grafton', profileId: 'A3213-1', item: 'Residual fee correction', description: 'Network fee correction', amount: -6.50, mine: false },
-  { id: 'fa-3', month: MONTH, participant: 'Citi Merchant Services BMS01', type: 'PSP', agent: '1st Grafton', profileId: 'A3213-1', item: 'Residual payout adjustment', description: 'Manual reserve release', amount: 42.00, mine: true },
-  { id: 'fa-4', month: MONTH, participant: 'Citi Merchant Services BMS01', type: 'PSP', agent: '1st Grafton', profileId: 'A3213-1', item: 'Residual payout adjustment', description: 'Pricing support adjustment', amount: 12.25, mine: false },
+  { id: 'fa-1', month: MONTH, merchant: 'Citi Merchant Services BMS01', type: 'PSP', agent: '1st Grafton', profileId: 'A3213-1', item: 'Residual payout adjustment', description: 'Quarterly true-up credit', amount: 18.75, mine: true },
+  { id: 'fa-2', month: MONTH, merchant: 'Citi Merchant Services BMS01', type: 'PSP', agent: '1st Grafton', profileId: 'A3213-1', item: 'Residual fee correction', description: 'Network fee correction', amount: -6.50, mine: false },
+  { id: 'fa-3', month: MONTH, merchant: 'Citi Merchant Services BMS01', type: 'PSP', agent: '1st Grafton', profileId: 'A3213-1', item: 'Residual payout adjustment', description: 'Manual reserve release', amount: 42.00, mine: true },
+  { id: 'fa-4', month: MONTH, merchant: 'Citi Merchant Services BMS01', type: 'PSP', agent: '1st Grafton', profileId: 'A3213-1', item: 'Residual payout adjustment', description: 'Pricing support adjustment', amount: 12.25, mine: false },
 ];
 
 export const myAdjustments = () => FEE_ADJUSTMENTS.filter((r) => r.mine);
@@ -127,13 +127,13 @@ export const TRENDING = TREND_AGENTS.flatMap((a, i) => (
  * ------------------------------------------------------------------ */
 
 export const AGENT_PAYOUTS = [
-  { id: 'ap-1', agent: 'ACI admin', profileId: 'ACI000001', profiles: 3, participants: 35, transactions: 6571, volume: 607065.45, income: 15687.55, expense: 12518.94, grossProfit: 3168.61, payoutToOthers: 28.41, grossPayout: 2564.25 },
-  { id: 'ap-2', agent: 'PayUK', profileId: '', profiles: 1, participants: 7, transactions: 782, volume: 333494.59, income: 7776.06, expense: 7199.65, grossProfit: 576.41, payoutToOthers: 0, grossPayout: 489.92 },
-  { id: 'ap-3', agent: '1st Grafton', profileId: 'A3213-1', profiles: 1, participants: 16, transactions: 1329, volume: 237865.85, income: 6280.78, expense: 5715.55, grossProfit: 565.23, payoutToOthers: 0, grossPayout: 282.58 },
-  { id: 'ap-4', agent: 'Yvonne Hall', profileId: 'A3092-1', profiles: 1, participants: 8, transactions: 1009, volume: 215856.80, income: 4751.34, expense: 3417.69, grossProfit: 1333.65, payoutToOthers: 0, grossPayout: 333.43 },
-  { id: 'ap-5', agent: 'Huntingdon Garner', profileId: 'A3212-2', profiles: 1, participants: 6, transactions: 706, volume: 245326.12, income: 5162.76, expense: 4871.56, grossProfit: 291.20, payoutToOthers: 0, grossPayout: 43.70 },
-  { id: 'ap-6', agent: 'Eric Bolen', profileId: 'A4099-107', profiles: 1, participants: 16, transactions: 1339, volume: 239794.03, income: 6280.78, expense: 5715.55, grossProfit: 565.23, payoutToOthers: 0, grossPayout: 28.41 },
-  { id: 'ap-7', agent: 'Michael Collester', profileId: 'A3010-2', profiles: 1, participants: 12, transactions: 4389, volume: 175304.63, income: 5095.58, expense: 3665.52, grossProfit: 1430.06, payoutToOthers: 0, grossPayout: 0 },
+  { id: 'ap-1', agent: 'ACI admin', profileId: 'ACI000001', profiles: 3, merchants: 35, transactions: 6571, volume: 607065.45, income: 15687.55, expense: 12518.94, grossProfit: 3168.61, payoutToOthers: 28.41, grossPayout: 2564.25 },
+  { id: 'ap-2', agent: 'PayUK', profileId: '', profiles: 1, merchants: 7, transactions: 782, volume: 333494.59, income: 7776.06, expense: 7199.65, grossProfit: 576.41, payoutToOthers: 0, grossPayout: 489.92 },
+  { id: 'ap-3', agent: '1st Grafton', profileId: 'A3213-1', profiles: 1, merchants: 16, transactions: 1329, volume: 237865.85, income: 6280.78, expense: 5715.55, grossProfit: 565.23, payoutToOthers: 0, grossPayout: 282.58 },
+  { id: 'ap-4', agent: 'Yvonne Hall', profileId: 'A3092-1', profiles: 1, merchants: 8, transactions: 1009, volume: 215856.80, income: 4751.34, expense: 3417.69, grossProfit: 1333.65, payoutToOthers: 0, grossPayout: 333.43 },
+  { id: 'ap-5', agent: 'Huntingdon Garner', profileId: 'A3212-2', profiles: 1, merchants: 6, transactions: 706, volume: 245326.12, income: 5162.76, expense: 4871.56, grossProfit: 291.20, payoutToOthers: 0, grossPayout: 43.70 },
+  { id: 'ap-6', agent: 'Eric Bolen', profileId: 'A4099-107', profiles: 1, merchants: 16, transactions: 1339, volume: 239794.03, income: 6280.78, expense: 5715.55, grossProfit: 565.23, payoutToOthers: 0, grossPayout: 28.41 },
+  { id: 'ap-7', agent: 'Michael Collester', profileId: 'A3010-2', profiles: 1, merchants: 12, transactions: 4389, volume: 175304.63, income: 5095.58, expense: 3665.52, grossProfit: 1430.06, payoutToOthers: 0, grossPayout: 0 },
 ].map((r) => ({ ...r, residualMonth: MONTH, payoutMonth: MONTH, type: 'PSP' }));
 
 /* ------------------------------------------------------------------ *
@@ -191,13 +191,13 @@ export const MY_INCOME = (() => {
  * ------------------------------------------------------------------ */
 
 export const PARTICIPANT_STATUS = [
-  { id: 'ps-1', participant: 'Regions Bank', routingNumber: '121103021', partner: 'PNC Bank', partnerCode: '111626021', portfolio: PORTFOLIOS[0], portfolioType: 'Supplier', open: '', close: '', status: 'Active' },
-  { id: 'ps-2', participant: 'Regions Bank', routingNumber: '121103021', partner: 'PNC Bank', partnerCode: '111626021', portfolio: '_QA1', portfolioType: 'PSP', open: '', close: '', status: 'Active' },
-  { id: 'ps-3', participant: 'Citibank', routingNumber: '202678021', partner: 'Wells Fargo Bank', partnerCode: '309635021', portfolio: PORTFOLIOS[1], portfolioType: 'Supplier', open: '', close: '', status: 'Active' },
-  { id: 'ps-4', participant: 'PNC Bank', routingNumber: '111626021', partner: '', partnerCode: '', portfolio: PORTFOLIOS[1], portfolioType: 'Supplier', open: '', close: '', status: 'Active' },
-  { id: 'ps-5', participant: 'Bank of New York Mellon', routingNumber: '700225021', partner: '', partnerCode: '', portfolio: PORTFOLIOS[0], portfolioType: 'Supplier', open: '2026/08/11', close: '', status: 'Active' },
-  { id: 'ps-6', participant: 'Fifth Third Bank', routingNumber: '608371021', partner: '', partnerCode: '', portfolio: PORTFOLIOS[0], portfolioType: 'Supplier', open: '2026/08/12', close: '', status: 'Active' },
-  { id: 'ps-7', participant: 'JPMorgan Chase Bank', routingNumber: '560003021', partner: '', partnerCode: '', portfolio: PORTFOLIOS[3], portfolioType: 'PSP', open: '2026/08/12', close: '', status: 'Active' },
+  { id: 'ps-1', merchant: 'Regions Bank', routingNumber: '121103021', partner: 'PNC Bank', partnerCode: '111626021', portfolio: PORTFOLIOS[0], portfolioType: 'Supplier', open: '', close: '', status: 'Active' },
+  { id: 'ps-2', merchant: 'Regions Bank', routingNumber: '121103021', partner: 'PNC Bank', partnerCode: '111626021', portfolio: '_QA1', portfolioType: 'PSP', open: '', close: '', status: 'Active' },
+  { id: 'ps-3', merchant: 'Citibank', routingNumber: '202678021', partner: 'Wells Fargo Bank', partnerCode: '309635021', portfolio: PORTFOLIOS[1], portfolioType: 'Supplier', open: '', close: '', status: 'Active' },
+  { id: 'ps-4', merchant: 'PNC Bank', routingNumber: '111626021', partner: '', partnerCode: '', portfolio: PORTFOLIOS[1], portfolioType: 'Supplier', open: '', close: '', status: 'Active' },
+  { id: 'ps-5', merchant: 'Bank of New York Mellon', routingNumber: '700225021', partner: '', partnerCode: '', portfolio: PORTFOLIOS[0], portfolioType: 'Supplier', open: '2026/08/11', close: '', status: 'Active' },
+  { id: 'ps-6', merchant: 'Fifth Third Bank', routingNumber: '608371021', partner: '', partnerCode: '', portfolio: PORTFOLIOS[0], portfolioType: 'Supplier', open: '2026/08/12', close: '', status: 'Active' },
+  { id: 'ps-7', merchant: 'JPMorgan Chase Bank', routingNumber: '560003021', partner: '', partnerCode: '', portfolio: PORTFOLIOS[3], portfolioType: 'PSP', open: '2026/08/12', close: '', status: 'Active' },
 ];
 
 /* ------------------------------------------------------------------ *
@@ -225,8 +225,8 @@ export const INCOME_EXPENSE = (() => {
     payoutMonth: MONTH,
     agent: 'PayUK',
     agentScope: i % 2 === 0 ? 'House [PSP]' : 'House [Supplier]',
-    participant: 'Ashton & Partners LLC',
-    participantMid: '889561051029485',
+    merchant: 'Ashton & Partners LLC',
+    mid: '889561051029485',
     partner: it.partner.name,
     partnerCode: it.partner.code,
     itemName: it.name,

@@ -186,7 +186,7 @@ export function RowMenu({ items = [], label = 'Row actions' }) {
       width={188}
       trigger={({ toggle }) => (
         <button type="button" className="row-menu__btn" onClick={(e) => { e.stopPropagation(); toggle(e); }} aria-label={label}>
-          <Icon name="dots" size={16} />
+          <Icon name="dots" size={19} />
         </button>
       )}
     >

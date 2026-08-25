@@ -124,7 +124,7 @@ function DocumentsTab() {
       cell: (r) => (
         <span className="doc-name">
           <Icon name={r.icon} size={14} className="subtle" />
-          <TwoLine primary={r.name} secondary={r.participant} />
+          <TwoLine primary={r.name} secondary={r.merchant} />
         </span>
       ),
       text: (r) => `${r.name} ${r.merchant}`,

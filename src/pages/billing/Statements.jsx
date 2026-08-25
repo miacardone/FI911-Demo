@@ -40,7 +40,7 @@ export function Statements() {
       header: 'Merchant Name',
       fw: 22,
       sortable: true,
-      cell: (r) => <TwoLine primary={r.participant} secondary={`${r.merchant} • MID:${r.mid}`} />,
+      cell: (r) => <TwoLine primary={r.merchant} secondary={`${r.merchant} • MID:${r.mid}`} />,
       text: (r) => `${r.merchant} ${r.merchant} ${r.mid}`,
     },
     { key: 'processor', header: 'Processor', fw: 10, sortable: true },
