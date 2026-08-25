@@ -1226,12 +1226,16 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 .fi-detail__body { display: flex; flex-direction: column; gap: var(--s-2); }
 
 /* Sticky commit bar — only rendered once the form is dirty. */
+/* Already sticky, but it read as just another row at the end of the page.
+   An unsaved-changes bar has to announce itself: it says WHAT is unsaved and
+   sits above the content it belongs to. */
 .fi-detail__foot {
   position: sticky; bottom: 0; z-index: var(--z-sticky);
-  display: flex; justify-content: flex-end; gap: var(--s-2);
-  padding: var(--s-3) var(--s-5);
+  display: flex; align-items: center; justify-content: flex-end; gap: var(--s-2);
+  padding: var(--s-3) var(--s-4);
   background: var(--c-surface);
-  border: 1px solid var(--c-line); border-radius: var(--r-md);
+  border: 1px solid var(--c-accent); border-radius: var(--r-md);
+  box-shadow: var(--shadow-card);
   box-shadow: var(--shadow-raised);
 }
 
@@ -2423,4 +2427,9 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
   border-color: var(--c-primary);
   box-shadow: 0 0 0 3px var(--c-primary-wash);
   outline: none;
+}
+
+.fi-detail__foot-note {
+  display: inline-flex; align-items: center; gap: 6px; margin-right: auto;
+  font-size: var(--fs-small); font-weight: 600; color: var(--c-accent-deep);
 }

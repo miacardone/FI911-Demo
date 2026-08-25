@@ -81,6 +81,7 @@ export function InvitationDetail() {
         subtitle={`${record.agent} (${record.agent.toLowerCase().replace(/\s+/g, '').slice(0, 8)}@${brand.emailDomain})`}
         onBack={() => navigate(routes.invitations)}
         dirty={form.dirty}
+        onSave={() => form.markSaved()}
         onDiscard={() => form.reset()}
         actions={<Button variant="primary" size="sm" onClick={() => setModal({ kind: 'status' })}>Update Status</Button>}
         headerIcons={[
@@ -147,7 +148,7 @@ export function InvitationDetail() {
             <TextField {...field('ownerAddress2', 'Address Line 2')} placeholder="Enter address line 2" />
             <TextField {...field('ownerEmail', 'E-mail Address')} />
             <TextField {...field('ownerCity', 'City')} />
-            <SelectField {...field('ownerCountry', 'Country')} options={opts(['United Kingdom', 'United States'])} placeholder="" />
+            <SelectField {...field('ownerCountry', 'Country')} options={opts(['United States', 'Canada'])} placeholder="" />
             <SelectField {...field('ownerState', 'State')} options={opts(['California', 'New York', 'Texas'])} placeholder="" />
             <TextField {...field('ownerZip', 'Zip Code')} />
           </FieldGrid>

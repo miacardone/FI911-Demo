@@ -23,7 +23,7 @@ import brand from '@/brand/brand.config';
 
 const opts = (list) => list.map((v) => ({ value: v, label: v }));
 
-const COUNTRIES = ['United Kingdom', 'United States', 'Ireland', 'Germany', 'France'];
+const COUNTRIES = ['United States', 'Canada', 'Mexico', 'Puerto Rico'];
 const US_STATES = ['California', 'Arkansas', 'South Carolina', 'New York', 'Texas'];
 
 /* ------------------------------------------------------------------ *

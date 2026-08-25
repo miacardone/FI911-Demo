@@ -113,6 +113,7 @@ export function ApplicationDetail() {
         subtitle={`${record.agent} (${record.agent.toLowerCase().replace(/\s+/g, '.')}@fi911.com)`}
         onBack={() => navigate(routes.applications)}
         dirty={form.dirty}
+        onSave={() => form.markSaved()}
         onDiscard={() => form.reset()}
         actions={<Button variant="primary" size="sm" onClick={() => setModal({ kind: 'status' })}>Update Status</Button>}
         headerIcons={[

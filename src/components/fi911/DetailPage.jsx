@@ -112,6 +112,9 @@ export function useForm(initial) {
     setDirty(false);
   };
 
+  /** Keep the current values but stop calling them unsaved. */
+  const markSaved = () => setDirty(false);
+
   /** Spread onto a TextField/SelectField/TextAreaField. */
   const field = (name, label, extra = {}) => ({
     label,
@@ -127,7 +130,7 @@ export function useForm(initial) {
     ...extra,
   });
 
-  return { values, set, reset, dirty, setDirty, field, toggle };
+  return { values, set, reset, markSaved, dirty, setDirty, field, toggle };
 }
 
 /* ---------- Checkbox / toggle groups ---------- *
@@ -230,22 +233,33 @@ export function WizardSteps({ steps, current, onSelect }) {
   );
 }
 
-export function WizardNav({ steps, current, onChange }) {
+export function WizardNav({ steps, current, onChange, onFinish, finishDirty }) {
   const atStart = current === 0;
   const atEnd = current === steps.length - 1;
+  const next = steps[current + 1];
 
   return (
     <div className="fi-wizard-nav">
       <Button variant="secondary" icon="arrowLeft" disabled={atStart} onClick={() => onChange(current - 1)}>
         Previous
       </Button>
+
       <span className="fi-wizard-nav__pos">
         Step <strong>{current + 1}</strong> of <strong>{steps.length}</strong>
         <span className="fi-wizard-nav__name">{steps[current]?.label}</span>
       </span>
-      <Button variant="primary" iconAfter="arrowRight" disabled={atEnd} onClick={() => onChange(current + 1)}>
-        Next
-      </Button>
+
+      {atEnd ? (
+        <Button variant="primary" icon="check" onClick={onFinish}>
+          {finishDirty ? 'Save changes' : 'Finish'}
+        </Button>
+      ) : (
+        /* Naming the next step turns "Next" from a direction into a
+           destination, which is the whole point of showing a wizard's shape. */
+        <Button variant="primary" iconAfter="arrowRight" onClick={() => onChange(current + 1)}>
+          {next ? `Next: ${next.label}` : 'Next'}
+        </Button>
+      )}
     </div>
   );
 }
@@ -329,6 +343,16 @@ export function DetailPage({
     toast.notify('Changes saved.');
   };
 
+  /* The last step had a Next button with nowhere to go, so it was disabled and
+     looked broken. It finishes the form instead — saving if there is anything
+     to save, which is what someone reaching the end of a wizard is trying to
+     do. */
+  const atEnd = steps ? step === steps.length - 1 : false;
+  const finish = () => {
+    if (dirty) save();
+    else toast.notify('Nothing to save — no changes on this record.');
+  };
+
   return (
     <SectionStack>
     <div className="fi-detail">
@@ -388,7 +412,7 @@ export function DetailPage({
             )
             : <WizardSteps steps={steps} current={step} onSelect={goToStep} />}
           <div className="fi-detail__body">{steps[step]?.render()}</div>
-          <WizardNav steps={steps} current={step} onChange={goToStep} />
+          <WizardNav steps={steps} current={step} onChange={goToStep} onFinish={finish} finishDirty={dirty} />
         </>
       ) : (
         <div className="fi-detail__body">{children}</div>
@@ -396,8 +420,12 @@ export function DetailPage({
 
       {dirty && (
         <footer className="fi-detail__foot">
-          <Button variant="secondary" onClick={onDiscard}>Discard Changes</Button>
-          <Button variant="primary" onClick={save}>Save Changes</Button>
+          <span className="fi-detail__foot-note">
+            <Icon name="alert" size={14} />
+            Unsaved changes
+          </span>
+          <Button variant="secondary" onClick={onDiscard}>Discard</Button>
+          <Button variant="primary" icon="check" onClick={save}>Save changes</Button>
         </footer>
       )}
     </div>

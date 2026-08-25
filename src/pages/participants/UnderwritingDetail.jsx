@@ -105,6 +105,7 @@ export function UnderwritingDetail() {
         subtitle={`${record.merchant} — ${record.status}`}
         onBack={() => navigate(routes.underwriting)}
         dirty={form.dirty}
+        onSave={() => form.markSaved()}
         onDiscard={() => form.reset()}
         headerIcons={[
           { icon: 'paperclip', label: 'Attachments', onSelect: () => setModal({ kind: 'attachments' }) },

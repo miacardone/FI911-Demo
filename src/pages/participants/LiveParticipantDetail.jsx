@@ -109,6 +109,7 @@ export function LiveParticipantDetail() {
         badge={{ label: record.type, tone: record.type === 'Bank' ? 'success' : 'info' }}
         onBack={() => navigate(routes.liveParticipants)}
         dirty={form.dirty}
+        onSave={() => form.markSaved()}
         onDiscard={() => form.reset()}
         headerIcons={[
           { icon: 'file', label: 'Agreement PDF', onSelect: () => {} },
