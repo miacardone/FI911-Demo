@@ -253,10 +253,10 @@ export const PORTFOLIO_PAYOUTS = (() => {
   const participants = [
     'Ashton & Partners LLC', 'Bluebell Care Services', 'Cornerstone Engineering', 'Dover Street Tea Room',
     'Eastgate Office Supplies', 'Fairfield Sports Co', 'Pelican Marina LLC', 'Topsail Surf School LLC',
-    'Hillside Artisan Bakery', 'Phoenix Wine Merchants', 'Quarry Lane Hardware Ltd', 'Summit Electrical Ltd',
+    'Hillside Artisan Bakery', 'Phoenix Wine Merchants', 'Quarry Lane Hardware LLC', 'Summit Electrical LLC',
     'Dunmore Travel LLC', 'Riverside Flooring Co', 'Whitmore Building Supplies', 'Harrington & Sons LLC',
-    'Thornfield Market Ltd', 'Westgate Print & Design', 'Birchwood Vets Ltd', 'Cranleigh Kitchens Ltd',
-    'Gainsborough Print Ltd', 'Bramble Hill Deli', 'Granary Bakehouse Ltd', 'Elmside Gift Shop',
+    'Thornfield Market LLC', 'Westgate Print & Design', 'Birchwood Veterinary LLC', 'Crestline Kitchens LLC',
+    'Greenfield Print Co', 'Bramble Hill Deli', 'Granary Bakehouse LLC', 'Elmside Gift Shop',
     'Clifton Beauty & Wellness',
   ];
 

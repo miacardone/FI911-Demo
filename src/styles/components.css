@@ -1271,13 +1271,28 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 }
 .fi-fields__full { grid-column: 1 / -1; }
 
-/* A two-column form on a 1440px screen wastes half its width and pays for it
-   in height — which is the whole reason these pages scrolled. Three columns
-   above 1180px turns a twelve-row section into eight, and pages that asked
-   for a specific column count keep it. */
+/* Three even columns — but the CONTROL inside each is sized to what it holds.
+   Free spans (4 and 6 of 12) were the first attempt and they tile badly: a
+   4 next to a 6 leaves 2 columns of dead space and pushes the next field to a
+   new row, so the form ended up MORE ragged and taller. Even columns keep the
+   rows aligned; capping the input is what stops a date picker being as wide
+   as an email address. */
 @media (min-width: 1180px) {
   .fi-fields { grid-template-columns: repeat(var(--fi-field-cols-wide, 3), minmax(0, 1fr)); }
 }
+
+/* Every field occupies ONE column, so rows always tile and never leave a hole.
+   Letting long fields span two was the second attempt: a span-2 that cannot
+   fit the remaining slot wraps, and the gap it leaves is exactly the ragged
+   look we were trying to remove. Variety comes from the control width inside
+   the column, not from the column count. */
+
+.field--sm .input,
+.field--sm .select { max-width: 170px; }
+.field--sm input[type="date"] { max-width: 165px; }
+/* Genuinely long values get the whole row rather than an awkward two-thirds. */
+.field--lg .input { max-width: none; }
+.fi-fields__full { grid-column: 1 / -1; }
 @media (max-width: 760px) { .fi-fields { grid-template-columns: 1fr; } }
 
 /* ---------- Check / radio groups ---------- */

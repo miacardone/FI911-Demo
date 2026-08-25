@@ -70,9 +70,9 @@ export const MERCHANTS = [
 
 /** Merchants named for their acquirer — Alert Action and Gateway use these. */
 export const PROCESSOR_MERCHANTS = [
-  'Chase Paymentech Oswestry Cheese Co', 'Worldpay Ramsgate Chandlery Ltd', 'First Data Penrith Pet Emporium',
-  'Chase Paymentech Arundel Antiques Ltd', 'Worldpay Ximenes Spice Importers',
-  'Chase Paymentech Uckfield Garden Rooms', 'Fiserv Wells Newark Markets Ltd', 'TSYS Wells Montrose Seafood Bar',
+  'Chase Paymentech Oakvale Cheese Co', 'Worldpay Rockport Marine Supply', 'First Data Peoria Pet Emporium',
+  'Chase Paymentech Ashland Antiques', 'Worldpay Ximenes Spice Importers',
+  'Chase Paymentech Fairfield Garden Rooms', 'Fiserv Newark Markets', 'TSYS Montrose Seafood Bar',
   'Fiserv Wells Zeals Honey Farm', 'Global Payments Whitstable Oyster Bar', 'Fiserv Wells Tewkesbury Forge',
   'TSYS Wells Lichfield Cathedral Shop', 'Fiserv Chase Kendal Mint Cake Co', 'Global Payments Glastonbury Music Store',
 ];
@@ -141,7 +141,7 @@ export const ISO_PORTFOLIOS = ['Enterprise ISO', 'Direct Bank Portfolio', 'High-
 
 export const REGIONS = [
   'West / ISO Sales', 'West / Risk Ops', 'South / Merchant Support', 'South / Banking Ops',
-  'Midwest / Banking Ops', 'Northeast / Enterprise', 'EMEA',
+  'Midwest / Banking Ops', 'Northeast / Enterprise', 'West / Enterprise',
 ];
 
 export const PORTFOLIOS = [

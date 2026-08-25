@@ -150,7 +150,7 @@ export function UnderwritingDetail() {
             <SelectField {...field('processor', 'Processor')} options={opts(['First Data Omaha', ...brand.processors])} />
             <TextField {...field('agentName', 'Agent Name')} />
             <TextField {...field('partnerName', 'Partner Name')} />
-            <SelectField {...field('region', 'Region')} options={opts(['EMEA', 'North', 'South', 'West'])} placeholder="" />
+            <SelectField {...field('region', 'Region')} options={opts(['West / Enterprise', 'North', 'South', 'West'])} placeholder="" />
             <SelectField {...field('channel', 'Channel')} options={opts(['Direct', 'Referral', 'ISO'])} placeholder="" />
             <TextField {...field('mccCode', 'MCC Code')} />
             <TextField {...field('marketingMethod', 'Marketing Method')} />

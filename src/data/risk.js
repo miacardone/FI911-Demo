@@ -44,19 +44,19 @@ export const FLAGGED_TREND = [
 ];
 
 export const TOP_FLAGGED_VOLUME = [
-  { label: 'Chase Paymentech Arundel Antiques Ltd', value: 52_400_000 },
+  { label: 'Chase Paymentech Ashland Antiques', value: 52_400_000 },
   { label: 'Fiserv Wells Tewkesbury Forge', value: 38_900_000 },
-  { label: 'Chase Paymentech Uckfield Garden Rooms', value: 36_200_000 },
+  { label: 'Chase Paymentech Fairfield Garden Rooms', value: 36_200_000 },
   { label: 'Worldpay Ximenes Spice Importers', value: 28_100_000 },
   { label: 'Fiserv Wells Zeals Honey Farm', value: 24_300_000 },
 ];
 
 export const TOP_VULNERABILITY = [
-  { label: 'TSYS Wells Montrose Seafood Bar', value: 100 },
-  { label: 'Chase Paymentech Oswestry Cheese Co', value: 100 },
+  { label: 'TSYS Montrose Seafood Bar', value: 100 },
+  { label: 'Chase Paymentech Oakvale Cheese Co', value: 100 },
   { label: 'Fiserv Wells Tewkesbury Forge', value: 99 },
-  { label: 'Chase Paymentech Uckfield Garden Rooms', value: 99 },
-  { label: 'Chase Paymentech Arundel Antiques Ltd', value: 98 },
+  { label: 'Chase Paymentech Fairfield Garden Rooms', value: 99 },
+  { label: 'Chase Paymentech Ashland Antiques', value: 98 },
 ];
 
 export const PARSED_FILES = [

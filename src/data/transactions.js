@@ -239,10 +239,10 @@ export const SETTLEMENT_SUMMARY = (() => {
   const rows = [
     { iso: 'PERSONIFY_INC', merchant: 'Pemberton Retail Group', mid: '559909667570001', bank: 'U.S. Bank', terminal: 'IFKQJQBYQ0Q', sales: 7, salesValue: 129251.25, refunds: 0, refundValue: 0 },
     { iso: 'MERCHANT_PREFERRED_Z', merchant: 'Highfield Sports Direct', mid: '557978610570016', bank: 'U.S. Bank', terminal: '100859927728', sales: 5, salesValue: 91255.75, refunds: 0, refundValue: 0 },
-    { iso: 'ATM_ONE_INC', merchant: 'Kingsport Electronics Ltd', mid: '876595895970182', bank: 'U.S. Bank', terminal: 'OKDMVENIDT08', sales: 4, salesValue: 88600.00, refunds: 1, refundValue: -1890.00 },
-    { iso: 'ATM_ONE_INC', merchant: 'Kingsport Electronics Ltd', mid: '876595895970182', bank: 'Wells Fargo Bank', terminal: 'OKDMVENIDT07', sales: 5, salesValue: 134721.80, refunds: 1, refundValue: -3420.00 },
-    { iso: 'ATM_ONE_INC', merchant: 'Kingsport Electronics Ltd', mid: '876595895970182', bank: 'Wells Fargo Bank', terminal: 'OKDMVENIDT06', sales: 6, salesValue: 87317.05, refunds: 0, refundValue: 0 },
-    { iso: 'ATM_ONE_INC', merchant: 'Kingsport Electronics Ltd', mid: '876595895970182', bank: 'Citibank', terminal: 'OKDMVENIDT05', sales: 6, salesValue: 47420.25, refunds: 0, refundValue: 0 },
+    { iso: 'ATM_ONE_INC', merchant: 'Kingsport Electronics Inc', mid: '876595895970182', bank: 'U.S. Bank', terminal: 'OKDMVENIDT08', sales: 4, salesValue: 88600.00, refunds: 1, refundValue: -1890.00 },
+    { iso: 'ATM_ONE_INC', merchant: 'Kingsport Electronics Inc', mid: '876595895970182', bank: 'Wells Fargo Bank', terminal: 'OKDMVENIDT07', sales: 5, salesValue: 134721.80, refunds: 1, refundValue: -3420.00 },
+    { iso: 'ATM_ONE_INC', merchant: 'Kingsport Electronics Inc', mid: '876595895970182', bank: 'Wells Fargo Bank', terminal: 'OKDMVENIDT06', sales: 6, salesValue: 87317.05, refunds: 0, refundValue: 0 },
+    { iso: 'ATM_ONE_INC', merchant: 'Kingsport Electronics Inc', mid: '876595895970182', bank: 'Citibank', terminal: 'OKDMVENIDT05', sales: 6, salesValue: 47420.25, refunds: 0, refundValue: 0 },
   ];
 
   return rows.map((r, i) => ({
@@ -347,10 +347,10 @@ export const FUNDING_DEPOSITS = (() => {
   const d = createDraw(6701);
   const merchants = [
     'Riverton Timber Supply', 'Clearwater Catering Supply', 'Monroe Steel Fabricators',
-    'Blue Ridge Holiday Park', 'Arbor Hill Bakers LLC', 'Pontypool Packaging Ltd',
-    'Tredegar Office Interiors Ltd', 'Tredegar Office Interiors Ltd', 'Caerphilly Cheese & Deli Ltd',
-    'Elmwood Engineering Ltd', 'Monmouth River Cruises', 'Lakewood Springs Spa LLC',
-    'Welshpool Agricultural Traders', 'Newtown Furniture Makers Ltd', 'Aberystwyth Marine Chandlery',
+    'Blue Ridge Holiday Park', 'Arbor Hill Bakers LLC', 'Portland Packaging LLC',
+    'Trenton Office Interiors LLC', 'Trenton Office Interiors LLC', 'Cascade Cheese & Deli LLC',
+    'Elmwood Engineering LLC', 'Monterey Bay Cruises', 'Lakewood Springs Spa LLC',
+    'Wheatland Agricultural Traders', 'Newtown Furniture Makers LLC', 'Annapolis Marine Supply',
   ];
 
   return merchants.map((merchant, i) => {
@@ -385,7 +385,7 @@ const QUALIFICATIONS = [
 
 export const QUALIFICATION_ROWS = (() => {
   const d = createDraw(6801);
-  const merchants = ['Corsham Print & Design Ltd', 'Bradford-on-Avon Stone Masons', 'Kenwood Outdoor Supply LLC'];
+  const merchants = ['Cortland Print & Design LLC', 'Boulder Stone Masons', 'Kenwood Outdoor Supply LLC'];
   const partners = ['Citi Merchant Services', 'Wells Fargo Merchant Services', 'Worldpay from FIS'];
 
   return Array.from({ length: 10 }, (_, i) => {
@@ -421,14 +421,14 @@ export const QUALIFICATION_ROWS = (() => {
  * ------------------------------------------------------------------ */
 
 export const MERCHANT_RESERVES = [
-  { id: 'mr-1', institutionId: 'WF001', isoId: 'WORLDPAY001', merchant: 'Corsham Print & Design Ltd', partner: 'Global Payment Solutions', rate: 5.0, reserveStatus: 'Held', payStatus: 'Pending', contractDate: '2026/08/15', processDate: '2026/08/17', processor: 'Fiserv' },
-  { id: 'mr-2', institutionId: 'BOA001', isoId: 'GPS001', merchant: 'Bradford-on-Avon Stone Masons', partner: 'Mercury Payment Systems', rate: 7.5, reserveStatus: 'Released', payStatus: 'Paid', contractDate: '2026/08/07', processDate: '2026/08/17', processor: 'Fiserv' },
+  { id: 'mr-1', institutionId: 'WF001', isoId: 'WORLDPAY001', merchant: 'Cortland Print & Design LLC', partner: 'Global Payment Solutions', rate: 5.0, reserveStatus: 'Held', payStatus: 'Pending', contractDate: '2026/08/15', processDate: '2026/08/17', processor: 'Fiserv' },
+  { id: 'mr-2', institutionId: 'BOA001', isoId: 'GPS001', merchant: 'Boulder Stone Masons', partner: 'Mercury Payment Systems', rate: 7.5, reserveStatus: 'Released', payStatus: 'Paid', contractDate: '2026/08/07', processDate: '2026/08/17', processor: 'Fiserv' },
   { id: 'mr-3', institutionId: 'FISERV001', isoId: 'VANTIVISO', merchant: 'Kenwood Outdoor Supply LLC', partner: 'Heartland Payment Systems', rate: 10.0, reserveStatus: 'Held', payStatus: 'Pending', contractDate: '2026/08/15', processDate: '2026/08/17', processor: 'Fiserv' },
-  { id: 'mr-4', institutionId: 'TSYS001', isoId: 'ELAVONISO', merchant: 'Fernbrook Hospitality Ltd', partner: 'Priority Payment Systems', rate: 6.0, reserveStatus: 'Partial', payStatus: 'Processing', contractDate: '2026/08/15', processDate: '2026/08/17', processor: 'TSYS' },
+  { id: 'mr-4', institutionId: 'TSYS001', isoId: 'ELAVONISO', merchant: 'Fernbrook Hospitality LLC', partner: 'Priority Payment Systems', rate: 6.0, reserveStatus: 'Partial', payStatus: 'Processing', contractDate: '2026/08/15', processDate: '2026/08/17', processor: 'TSYS' },
   { id: 'mr-5', institutionId: 'TSYS001', isoId: 'PAYSIMPLE001', merchant: 'Highfield Sports Direct', partner: 'Paymentech Solutions', rate: 8.5, reserveStatus: 'Released', payStatus: 'Paid', contractDate: '2026/08/15', processDate: '2026/08/17', processor: 'TSYS' },
   { id: 'mr-6', institutionId: 'TSYS001', isoId: 'GPS001', merchant: 'Redwood Pharmacy Group', partner: 'Global Payment Solutions', rate: 4.5, reserveStatus: 'Held', payStatus: 'On Hold', contractDate: '2026/08/15', processDate: '2026/08/17', processor: 'TSYS' },
-  { id: 'mr-7', institutionId: 'JPM001', isoId: 'WORLDPAY001', merchant: 'Neston Electrical Ltd', partner: 'Mercury Payment Systems', rate: 9.0, reserveStatus: 'Held', payStatus: 'Pending', contractDate: '2026/08/15', processDate: '2026/08/17', processor: 'Chase Paymentech' },
-  { id: 'mr-8', institutionId: 'ELAV001', isoId: 'ELAVONISO', merchant: 'Redditch Tool Hire Ltd', partner: 'Priority Payment Systems', rate: 12.0, reserveStatus: 'Released', payStatus: 'Paid', contractDate: '2026/08/15', processDate: '2026/08/17', processor: 'Global Payments' },
+  { id: 'mr-7', institutionId: 'JPM001', isoId: 'WORLDPAY001', merchant: 'Newton Electrical LLC', partner: 'Mercury Payment Systems', rate: 9.0, reserveStatus: 'Held', payStatus: 'Pending', contractDate: '2026/08/15', processDate: '2026/08/17', processor: 'Chase Paymentech' },
+  { id: 'mr-8', institutionId: 'ELAV001', isoId: 'ELAVONISO', merchant: 'Redwood Tool Rental LLC', partner: 'Priority Payment Systems', rate: 12.0, reserveStatus: 'Released', payStatus: 'Paid', contractDate: '2026/08/15', processDate: '2026/08/17', processor: 'Global Payments' },
 ];
 
 /* ------------------------------------------------------------------ *

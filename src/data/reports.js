@@ -40,7 +40,7 @@ export const MERCHANT_GLOBAL = (() => {
       groupEntity: d.pick(ISO_PORTFOLIOS),
       region: d.pick(REGIONS),
       processor: d.pick(brand.processors),
-      legalName: `${dbaName.replace(/ (Ltd|Co|Group|Services)$/, '')} Limited`,
+      legalName: `${dbaName.replace(/ (LLC|Inc|Co|Group|Services)$/, '')} LLC`,
       agent: d.pick(AGENTS),
       assignedTo: d.bool(0.75) ? d.pick(ASSIGNEES) : '',
       ownershipType: d.pick(OWNERSHIP),

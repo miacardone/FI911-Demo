@@ -10,9 +10,33 @@ import { Button } from '@/components/ui/Surface';
  * what is wrong.
  */
 
-function Shell({ label, required, hint, error, htmlFor, children }) {
+/**
+ * How wide a field wants to be, inferred from what it holds.
+ *
+ * A twelve-column grid with every field spanning four looks tidy and reads
+ * badly: a date input three hundred pixels wide next to an equally wide ZIP
+ * code tells you the layout was decided before the content. Sizing each field
+ * to its likely value is what makes a form look considered — and it packs
+ * more per row, which is the other thing we want.
+ *
+ * Inferred rather than declared because there are several hundred field
+ * definitions; annotating them all would guarantee drift, and the label
+ * already says what the field holds.
+ */
+const NARROW = /(^|\b)(zip|state|dob|date|year|month|%|pct|percent|qty|quantity|rate|code|number of|count|amount|ticket|fee|time)\b/i;
+const WIDE = /(^|\b)(address|description|email|website|url|notes?|reason|comment|legal name|business name|dba)\b/i;
+
+export function fieldSpan(label, type) {
+  const text = String(label ?? '');
+  if (type === 'date' || type === 'number') return 'sm';
+  if (WIDE.test(text)) return 'lg';
+  if (NARROW.test(text)) return 'sm';
+  return 'md';
+}
+
+function Shell({ label, required, hint, error, htmlFor, span = 'md', children }) {
   return (
-    <div className="field">
+    <div className={`field field--${span}`}>
       {label && (
         <label className="field__label" htmlFor={htmlFor}>
           {label}
@@ -25,21 +49,21 @@ function Shell({ label, required, hint, error, htmlFor, children }) {
   );
 }
 
-export function TextField({ label, required, hint, error, id: providedId, className = '', ...rest }) {
+export function TextField({ label, required, hint, error, span, id: providedId, className = '', ...rest }) {
   const generated = useId();
   const id = providedId ?? generated;
   return (
-    <Shell label={label} required={required} hint={hint} error={error} htmlFor={id}>
+    <Shell label={label} required={required} hint={hint} error={error} htmlFor={id} span={span ?? fieldSpan(label, rest.type)}>
       <input id={id} className={`input ${error ? 'input--error' : ''} ${className}`.trim()} aria-invalid={Boolean(error)} {...rest} />
     </Shell>
   );
 }
 
-export function SelectField({ label, required, hint, error, options = [], placeholder, children, id: providedId, className = '', ...rest }) {
+export function SelectField({ label, required, hint, error, span, options = [], placeholder, children, id: providedId, className = '', ...rest }) {
   const generated = useId();
   const id = providedId ?? generated;
   return (
-    <Shell label={label} required={required} hint={hint} error={error} htmlFor={id}>
+    <Shell label={label} required={required} hint={hint} error={error} htmlFor={id} span={span ?? fieldSpan(label)}>
       <select id={id} className={`select ${error ? 'select--error' : ''} ${className}`.trim()} aria-invalid={Boolean(error)} {...rest}>
         {placeholder && <option value="">{placeholder}</option>}
         {children ?? options.map((o) => (
