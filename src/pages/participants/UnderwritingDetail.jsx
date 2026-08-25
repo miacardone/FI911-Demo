@@ -39,8 +39,8 @@ export function UnderwritingDetail() {
     businessType: 'Government',
     openDate: '',
     participantType: '',
-    address: '25 Gresham Street, London EC2V 7HN',
-    website: 'www.barclaysmerchantservices.com',
+    address: '1420 Peachtree Street NE, Atlanta, GA 30309',
+    website: 'www.kenwoodoutdoor.com',
     workNumber: record.phone,
     mcc: '5411',
     monthlyVolume: '15,000.00',
@@ -71,8 +71,8 @@ export function UnderwritingDetail() {
     directCredit: true, directDebit: true,
 
     owners: [
-      { name: 'James Richardson', title: 'CEO', ownership: '60%', dob: '', address: '14 Kensington High Street, London W8 4PT', ssn: '***-**-4521', idType: 'Passport', idNumber: '***8742' },
-      { name: 'Sarah Mitchell', title: 'CFO', ownership: '40%', dob: '', address: '88 Victoria Road, London SW1V 1EZ', ssn: '***-**-7834', idType: '', idNumber: '***3291' },
+      { name: 'James Richardson', title: 'CEO', ownership: '60%', dob: '', address: '2318 Magnolia Avenue, Atlanta, GA 30305', ssn: '***-**-4521', idType: 'Driver’s License', idNumber: '***8742' },
+      { name: 'Sarah Mitchell', title: 'CFO', ownership: '40%', dob: '', address: '775 Ponce de Leon Place, Atlanta, GA 30306', ssn: '***-**-7834', idType: '', idNumber: '***3291' },
     ],
     equipment: [
       { terminalType: '', make: 'Ingenico', model: 'Desk 5000', quantity: '3', serial: 'ING-50001-A', connection: '', autoClose: '23:00' },

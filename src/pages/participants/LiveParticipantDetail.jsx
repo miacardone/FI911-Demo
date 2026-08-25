@@ -193,14 +193,10 @@ export function LiveParticipantDetail() {
           },
           {
             label: 'Terminals',
-            required: ['terminals'],
-            render: () => <PaymentTerminalsSection form={form} />,
-          },
-          {
-            label: 'Terminal Settings',
-            required: ['shipping'],
+            required: ['terminals', 'shipping'],
             render: () => (
               <>
+                <PaymentTerminalsSection form={form} />
                 <DefaultTerminalSettingsSection form={form} />
                 <ShippingMethodSection form={form} />
               </>

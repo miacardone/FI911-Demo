@@ -1264,34 +1264,40 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 
 /* ---------- Field grid ---------- */
 
+/**
+ * The form row.
+ *
+ * Was an even grid, so every control was the same width whatever it held — a
+ * date picker as wide as a street address. Free spans on a 12-column grid was
+ * the next attempt and it tiles badly: anything that does not divide into 12
+ * leaves dead columns and pushes the next field onto a new row.
+ *
+ * Flex solves what the grid could not. Each field asks for the width its
+ * content needs (`flex-basis`) and then shares out whatever is left over
+ * (`flex-grow`), so rows always run edge to edge while the fields inside them
+ * keep their relative proportions. A ZIP stays short next to a long address;
+ * neither leaves a hole.
+ */
 .fi-fields {
-  display: grid;
-  grid-template-columns: repeat(var(--fi-field-cols, 2), minmax(0, 1fr));
-  gap: var(--s-2) var(--s-4);
-}
-.fi-fields__full { grid-column: 1 / -1; }
-
-/* Three even columns — but the CONTROL inside each is sized to what it holds.
-   Free spans (4 and 6 of 12) were the first attempt and they tile badly: a
-   4 next to a 6 leaves 2 columns of dead space and pushes the next field to a
-   new row, so the form ended up MORE ragged and taller. Even columns keep the
-   rows aligned; capping the input is what stops a date picker being as wide
-   as an email address. */
-@media (min-width: 1180px) {
-  .fi-fields { grid-template-columns: repeat(var(--fi-field-cols-wide, 3), minmax(0, 1fr)); }
+  display: flex; flex-wrap: wrap;
+  gap: var(--s-2) var(--s-3);
+  align-items: flex-start;
 }
 
-/* Every field occupies ONE column, so rows always tile and never leave a hole.
-   Letting long fields span two was the second attempt: a span-2 that cannot
-   fit the remaining slot wraps, and the gap it leaves is exactly the ragged
-   look we were trying to remove. Variety comes from the control width inside
-   the column, not from the column count. */
+/* Leftover space is shared PROPORTIONALLY rather than capped. A hard
+   max-width on the short fields meant a row of three of them stopped short of
+   the right edge and trailed off. Growing 1 : 2 : 4 keeps a ZIP visibly
+   shorter than an address while still letting every row reach the edge. */
+.fi-fields > .field { flex: 2 1 190px; min-width: 0; }
+.fi-fields > .field--sm { flex: 1 1 130px; }
+.fi-fields > .field--lg { flex: 4 1 300px; }
+.fi-fields > .fi-fields__full { flex: 1 1 100%; }
 
-.field--sm .input,
-.field--sm .select { max-width: 170px; }
-.field--sm input[type="date"] { max-width: 165px; }
-/* Genuinely long values get the whole row rather than an awkward two-thirds. */
-.field--lg .input { max-width: none; }
+@media (max-width: 760px) {
+  .fi-fields > .field,
+  .fi-fields > .field--sm,
+  .fi-fields > .field--lg { flex: 1 1 100%; max-width: none; }
+}
 .fi-fields__full { grid-column: 1 / -1; }
 @media (max-width: 760px) { .fi-fields { grid-template-columns: 1fr; } }
 

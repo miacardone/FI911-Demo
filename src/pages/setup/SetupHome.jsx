@@ -213,7 +213,7 @@ export function SetupHome() {
       stats: [
         { label: 'Processors', value: 6 },
         { label: 'Currency', value: 'USD' },
-        { label: 'Timezone', value: 'London' },
+        { label: 'Timezone', value: 'New York' },
       ],
     },
   ];

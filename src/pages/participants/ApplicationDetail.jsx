@@ -56,8 +56,8 @@ export function ApplicationDetail() {
     mcc: '6099',
     businessDescription: 'SME-focused digital banking platform — Business accounts and invoicing',
 
-    physicalAddress: '20 Orange Street', physicalCity: 'London', physicalCountry: '', physicalState: '', physicalZip: 'WC2H 7EF',
-    mailingAddress: '20 Orange Street', mailingCity: 'London', mailingCountry: '', mailingState: '', mailingZip: 'WC2H 7EF',
+    physicalAddress: '640 Commerce Drive', physicalCity: 'Columbus', physicalCountry: 'United States', physicalState: 'OH', physicalZip: '43215',
+    mailingAddress: '640 Commerce Drive', mailingCity: 'Columbus', mailingCountry: 'United States', mailingState: 'OH', mailingZip: '43215',
 
     averageTicket: '195', highestTicket: '4000', monthlyVolume: '350000',
     retailSwipe: '5', keyEntered: '10', moto: '10', internet: '75',
@@ -79,7 +79,7 @@ export function ApplicationDetail() {
     bankAccounts: [{ bankName: 'First Citizens Bank', accountNumber: '04112233445566', routing: '040620021', use: 'Direct Credit Authority' }],
     individuals: [{
       name: record.contact, phone: record.phone, email: record.email,
-      address1: '20 Orange Street', city: 'London', zip: 'WC2H 7EF',
+      address1: '640 Commerce Drive', city: 'Columbus', zip: '43215',
       idType: 'Driving License', idNumber: 'OSEI9903166N1AB', issuerCountry: 'UK',
       ownership: '0', isSignatory: true, isOfficer: true, isBeneficiary: false,
     }],

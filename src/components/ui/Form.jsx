@@ -23,7 +23,7 @@ import { Button } from '@/components/ui/Surface';
  * definitions; annotating them all would guarantee drift, and the label
  * already says what the field holds.
  */
-const NARROW = /(^|\b)(zip|state|dob|date|year|month|%|pct|percent|qty|quantity|rate|code|number of|count|amount|ticket|fee|time)\b/i;
+const NARROW = /%|(^|\b)(zip|postal|state|dob|date|year|month|pct|percent|qty|quantity|rate|mcc|code|count|amount|ticket|fee|time|split|tier)\b/i;
 const WIDE = /(^|\b)(address|description|email|website|url|notes?|reason|comment|legal name|business name|dba)\b/i;
 
 export function fieldSpan(label, type) {
