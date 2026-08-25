@@ -75,8 +75,38 @@ function fitLabel(value, chars) {
  * edge, so half the label hangs outside the chart and gets clipped by the
  * card. Anchoring the first tick to its start and the last to its end keeps
  * both inside the box without moving the tick itself.
+ *
+ * The catch: an anchored end tick grows INWARD, so it can collide with its
+ * neighbour where a centred one would not. That is what `axisLabels` below is
+ * for — with the redundant year gone there is room for both.
  */
 const anchorAt = (i, count) => (i === 0 ? 'start' : i === count - 1 ? 'end' : 'middle');
+
+/**
+ * Strip whatever every tick on the axis has in common.
+ *
+ * A week of daily ticks all carry the same year, so printing it six times adds
+ * no information and costs four characters per label — which is the difference
+ * between "2026/08/15 2026/08/16" colliding and "08/15 08/16" sitting apart.
+ * The same applies to a run of months inside one year.
+ *
+ * Only strips when EVERY label agrees, so a series spanning a year boundary
+ * keeps its years and stays unambiguous.
+ */
+function axisLabels(values) {
+  const strs = values.map((v) => String(v ?? ''));
+  const dated = strs.every((v) => /^\d{4}[/-]\d{2}[/-]\d{2}$/.test(v));
+  if (dated) {
+    const years = new Set(strs.map((v) => v.slice(0, 4)));
+    if (years.size === 1) return strs.map((v) => v.slice(5));
+  }
+  const monthly = strs.every((v) => /^[A-Za-z]{3}-\d{4}$/.test(v));
+  if (monthly) {
+    const years = new Set(strs.map((v) => v.slice(-4)));
+    if (years.size === 1) return strs.map((v) => v.slice(0, 3));
+  }
+  return strs;
+}
 
 /** Axis ticks: at most this many, so a 28-day series does not print 28 labels. */
 const maxTicks = (width) => Math.max(4, Math.floor(width / 90));
@@ -135,6 +165,7 @@ export function BarChart({
   const labelEvery = categorical ? 1 : Math.max(1, Math.ceil(data.length / maxTicks(plotW)));
   const labelChars = Math.max(4, Math.floor(slot / 6.2));
   const clip = (t) => (categorical ? fitLabel(t, labelChars) : String(t));
+  const xLabels = axisLabels(data.map((d) => d[xKey] ?? d.period));
 
   return (
     <div className="chart-frame" ref={ref}>
@@ -181,7 +212,7 @@ export function BarChart({
               })}
               {i % labelEvery === 0 && (
                 <text x={PAD.left + slot * i + slot / 2} y={H - (xLabel ? 20 : 6)} className="chart__axis" textAnchor="middle">
-                  {clip(row[xKey])}
+                  {clip(xLabels[i])}
                   <title>{row[xKey]}</title>
                 </text>
               )}
@@ -250,6 +281,7 @@ export function AreaChart({
   const labelEvery = categorical ? 1 : Math.max(1, Math.ceil(data.length / maxTicks(plotW)));
   const labelChars = Math.max(4, Math.floor((plotW / Math.max(data.length, 1)) / 6.2));
   const clip = (t) => (categorical ? fitLabel(t, labelChars) : String(t));
+  const xLabels = axisLabels(data.map((d) => d[xKey] ?? d.period));
 
   return (
     <div className="chart-frame" ref={ref}>
@@ -295,7 +327,7 @@ export function AreaChart({
 
         {data.map((d, i) => (i % labelEvery === 0 ? (
           <text key={`lbl-${d[xKey]}-${i}`} x={x(i)} y={H - (xLabel ? 20 : 6)} className="chart__axis" textAnchor={anchorAt(i, data.length)}>
-            {clip(d[xKey])}
+            {clip(xLabels[i])}
             <title>{d[xKey]}</title>
           </text>
         ) : null))}
@@ -558,6 +590,7 @@ export function LineChart({
   const labelEvery = categorical ? 1 : Math.max(1, Math.ceil(data.length / maxTicks(plotW)));
   const labelChars = Math.max(4, Math.floor((plotW / Math.max(data.length, 1)) / 6.2));
   const clip = (t) => (categorical ? fitLabel(t, labelChars) : String(t));
+  const xLabels = axisLabels(data.map((d) => d[xKey] ?? d.period));
 
   return (
     <div className="chart-frame" ref={ref}>
@@ -602,7 +635,7 @@ export function LineChart({
 
         {data.map((d, i) => (i % labelEvery === 0 ? (
           <text key={`lbl-${d[xKey]}-${i}`} x={x(i)} y={H - (xLabel ? 20 : 6)} className="chart__axis" textAnchor={anchorAt(i, data.length)}>
-            {clip(d[xKey])}
+            {clip(xLabels[i])}
             <title>{d[xKey]}</title>
           </text>
         ) : null))}
