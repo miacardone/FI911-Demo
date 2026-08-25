@@ -122,54 +122,76 @@ export function ApplicationDetail() {
           { icon: 'edit', label: 'Edit', onSelect: () => {} },
         ]}
         values={form.values}
+        /* A step is a screen, not a chapter. */
         steps={[
           {
-            label: 'Business Information',
+            label: 'Business',
             required: ['agentName', 'agentEmail', 'type', 'legalName', 'merchant', 'website',
               'contact', 'phone', 'email', 'taxId', 'businessType', 'businessDescription',
               'physicalAddress', 'physicalCity', 'physicalZip', 'mailingAddress', 'mailingCity', 'mailingZip'],
+            render: () => <BusinessInformationSection form={form} variant="application" />,
+          },
+          {
+            label: 'Addresses',
+            required: [],
             render: () => (
               <>
-                <BusinessInformationSection form={form} variant="application" />
                 <AddressSection form={form} title="Physical Address" prefix="physical" />
                 <AddressSection form={form} title="Mailing Address" prefix="mailing" />
               </>
             ),
           },
           {
-            label: 'Trading Profile',
+            label: 'Processing',
             required: ['averageTicket', 'highestTicket', 'monthlyVolume', 'retailSwipe',
               'keyEntered', 'moto', 'internet', 'advertise', 'soldHow', 'refundPolicy', 'cardEntry'],
-            render: () => (
-              <>
-                <TransactionInformationSection form={form} />
-                <NatureOfBusinessSection form={form} />
-                <ComplianceSection form={form} />
-              </>
-            ),
+            render: () => <TransactionInformationSection form={form} />,
           },
           {
-            label: 'Banking & Individuals',
+            label: 'Nature of Business',
+            required: [],
+            render: () => <NatureOfBusinessSection form={form} />,
+          },
+          {
+            label: 'Compliance',
+            required: [],
+            render: () => <ComplianceSection form={form} />,
+          },
+          {
+            label: 'Banking',
             required: ['bankAccounts', 'individuals'],
-            render: () => (
-              <>
-                <BankAccountsSection form={form} />
-                <IndividualsSection form={form} />
-              </>
-            ),
+            render: () => <BankAccountsSection form={form} />,
           },
           {
-            label: 'Terminals & Pricing',
+            label: 'Individuals',
+            required: [],
+            render: () => <IndividualsSection form={form} />,
+          },
+          {
+            label: 'Terminals',
             required: ['pricingType', 'authFee', 'mcVisaDiscoverPct', 'amexPct', 'joining',
               'annual', 'admin', 'chargebackFee', 'shipping'],
             render: () => (
               <>
                 <PaymentTerminalsSection form={form} />
                 <DefaultTerminalSettingsSection form={form} />
-                <ShippingMethodSection form={form} />
-                <PricingSection form={form} />
               </>
             ),
+          },
+          {
+            label: 'Shipping',
+            required: [],
+            render: () => <ShippingMethodSection form={form} />,
+          },
+          {
+            label: 'Card Rates',
+            required: [],
+            render: () => <PricingSection form={form} part="rates" />,
+          },
+          {
+            label: 'Debit & Fees',
+            required: [],
+            render: () => <PricingSection form={form} part="fees" />,
           },
         ]}
       >

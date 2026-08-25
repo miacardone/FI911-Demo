@@ -1223,7 +1223,7 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 }
 .fi-detail__icon:hover { background: var(--c-primary-wash); color: var(--c-primary); }
 
-.fi-detail__body { display: flex; flex-direction: column; gap: var(--s-3); }
+.fi-detail__body { display: flex; flex-direction: column; gap: var(--s-2); }
 
 /* Sticky commit bar — only rendered once the form is dirty. */
 .fi-detail__foot {
@@ -1263,9 +1263,17 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 .fi-fields {
   display: grid;
   grid-template-columns: repeat(var(--fi-field-cols, 2), minmax(0, 1fr));
-  gap: var(--s-3) var(--s-4);
+  gap: var(--s-2) var(--s-4);
 }
 .fi-fields__full { grid-column: 1 / -1; }
+
+/* A two-column form on a 1440px screen wastes half its width and pays for it
+   in height — which is the whole reason these pages scrolled. Three columns
+   above 1180px turns a twelve-row section into eight, and pages that asked
+   for a specific column count keep it. */
+@media (min-width: 1180px) {
+  .fi-fields { grid-template-columns: repeat(var(--fi-field-cols-wide, 3), minmax(0, 1fr)); }
+}
 @media (max-width: 760px) { .fi-fields { grid-template-columns: 1fr; } }
 
 /* ---------- Check / radio groups ---------- */
@@ -1742,13 +1750,19 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 
 /* ---------- Section completion cards ---------- */
 
+/* A wizard's step strip is signposting, not content. As a wrapping grid of
+   200px cards, nine steps took three rows and 190px of the very height the
+   wizard exists to save. One scrolling row of compact chips does the same job
+   in a quarter of the space. */
 .step-cards {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--s-2);
+  display: flex; gap: 6px;
+  overflow-x: auto; overflow-y: hidden;
+  padding-bottom: 2px;
+  scrollbar-width: thin;
 }
 .step-card {
-  display: flex; align-items: center; gap: var(--s-3);
-  padding: var(--s-3); text-align: left;
+  display: flex; align-items: center; gap: var(--s-2); flex: 0 0 auto;
+  padding: 5px var(--s-3); text-align: left;
   border: 1px solid var(--c-line); border-left: 3px solid var(--c-line-strong);
   border-radius: var(--r-md); background: var(--c-surface);
   cursor: pointer;
@@ -1760,7 +1774,10 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 .step-card--in_progress { border-left-color: var(--c-accent); }
 .step-card--not_started { border-left-color: var(--c-line-strong); }
 
-.step-card__text { min-width: 0; flex: 1; line-height: 1.3; }
+.step-card__text { min-width: 0; flex: 1; line-height: 1.25; }
+/* The state word is already in the ring's colour and the count; spelling out
+   "IN PROGRESS" under every chip is a third telling of the same thing. */
+.step-cards .step-card__state { display: none; }
 .step-card__title {
   display: block; font-size: var(--fs-small); font-weight: 700; color: var(--c-ink);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
@@ -2265,3 +2282,49 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 
 .icon-btn { color: var(--c-ink-muted); width: 28px; height: 28px; }
 .icon-btn:hover { color: var(--c-primary-deep); background: var(--c-primary-wash); }
+
+/* ---------- Collapsible record summary ---------- */
+
+.fi-detail__summary { display: grid; gap: var(--s-2); }
+.fi-detail__summary-toggle {
+  display: inline-flex; align-items: center; gap: 6px; align-self: flex-start;
+  padding: 3px var(--s-2); border: 0; background: transparent; cursor: pointer;
+  font-size: var(--fs-micro); font-weight: 600; color: var(--c-ink-muted);
+  text-transform: uppercase; letter-spacing: .04em;
+}
+.fi-detail__summary-toggle:hover { color: var(--c-primary-deep); }
+.fi-detail__summary-toggle .is-open { transform: rotate(90deg); }
+.fi-detail__summary-toggle svg { transition: transform var(--dur-fast) var(--ease); }
+
+/* The head was sized for a page with room to spare. */
+.fi-detail__head { padding-bottom: var(--s-2); }
+
+/* ---------- Wizard density ----------
+   These pages are read a step at a time, not scrolled, so the vertical rhythm
+   is tuned for fitting rather than for breathing room. Applied only inside a
+   wizard body — plain detail pages keep the looser spacing. */
+
+.fi-detail__body .fi-section__body { padding: 0 var(--s-4) var(--s-3); gap: var(--s-2); }
+.fi-detail__body .fi-section__toggle { padding: var(--s-2) 0; }
+.fi-detail__body .field__label { margin-bottom: 1px; }
+.fi-detail__body .rate-row { padding: 3px var(--s-3); }
+.fi-detail__body .fi-repeat { padding: var(--s-3); gap: var(--s-2); }
+
+/* Two rate cards side by side rather than stacked: a nine-row card is the one
+   thing on these forms that genuinely cannot shrink, so it is given width
+   instead of height. */
+@media (min-width: 1180px) {
+  .fi-detail__body .rate-card-pair { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3); align-items: start; }
+}
+
+/* Checkbox groups and rate cards are the two things on these forms that cannot
+   be shortened — so inside a wizard they are given WIDTH instead. A four-across
+   checkbox grid turns a twelve-row list into three rows. */
+@media (min-width: 1180px) {
+  .fi-detail__body .fi-checkgroup__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  /* Sections that are nothing but stacked groups flow in two columns. */
+  .fi-detail__body .fi-section--columns .fi-section__body {
+    display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3) var(--s-4); align-items: start;
+  }
+  .fi-detail__body .fi-section--columns .fi-fields { grid-column: 1 / -1; }
+}

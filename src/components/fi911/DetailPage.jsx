@@ -45,7 +45,7 @@ export function useSectionControls() {
   return useContext(SectionBroadcast);
 }
 
-export function Section({ title, children, collapsible = true, defaultOpen = true, underline = false, actions }) {
+export function Section({ title, children, collapsible = true, defaultOpen = true, underline = false, actions, columns = false }) {
   const [open, setOpen] = useState(defaultOpen);
   const broadcast = useContext(SectionBroadcast);
   const signal = broadcast?.signal;
@@ -55,7 +55,7 @@ export function Section({ title, children, collapsible = true, defaultOpen = tru
   }, [signal]);
 
   return (
-    <section className="fi-section">
+    <section className={`fi-section ${columns ? 'fi-section--columns' : ''}`.trim()}>
       <header className="fi-section__head">
         {collapsible ? (
           <button type="button" className="fi-section__toggle" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
@@ -73,8 +73,20 @@ export function Section({ title, children, collapsible = true, defaultOpen = tru
 }
 
 /** Two-column field grid — the default layout inside every section. */
-export function FieldGrid({ children, columns = 2 }) {
-  return <div className="fi-fields" style={{ '--fi-field-cols': columns }}>{children}</div>;
+/**
+ * `columns` is the NARROW-screen count; wide screens get one more, because a
+ * two-column form on a 1440px display wastes half its width and pays for it in
+ * height. A page that genuinely needs a fixed count passes `wide` explicitly.
+ */
+export function FieldGrid({ children, columns = 2, wide }) {
+  return (
+    <div
+      className="fi-fields"
+      style={{ '--fi-field-cols': columns, '--fi-field-cols-wide': wide ?? Math.min(columns + 1, 4) }}
+    >
+      {children}
+    </div>
+  );
 }
 
 /** A field that should span the whole grid row (Business Description, Address). */
@@ -278,6 +290,11 @@ export function DetailPage({
   const navigate = useNavigate();
   const toast = useToast();
   const [step, setStep] = useState(0);
+  /* The record summary is reference: useful when you arrive, in the way once
+     you are working a step. It was 220px of permanently-on chrome above a
+     632px viewport, so it starts collapsed on a wizard and open on a plain
+     detail page, where there is nothing else competing for the height. */
+  const [summaryOpen, setSummaryOpen] = useState(!steps);
 
   const goToStep = (i) => {
     setStep(i);
@@ -342,7 +359,20 @@ export function DetailPage({
         </div>
       </header>
 
-      {summary}
+      {summary && (
+        <div className={`fi-detail__summary ${summaryOpen ? 'is-open' : ''}`.trim()}>
+          <button
+            type="button"
+            className="fi-detail__summary-toggle"
+            onClick={() => setSummaryOpen((v) => !v)}
+            aria-expanded={summaryOpen}
+          >
+            <Icon name="chevron" size={14} className={summaryOpen ? 'is-open' : ''} />
+            {summaryOpen ? 'Hide record details' : 'Show record details'}
+          </button>
+          {summaryOpen && summary}
+        </div>
+      )}
 
       {steps ? (
         <>

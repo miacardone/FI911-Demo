@@ -156,7 +156,7 @@ export function NatureOfBusinessSection({ form, showFulfillment = false }) {
   const list = (name) => values[name] ?? [];
 
   return (
-    <Section title="Nature of Business">
+    <Section title="Nature of Business" columns>
       <CheckGroup label="How do you advertise/market your business?" options={ADVERTISE} values={list('advertise')} onChange={(v) => set('advertise', v)} />
       <CheckGroup label="How are your products or services sold?" options={SOLD_HOW} values={list('soldHow')} onChange={(v) => set('soldHow', v)} />
 
@@ -468,11 +468,16 @@ function RateRow({ label, form, name }) {
   );
 }
 
-export function PricingSection({ form }) {
-  const { values, set, field } = form;
+export function PricingSection({ form, part = 'all' }) {
+  const { field } = form;
 
-  return (
-    <Section title="Pricing">
+  /* A twenty-row rate card is the one block on these forms that cannot be
+     shortened without hiding rates, so it is SPLIT instead: card rates in one
+     step, debit and fees in the next. `part` lets the wizard page it while a
+     plain detail page still renders the lot. */
+  const cardRates = (
+    <Section title="Pricing — Card Rates">
+
       <FieldGrid>
         <TextField {...field('pricingType', 'Pricing Type')} placeholder="Interchange Plus" />
       </FieldGrid>
@@ -501,8 +506,12 @@ export function PricingSection({ form }) {
           <TextField {...field('surchargePerTxn', 'or Per Txn.')} type="number" placeholder="0" />
         </FieldGrid>
       </div>
+    </Section>
+  );
 
-      <div>
+  const feeRates = (
+    <Section title="Pricing — Debit & Fees">
+<div>
         <span className="fi-checkgroup__label">PIN Debit Rates</span>
         <div className="rate-table">
           <div className="rate-row rate-row--head">
@@ -525,11 +534,11 @@ export function PricingSection({ form }) {
       </div>
     </Section>
   );
-}
 
-/* ------------------------------------------------------------------ *
- * Fee schedule (Underwriting)
- * ------------------------------------------------------------------ */
+  if (part === 'rates') return cardRates;
+  if (part === 'fees') return feeRates;
+  return <>{cardRates}{feeRates}</>;
+}
 
 export function FeeScheduleSection({ form }) {
   const { values, set } = form;

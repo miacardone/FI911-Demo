@@ -111,9 +111,12 @@ export function UnderwritingDetail() {
           { icon: 'message', label: 'Notes', onSelect: () => setModal({ kind: 'notes' }) },
           { icon: 'menu', label: 'More actions', onSelect: () => {} },
         ]}
+        /* One section per step. The three-step version stacked two or three
+           full sections into each, which still meant scrolling inside a
+           wizard — the steps were chapter headings, not pages. */
         steps={[
           {
-            label: 'Merchant & General',
+            label: 'Merchant',
             render: () => (
               <>
                 <Section title="Merchant Details">
@@ -132,6 +135,13 @@ export function UnderwritingDetail() {
             <TextField {...field('swipe', 'Swipe %')} />
           </FieldGrid>
         </Section>
+              </>
+            ),
+          },
+          {
+            label: 'General',
+            render: () => (
+              <>
                 <Section title="General Information">
           <FieldGrid>
             <TextField {...field('mid', 'MID')} required />
@@ -149,7 +159,7 @@ export function UnderwritingDetail() {
             ),
           },
           {
-            label: 'Business & Banking',
+            label: 'Business',
             render: () => (
               <>
                 <Section title="Business Information">
@@ -163,6 +173,13 @@ export function UnderwritingDetail() {
             <FullRow><TextField {...field('advertiseBusiness', 'Advertise Business')} /></FullRow>
           </FieldGrid>
         </Section>
+              </>
+            ),
+          },
+          {
+            label: 'Banking',
+            render: () => (
+              <>
                 <Section title="Banking Information">
           <div>
             <span className="fi-checkgroup__label">Deposit Account</span>
@@ -189,7 +206,7 @@ export function UnderwritingDetail() {
             ),
           },
           {
-            label: 'Owners, Equipment & Fees',
+            label: 'Owners',
             render: () => (
               <>
                 <Section title="Owners" actions={<AddButton onClick={() => set('owners', [...owners, {}])}>Add Owner</AddButton>}>
@@ -208,6 +225,13 @@ export function UnderwritingDetail() {
             </RepeatBlock>
           ))}
         </Section>
+              </>
+            ),
+          },
+          {
+            label: 'Equipment & Fees',
+            render: () => (
+              <>
                 <Section title="Equipment" actions={<AddButton onClick={() => set('equipment', [...equipment, {}])}>Add Equipment</AddButton>}>
           {equipment.map((k, i) => (
             <RepeatBlock key={i} title={`Equipment ${i + 1}`} onRemove={() => set('equipment', equipment.filter((_, idx) => idx !== i))}>
@@ -223,7 +247,6 @@ export function UnderwritingDetail() {
             </RepeatBlock>
           ))}
         </Section>
-                <FeeScheduleSection form={form} />
               </>
             ),
           },

@@ -88,8 +88,15 @@ export function InvitationDetail() {
           { icon: 'message', label: 'Notes', onSelect: () => setModal({ kind: 'notes' }) },
           { icon: 'menu', label: 'More actions', onSelect: () => {} },
         ]}
-      >
-        <Section title="Agent Information">
+        /* A wizard, not a scroll. Four sections stacked ran to two and a half
+           screens; a proposal is reviewed field by field, so it is paged. */
+        values={form.values}
+        steps={[
+          {
+            label: 'Agent',
+            render: () => (
+              <>
+            <Section title="Agent Information">
           <FieldGrid>
             <TextField {...field('agentName', 'Agent Name')} required />
             <TextField {...field('agentContactName', 'Agent Contact Name')} placeholder="Agent Contact Name" />
@@ -98,12 +105,17 @@ export function InvitationDetail() {
             </FullRow>
           </FieldGrid>
         </Section>
-
-        <Section title="Assignment">
+            <Section title="Assignment">
           <TextField {...field('assignedTo', 'Assign To')} placeholder="Enter assignee name" />
         </Section>
-
-        <Section title="Business Information">
+              </>
+            ),
+          },
+          {
+            label: 'Business',
+            render: () => (
+              <>
+            <Section title="Business Information">
           <FieldGrid>
             <SelectField {...field('type', 'Type')} options={opts(brand.participantTypes.map((t) => t.label))} placeholder="" />
             <TextField {...field('legalName', 'Legal Name')} />
@@ -118,12 +130,14 @@ export function InvitationDetail() {
             </FullRow>
           </FieldGrid>
         </Section>
-
-        <AddressSection form={form} title="Physical Address" prefix="physical" />
-        <TaxBusinessSection form={form} />
-        <AddressSection form={form} title="Mailing Address" prefix="mailing" />
-
-        <Section title="Business Owner Details">
+              </>
+            ),
+          },
+          {
+            label: 'Owner',
+            render: () => (
+              <>
+            <Section title="Business Owner Details">
           <FieldGrid>
             <TextField {...field('ownerName', 'Owner Name')} />
             <SelectField {...field('ownerTitle', 'Title')} options={opts(brand.ownerTitles)} placeholder="" />
@@ -138,7 +152,12 @@ export function InvitationDetail() {
             <TextField {...field('ownerZip', 'Zip Code')} />
           </FieldGrid>
         </Section>
-      </DetailPage>
+              </>
+            ),
+          },
+        ]}
+      />
+
 
       <ChangeStatusModal
         open={modal?.kind === 'status'}

@@ -141,49 +141,79 @@ export function LiveParticipantDetail() {
           </section>
         )}
         values={form.values}
+        /* One screen per step. The four-step version put seven sections in its
+           first step, which is how a "wizard" ended up 5.5 screens tall — the
+           steps were chapter headings, not pages. */
         steps={[
           {
-            label: 'Business Information',
-            required: ['agentName', 'agentEmail', 'type', 'legalName', 'merchant', 'website',
-              'contact', 'phone', 'email', 'taxId', 'businessDescription',
-              'physicalAddress', 'physicalCity', 'physicalZip', 'averageTicket', 'monthlyVolume'],
+            label: 'Business',
+            required: ['agentName', 'agentEmail', 'type', 'legalName', 'merchant', 'website', 'contact', 'phone', 'email', 'taxId'],
+            render: () => <BusinessInformationSection form={form} variant="onboarding" />,
+          },
+          {
+            label: 'Addresses',
+            required: ['physicalAddress', 'physicalCity', 'physicalZip'],
             render: () => (
               <>
-                <BusinessInformationSection form={form} variant="onboarding" />
                 <AddressSection form={form} title="Physical Address" prefix="physical" />
                 <AddressSection form={form} title="Mailing Address" prefix="mailing" />
-                <TransactionInformationSection form={form} />
-                <NatureOfBusinessSection form={form} showFulfillment />
-                <ParticipantRiskRulesSection form={form} />
-                <ComplianceSection form={form} long />
               </>
             ),
           },
           {
-            label: 'Banking & Individual Information',
-            required: ['bankAccounts', 'individuals'],
-            render: () => (
-              <>
-                <BankAccountsSection form={form} />
-                <IndividualsSection form={form} />
-              </>
-            ),
+            label: 'Processing',
+            required: ['averageTicket', 'monthlyVolume'],
+            render: () => <TransactionInformationSection form={form} />,
+          },
+          {
+            label: 'Nature of Business',
+            required: ['businessDescription'],
+            render: () => <NatureOfBusinessSection form={form} showFulfillment />,
+          },
+          {
+            label: 'Risk Rules',
+            required: [],
+            render: () => <ParticipantRiskRulesSection form={form} />,
+          },
+          {
+            label: 'Compliance',
+            required: [],
+            render: () => <ComplianceSection form={form} long />,
+          },
+          {
+            label: 'Banking',
+            required: ['bankAccounts'],
+            render: () => <BankAccountsSection form={form} />,
+          },
+          {
+            label: 'Individuals',
+            required: ['individuals'],
+            render: () => <IndividualsSection form={form} />,
           },
           {
             label: 'Terminals',
-            required: ['terminals', 'shipping'],
+            required: ['terminals'],
+            render: () => <PaymentTerminalsSection form={form} />,
+          },
+          {
+            label: 'Terminal Settings',
+            required: ['shipping'],
             render: () => (
               <>
-                <PaymentTerminalsSection form={form} />
                 <DefaultTerminalSettingsSection form={form} />
                 <ShippingMethodSection form={form} />
               </>
             ),
           },
           {
-            label: 'Pricing',
+            label: 'Card Rates',
             required: ['pricingType'],
-            render: () => <PricingSection form={form} />,
+            render: () => <PricingSection form={form} part="rates" />,
+          },
+          {
+            label: 'Debit & Fees',
+            required: [],
+            render: () => <PricingSection form={form} part="fees" />,
           },
         ]}
       />
