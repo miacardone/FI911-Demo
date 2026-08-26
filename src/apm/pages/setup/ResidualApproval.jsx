@@ -4,7 +4,9 @@ import { Money, StatusBadge, TwoLine, menuColumn, moneyText, moneyTotal } from '
 import { Badge, Button, Kpi } from '@/components/ui/Surface';
 import { Tooltip } from '@/components/ui/Overlay';
 import Icon from '@/components/ui/Icon';
+import { useNavigate } from 'react-router-dom';
 import { APPROVAL_STATUSES, LAST_CALCULATED_MONTH, RESIDUAL_APPROVALS } from '@/apm/data/setup';
+import { setupRoutes } from '@/apm/data/navigation';
 import { useToast } from '@/context/ToastContext';
 
 /**
@@ -46,6 +48,7 @@ function Delta({ value }) {
 
 export function ResidualApproval() {
   const toast = useToast();
+  const navigate = useNavigate();
   const [tab, setTab] = useState('pending');
   const [rows, setRows] = useState(RESIDUAL_APPROVALS);
 
@@ -68,7 +71,7 @@ export function ResidualApproval() {
     menuColumn((r) => [
       r.approval !== 'Approved' && { label: 'Approve payout', icon: 'check', onSelect: () => setApproval(r.id, 'Approved', `${r.portfolio} approved for payment.`) },
       r.approval !== 'On Hold' && { label: 'Place on hold', icon: 'pause', onSelect: () => setApproval(r.id, 'On Hold', `${r.portfolio} held — it will not pay this cycle.`) },
-      { label: 'View calculation', icon: 'table', onSelect: () => toast.notify(`Opening the ${LAST_CALCULATED_MONTH} calculation for ${r.portfolio}.`) },
+      { label: 'View calculation', icon: 'table', onSelect: () => navigate(setupRoutes.residualCalculation) },
     ]),
     { key: 'portfolio', header: 'Portfolio', fw: 26, sortable: true, cell: (r) => <TwoLine primary={r.portfolio} secondary={r.processor} />, text: (r) => `${r.portfolio} ${r.processor}` },
     { key: 'merchants', header: '# Merchants', fw: 7, align: 'center', sortable: true },

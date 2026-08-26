@@ -4,8 +4,12 @@ import { Badge, Button } from '@/components/ui/Surface';
 import { Tooltip } from '@/components/ui/Overlay';
 import { PORTFOLIO_SETUP } from '@/apm/data/setup';
 import { setupRoutes } from '@/apm/data/navigation';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/context/ToastContext';
+import { useRecords } from '@/hooks/useRecords';
+import { RecordFormModal } from '@/components/fi911/RecordFormModal';
+import brand from '@/apm/brand.config';
 
 /**
  * Setup > Residuals > Portfolio Setup.
@@ -18,15 +22,30 @@ import { useToast } from '@/context/ToastContext';
  * unmapped count is surfaced here and links straight to Merchant Mapping.
  */
 
+const PORTFOLIO_FIELDS = [
+  { name: 'name', label: 'Portfolio Name', required: true },
+  { name: 'processor', label: 'Processor', type: 'select', options: brand.processors, required: true },
+  { name: 'startDate', label: 'Start Date' },
+];
+
 export function PortfolioSetup() {
   const navigate = useNavigate();
   const toast = useToast();
+  const store = useRecords(PORTFOLIO_SETUP, { key: 'id' });
+
+  const [draft, setDraft] = useState(null);
+  const editing = draft && Object.keys(draft).length > 0 ? draft : null;
 
   const columns = [
     menuColumn((r) => [
-      { label: 'Edit portfolio', icon: 'edit', onSelect: () => toast.notify(`Editing ${r.name}.`) },
+      { label: 'Edit portfolio', icon: 'edit', onSelect: () => setDraft(r) },
       r.unmapped > 0 && { label: `Map ${r.unmapped} merchant${r.unmapped === 1 ? '' : 's'}`, icon: 'branch', onSelect: () => navigate(setupRoutes.merchantMapping) },
-      { label: 'Change status', icon: 'power', onSelect: () => toast.notify(`${r.name} status changed.`) },
+      {
+        label: r.status === 'Active' ? 'Deactivate' : 'Activate',
+        icon: 'power',
+        tone: r.status === 'Active' ? 'danger' : undefined,
+        onSelect: () => toast.notify(`${r.name} is now ${store.toggleStatus(r).toLowerCase()}.`),
+      },
     ]),
     { key: 'name', header: 'Portfolio Name', fw: 26, sortable: true, cell: (r) => <TwoLine primary={r.name} secondary={r.processor} />, text: (r) => `${r.name} ${r.processor}` },
     { key: 'merchants', header: 'Merchants', fw: 7, align: 'center', sortable: true },
@@ -68,15 +87,32 @@ export function PortfolioSetup() {
             </Button>
           )}
           <Button variant="secondary" size="sm" icon="upload" onClick={() => toast.notify('Import portfolios as CSV.')}>Import</Button>
-          <Button variant="primary" size="sm" icon="plus" onClick={() => toast.notify('New portfolio.')}>New</Button>
+          <Button variant="primary" size="sm" icon="plus" onClick={() => setDraft({})}>New</Button>
         </>
       )}
       columns={columns}
-      rows={PORTFOLIO_SETUP}
+      rows={store.rows}
       searchPlaceholder="Search portfolio name"
       exportName="portfolio-setup"
       totals={['merchants', 'unmapped', 'monthlyResidual']}
       empty="No portfolios configured."
+      footer={(
+        <RecordFormModal
+          open={Boolean(draft)}
+          onClose={() => setDraft(null)}
+          title="portfolio"
+          fields={PORTFOLIO_FIELDS}
+          initial={editing}
+          onSubmit={(v) => (editing
+            ? store.update(editing, v)
+            : store.create({
+              id: `new-pso-${store.rows.length}`,
+              status: 'Active', merchants: 0, unmapped: 0, monthlyResidual: 0,
+              created: brand.today.replace(/-/g, '/'), modified: brand.today.replace(/-/g, '/'),
+              ...v,
+            }))}
+        />
+      )}
     />
   );
 }
