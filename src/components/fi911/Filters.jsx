@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/Surface';
-import { SelectField, TextField } from '@/components/ui/Form';
+import { SelectField, TextField, fieldSpan } from '@/components/ui/Form';
 import { useToast } from '@/context/ToastContext';
 
 /**
@@ -35,11 +35,13 @@ export function FilterGrid({ fields, values, onChange, columns = 4 }) {
       {fields.map((f) => {
         const value = values[f.name] ?? '';
         const set = (v) => onChange({ ...values, [f.name]: v });
-        const style = f.span ? { gridColumn: `span ${f.span}` } : undefined;
+        /* The wrapper carries the width class so the flex row can size it. */
+        const cls = `field--${fieldSpan(f.label, f.type)}`;
+        const style = undefined;
 
         if (f.type === 'select') {
           return (
-            <div key={f.name} style={style}>
+            <div key={f.name} className={cls} style={style}>
               <SelectField
                 label={f.label}
                 required={f.required}
@@ -53,7 +55,7 @@ export function FilterGrid({ fields, values, onChange, columns = 4 }) {
         }
 
         return (
-          <div key={f.name} style={style}>
+          <div key={f.name} className={cls} style={style}>
             <TextField
               label={f.label}
               required={f.required}

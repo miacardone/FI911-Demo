@@ -49,7 +49,7 @@ export function ApplicationDetail() {
     phone: record.phone,
     serviceNumber: '0800-555-0660',
     email: record.email,
-    taxId: 'GB889900112',
+    taxId: '88-9900112',
     businessType: 'Corporation',
     participantType: '',
     businessStart: '',
@@ -80,7 +80,7 @@ export function ApplicationDetail() {
     individuals: [{
       name: record.contact, phone: record.phone, email: record.email,
       address1: '640 Commerce Drive', city: 'Columbus', zip: '43215',
-      idType: 'Driving License', idNumber: 'OSEI9903166N1AB', issuerCountry: 'UK',
+      idType: 'Driver’s License', idNumber: 'OH-RM428913', issuerCountry: 'United States',
       ownership: '0', isSignatory: true, isOfficer: true, isBeneficiary: false,
     }],
     terminals: [{}],

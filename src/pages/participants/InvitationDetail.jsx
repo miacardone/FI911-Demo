@@ -50,7 +50,7 @@ export function InvitationDetail() {
     physicalCountry: '',
     physicalState: '',
     physicalZip: '90026',
-    taxId: '457894114',
+    taxId: '45-7894114',
     businessType: 'Proprietary',
     participantType: '',
     businessStart: '',

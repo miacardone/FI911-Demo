@@ -1063,11 +1063,16 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
   background: var(--c-surface-sunken);
   padding: var(--s-4); margin-bottom: var(--s-4);
 }
+/* Same treatment as the form rows: a date range and a merchant name have no
+   business being the same width, and an even grid leaves the last row short. */
 .fi-filter__grid {
-  display: grid;
-  grid-template-columns: repeat(var(--fi-filter-cols, 4), minmax(0, 1fr));
-  gap: var(--s-3) var(--s-4);
+  display: flex; flex-wrap: wrap;
+  gap: var(--s-2) var(--s-3);
+  align-items: flex-start;
 }
+.fi-filter__grid > * { flex: 2 1 180px; min-width: 0; }
+.fi-filter__grid > .field--sm { flex: 1 1 130px; }
+.fi-filter__grid > .field--lg { flex: 4 1 280px; }
 .fi-filter__foot {
   display: flex; justify-content: flex-end; gap: var(--s-2);
   margin-top: var(--s-4); padding-top: var(--s-3);
@@ -1084,8 +1089,11 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 .fi-filter__report-fields { display: grid; grid-template-columns: repeat(2, minmax(180px, 240px)); gap: var(--s-4); }
 .fi-filter__report-actions { display: flex; align-items: center; gap: var(--s-2); flex-wrap: wrap; }
 
-@media (max-width: 1100px) { .fi-filter__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 680px)  { .fi-filter__grid { grid-template-columns: 1fr; } .fi-filter__report-fields { grid-template-columns: 1fr; } }
+
+@media (max-width: 680px) {
+  .fi-filter__grid > * { flex: 1 1 100%; }
+  .fi-filter__report-fields { grid-template-columns: 1fr; }
+}
 
 /* ---------- Pager ---------- */
 

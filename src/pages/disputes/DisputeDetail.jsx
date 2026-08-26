@@ -34,12 +34,12 @@ export function DisputeDetail() {
   const record = findDispute(id);
   const [documents, setDocuments] = useState([]);
 
-  useDetailCrumb(record.bankName);
+  useDetailCrumb(record.merchant);
 
   return (
     <DetailPage
       title={record.caseNumber}
-      subtitle={`Merchant Name: ${record.bankName}, Routing Number: ${record.routingNumber}`}
+      subtitle={`${record.merchant} · MID ${record.mid} · ${record.reasonCode} ${record.reasonCategory}`}
       onBack={() => navigate(routes.disputes)}
     >
       <section className="fi-section">
