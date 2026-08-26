@@ -117,44 +117,45 @@ export const fi911Brand = {
    * nav item is a solid teal block, which is how the real product marks
    * position. */
   colors: {
-    primary: '#00AAB4',
-    primaryDeep: '#00818A',
-    primaryTint: '#D6F1F3',
-    primaryWash: '#F0FAFB',
+    primary: '#1D6FE0',
+    primaryDeep: '#1552B3',
+    primaryTint: '#D6E5FA',
+    primaryWash: '#EFF5FE',
 
-    /* Accent — emphasis only, never a status. */
-    accent: '#FFC300',
-    accentDeep: '#C79800',
-    accentTint: '#FFF3CC',
+    /* Accent — emphasis only, never a status. Amber against navy, since a
+       second blue would not read as emphasis next to the primary. */
+    accent: '#E0A32E',
+    accentDeep: '#9A6B10',
+    accentTint: '#FBEFD6',
 
-    /* Chrome — light topbar over a soft charcoal rail */
+    /* Chrome — light topbar over the navy rail */
     topbar: '#FFFFFF',
-    topbarInk: '#14191E',
-    topbarChip: '#F1F3F4',
-    topbarField: '#F1F3F4',
-    crumbbar: '#F1F3F4',
-    crumbbarInk: '#6B747C',
-    crumbbarInkActive: '#14191E',
+    topbarInk: '#1A2435',
+    topbarChip: '#F1F4F9',
+    topbarField: '#F1F4F9',
+    crumbbar: '#F1F4F9',
+    crumbbarInk: '#6B7A91',
+    crumbbarInkActive: '#1A2435',
 
     /* The sign-in split panel stays dark — it is a marketing surface. */
-    loginPanel: '#22282C',
-    loginPanelInk: '#A8AFB6',
+    loginPanel: '#0B2545',
+    loginPanelInk: '#9FB2CA',
 
-    /* Navigation rail — soft charcoal, not brand Dark */
-    navRail: '#30363A',
-    navRailDeep: '#272C2F',
-    navActive: '#00AAB4',
-    navInk: '#C9CFD3',
-    navInkMuted: '#8B939B',
+    /* Navigation rail — deep navy */
+    navRail: '#0B2545',
+    navRailDeep: '#071B33',
+    navActive: '#1D6FE0',
+    navInk: '#C7D4E4',
+    navInkMuted: '#8296B0',
 
-    ink: '#14191E',
-    inkMuted: '#4A5157',
-    inkSubtle: '#7A828A',
-    canvas: '#EFF1F2',
+    ink: '#1A2435',
+    inkMuted: '#4A5A72',
+    inkSubtle: '#7A8AA3',
+    canvas: '#F4F6F9',
     surface: '#FFFFFF',
-    surfaceSunken: '#F6F7F8',
-    line: '#DFE3E6',
-    lineStrong: '#BFC5CA',
+    surfaceSunken: '#F7F9FC',
+    line: '#E3E8EF',
+    lineStrong: '#C6D0DE',
 
     success: '#0F7B4F',
     successTint: '#E4F4EC',
@@ -179,7 +180,7 @@ export const fi911Brand = {
    * lightness as well as hue, so the ramp survives color-vision deficiency
    * and greyscale printing. Assign in fixed order, never cycle — a sixth
    * category folds into "Other" and takes chartContrast. */
-  chartSeries: ['#00AAB4', '#3C4146', '#FFC300', '#00646B', '#9AA3AB'],
+  chartSeries: ['#1D6FE0', '#0B2545', '#E0A32E', '#5EA0F0', '#8296B0'],
   chartContrast: '#C42B21',
   chartNeutral: '#8B939B',
 

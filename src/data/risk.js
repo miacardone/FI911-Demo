@@ -30,8 +30,8 @@ export const RISK_KPIS = [
 
 export const RISK_DISTRIBUTION = [
   { id: 'high', label: 'High Risk', value: 39, color: '#C42B21' },
-  { id: 'medium', label: 'Medium Risk', value: 45, color: '#3D7EA8' },
-  { id: 'low', label: 'Low Risk', value: 16, color: '#1F8A93' },
+  { id: 'medium', label: 'Medium Risk', value: 45, color: '#E0A32E' },
+  { id: 'low', label: 'Low Risk', value: 16, color: '#1D6FE0' },
 ];
 
 export const FLAGGED_TREND = [

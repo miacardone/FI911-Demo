@@ -2,45 +2,45 @@
    DESIGN TOKENS
    Color variables (--c-*) are written at runtime by BrandProvider from
    brand.config.js. The values below are static fallbacks for the frame
-   before that effect runs. Keep them in sync with the Fi911 tenant.
+   before that effect runs. Keep them in sync with the active tenant.
    ============================================================ */
 
 :root {
-  --c-primary: #00AAB4;
-  --c-primary-deep: #00818A;
-  --c-primary-tint: #D6F1F3;
-  --c-primary-wash: #F0FAFB;
+  --c-primary: #1D6FE0;
+  --c-primary-deep: #1552B3;
+  --c-primary-tint: #D6E5FA;
+  --c-primary-wash: #EFF5FE;
 
-  --c-accent: #FFC300;
-  --c-accent-deep: #C79800;
-  --c-accent-tint: #FFF3CC;
+  --c-accent: #E0A32E;
+  --c-accent-deep: #9A6B10;
+  --c-accent-tint: #FBEFD6;
 
-  /* Chrome: light topbar over a soft charcoal rail */
+  /* Chrome: light topbar over the navy rail */
   --c-topbar: #FFFFFF;
-  --c-topbar-ink: #14191E;
-  --c-topbar-chip: #F1F3F4;
-  --c-topbar-field: #F1F3F4;
-  --c-crumbbar: #F1F3F4;
-  --c-crumbbar-ink: #6B747C;
-  --c-crumbbar-ink-active: #14191E;
+  --c-topbar-ink: #1A2435;
+  --c-topbar-chip: #F1F4F9;
+  --c-topbar-field: #F1F4F9;
+  --c-crumbbar: #F1F4F9;
+  --c-crumbbar-ink: #6B7A91;
+  --c-crumbbar-ink-active: #1A2435;
 
-  --c-login-panel: #22282C;
-  --c-login-panel-ink: #A8AFB6;
+  --c-login-panel: #0B2545;
+  --c-login-panel-ink: #9FB2CA;
 
-  --c-nav-rail: #30363A;
-  --c-nav-rail-deep: #272C2F;
-  --c-nav-active: #00AAB4;
-  --c-nav-ink: #C9CFD3;
-  --c-nav-ink-muted: #8B939B;
+  --c-nav-rail: #0B2545;
+  --c-nav-rail-deep: #071B33;
+  --c-nav-active: #1D6FE0;
+  --c-nav-ink: #C7D4E4;
+  --c-nav-ink-muted: #8296B0;
 
-  --c-ink: #14191E;
-  --c-ink-muted: #4A5157;
-  --c-ink-subtle: #7A828A;
-  --c-canvas: #EFF1F2;
+  --c-ink: #1A2435;
+  --c-ink-muted: #4A5A72;
+  --c-ink-subtle: #7A8AA3;
+  --c-canvas: #F4F6F9;
   --c-surface: #ffffff;
-  --c-surface-sunken: #F6F7F8;
-  --c-line: #DFE3E6;
-  --c-line-strong: #BFC5CA;
+  --c-surface-sunken: #F7F9FC;
+  --c-line: #E3E8EF;
+  --c-line-strong: #C6D0DE;
 
   --c-success: #0f7b4f;
   --c-success-tint: #e4f4ec;
@@ -57,13 +57,13 @@
   --c-scheme-discover: #e9730c;
 
   /* Validated categorical ramp — see brand.config.js for why this order */
-  --c-series-0: #00AAB4;
-  --c-series-1: #3C4146;
-  --c-series-2: #FFC300;
-  --c-series-3: #00646B;
-  --c-series-4: #9AA3AB;
+  --c-series-0: #1D6FE0;
+  --c-series-1: #0B2545;
+  --c-series-2: #E0A32E;
+  --c-series-3: #5EA0F0;
+  --c-series-4: #8296B0;
   --c-series-contrast: #C42B21;
-  --c-series-neutral: #8B939B;
+  --c-series-neutral: #8296B0;
 
   /* Type — one family everywhere: headings, body copy, case numbers,
      amounts, emails, reference IDs. No separate monospace face. */
@@ -138,37 +138,37 @@
    ============================================================ */
 
 :root[data-theme='dark'] {
-  --c-primary: #22C3CE;
-  --c-primary-deep: #7FE0E7;
-  --c-primary-tint: #0E3A40;
-  --c-primary-wash: #12272B;
+  --c-primary: #5EA0F0;
+  --c-primary-deep: #93C0F7;
+  --c-primary-tint: #12315C;
+  --c-primary-wash: #0E2340;
 
-  --c-accent: #FFD34D;
-  --c-accent-deep: #FFC300;
-  --c-accent-tint: #3A2F0A;
+  --c-accent: #F0C063;
+  --c-accent-deep: #E0A32E;
+  --c-accent-tint: #3A2E12;
 
-  --c-topbar: #1A2024;
-  --c-topbar-ink: #E7ECEF;
-  --c-topbar-chip: #262D32;
-  --c-topbar-field: #262D32;
-  --c-crumbbar: #171C20;
-  --c-crumbbar-ink: #8B939B;
-  --c-crumbbar-ink-active: #F2F5F6;
+  --c-topbar: #131E2E;
+  --c-topbar-ink: #E6EDF6;
+  --c-topbar-chip: #1E2B3E;
+  --c-topbar-field: #1E2B3E;
+  --c-crumbbar: #101A28;
+  --c-crumbbar-ink: #8296B0;
+  --c-crumbbar-ink-active: #F2F6FA;
 
-  --c-nav-rail: #14191E;
-  --c-nav-rail-deep: #0E1216;
-  --c-nav-active: #22C3CE;
-  --c-nav-ink: #C9CFD3;
-  --c-nav-ink-muted: #7E878F;
+  --c-nav-rail: #08182B;
+  --c-nav-rail-deep: #050F1D;
+  --c-nav-active: #5EA0F0;
+  --c-nav-ink: #C7D4E4;
+  --c-nav-ink-muted: #7C90AB;
 
-  --c-ink: #E7ECEF;
-  --c-ink-muted: #A7B0B7;
-  --c-ink-subtle: #7E878F;
-  --c-canvas: #0F1417;
-  --c-surface: #1A2024;
-  --c-surface-sunken: #232A2F;
-  --c-line: #2E363C;
-  --c-line-strong: #414B52;
+  --c-ink: #E6EDF6;
+  --c-ink-muted: #A6B6CA;
+  --c-ink-subtle: #7C90AB;
+  --c-canvas: #0A1421;
+  --c-surface: #131E2E;
+  --c-surface-sunken: #1A2637;
+  --c-line: #27354A;
+  --c-line-strong: #3A4A63;
 
   --c-success: #4ECB8B;
   --c-success-tint: #12301F;
@@ -179,16 +179,16 @@
   --c-info: #8A9BF0;
   --c-info-tint: #1C2140;
 
-  --c-series-0: #22C3CE;
-  --c-series-1: #8A939B;
-  --c-series-2: #FFD34D;
-  --c-series-3: #1C7A82;
-  --c-series-4: #5A646C;
+  --c-series-0: #5EA0F0;
+  --c-series-1: #8FA3BC;
+  --c-series-2: #F0C063;
+  --c-series-3: #2C6BB5;
+  --c-series-4: #566880;
   --c-series-contrast: #F0736A;
-  --c-series-neutral: #8A939B;
+  --c-series-neutral: #8FA3BC;
 
-  --c-login-panel: #14191E;
-  --c-login-panel-ink: #A8AFB6;
+  --c-login-panel: #08182B;
+  --c-login-panel-ink: #9FB2CA;
 
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
   --shadow-raised: 0 8px 28px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.4);
