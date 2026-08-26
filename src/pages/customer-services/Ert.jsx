@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
 import Modal from '@/components/ui/Modal';
-import { Button } from '@/components/ui/Surface';
+import { Badge, Button } from '@/components/ui/Surface';
 import { SelectField, TextAreaField, TextField } from '@/components/ui/Form';
 import { ListPage } from '@/components/fi911/ListPage';
 import { AdvancedSearchPanel, applyFilters } from '@/components/fi911/Filters';
-import { LinkCell, Muted, PriorityArrow, StatusBadge, TwoLine, menuColumn } from '@/components/fi911/cells';
+import { LinkCell, Muted, PriorityArrow, StatusBadge, SummaryRow, TwoLine, menuColumn } from '@/components/fi911/cells';
 import { ERT_NOTIFICATIONS, ERT_STATUSES, ertTabs, filterErt, nextErtId } from '@/data/ert';
 import { ChangeStatusModal } from '@/components/fi911/RecordModals';
 import { useToast } from '@/context/ToastContext';
@@ -19,6 +19,60 @@ import brand from '@/brand/brand.config';
  */
 
 const DESCRIPTION_LIMIT = 500;
+
+/**
+ * View a ticket.
+ *
+ * The row menu's View used to fire a toast carrying the raw row id, which is
+ * indistinguishable from nothing happening. A ticket has a correspondent, a
+ * deadline and a body — reading it is the most common thing anyone does on
+ * this screen, so it opens the record rather than announcing its own id.
+ */
+function ViewTicketModal({ ticket, onClose, onChangeStatus }) {
+  if (!ticket) return null;
+
+  const overdue = !ticket.closed && ticket.due < brand.today;
+
+  return (
+    <Modal
+      open
+      onClose={onClose}
+      title={`Notification ${ticket.id}`}
+      size="md"
+      footer={(
+        <>
+          <Button variant="secondary" onClick={onClose}>Close</Button>
+          <Button variant="primary" icon="refresh" onClick={() => { onClose(); onChangeStatus(ticket); }}>
+            Change status
+          </Button>
+        </>
+      )}
+    >
+      <div className="stack">
+        <div className="ticket__head">
+          <StatusBadge value={ticket.status} />
+          <PriorityArrow value={ticket.priority} />
+          {overdue && <Badge tone="danger" dot>Overdue</Badge>}
+        </div>
+
+        <div className="fi-summary">
+          <SummaryRow label="Type">{ticket.type}</SummaryRow>
+          <SummaryRow label="Sender">{ticket.sender}</SummaryRow>
+          <SummaryRow label="Recipient">{ticket.recipient} ({ticket.recipientCode})</SummaryRow>
+          <SummaryRow label="Assignee">{ticket.assignee || <Muted>Unassigned</Muted>}</SummaryRow>
+          <SummaryRow label="Created">{ticket.created}</SummaryRow>
+          <SummaryRow label="Due">{ticket.due}</SummaryRow>
+          <SummaryRow label="Closed">{ticket.closed || <Muted>Still open</Muted>}</SummaryRow>
+        </div>
+
+        <div>
+          <span className="t-section-label">Description</span>
+          <p className="ticket__body">{ticket.description || <Muted>No description was supplied.</Muted>}</p>
+        </div>
+      </div>
+    </Modal>
+  );
+}
 
 const ADVANCED_FIELDS = [
   { name: 'id', label: 'Notification ID' },
@@ -84,6 +138,7 @@ export function Ert() {
   const [applied, setApplied] = useState({});
   const [creating, setCreating] = useState(false);
   const [statusRow, setStatusRow] = useState(null);
+  const [viewRow, setViewRow] = useState(null);
 
   const tabs = useMemo(() => ertTabs(rows), [rows]);
   const visible = useMemo(
@@ -100,7 +155,7 @@ export function Ert() {
       cell: (r) => (
         <TwoLine
           primary={r.type === 'Message' ? 'Late Claim Reimbursement Fee' : r.type}
-          secondary={<LinkCell onClick={() => setStatusRow(r)}>{r.id}</LinkCell>}
+          secondary={<LinkCell onClick={() => setViewRow(r)}>{r.id}</LinkCell>}
         />
       ),
       text: (r) => r.id,
@@ -123,7 +178,7 @@ export function Ert() {
     { key: 'description', header: 'Description', fw: 22 },
     { key: 'closed', header: 'Closed Date', fw: 9, sortable: true, cell: (r) => (r.closed ? r.closed : <Muted>—</Muted>) },
     menuColumn((row) => [
-      { label: 'View', icon: 'eye', onSelect: () => toast.notify(`Notification ${row.id}`) },
+      { label: 'View', icon: 'eye', onSelect: () => setViewRow(row) },
       { label: 'Change Status', icon: 'refresh', onSelect: () => setStatusRow(row) },
     ]),
   ];
@@ -176,6 +231,12 @@ export function Ert() {
           }, ...rs]);
           toast.notify(`Ticket ${id} created.`);
         }}
+      />
+
+      <ViewTicketModal
+        ticket={viewRow}
+        onClose={() => setViewRow(null)}
+        onChangeStatus={setStatusRow}
       />
 
       <ChangeStatusModal

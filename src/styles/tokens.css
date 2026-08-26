@@ -69,6 +69,8 @@
      amounts, emails, reference IDs. No separate monospace face. */
   --font-display: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Deliberately the same stack as --font-display. Kept only so any
+     stylesheet still asking for it cannot introduce a second typeface. */
   --font-mono: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   --fs-display: 1.75rem;

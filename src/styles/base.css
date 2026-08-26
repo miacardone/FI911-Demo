@@ -50,12 +50,14 @@ button, input, select, textarea { font: inherit; color: inherit; }
   color: var(--c-ink-subtle);
 }
 
-/* Case IDs, ARNs, amounts and dates read as data, not prose. */
-.mono {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
-}
+/* Case IDs, ARNs, amounts and dates read as data, not prose.
+
+   One family everywhere — this class no longer switches face. It used to
+   also pull letter-spacing in, which together with tabular figures made
+   numbers look like a DIFFERENT typeface next to the surrounding text. All
+   it does now is line digits up in a column, which is the only part that
+   was ever earning its keep. */
+.mono { font-variant-numeric: tabular-nums; }
 
 .muted { color: var(--c-ink-muted); }
 .subtle { color: var(--c-ink-subtle); }
