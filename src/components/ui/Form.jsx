@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useId, useState } from 'react';
 import Icon from '@/components/ui/Icon';
 import { Button } from '@/components/ui/Surface';
 
@@ -55,6 +55,48 @@ export function TextField({ label, required, hint, error, span, id: providedId, 
   return (
     <Shell label={label} required={required} hint={hint} error={error} htmlFor={id} span={span ?? fieldSpan(label, rest.type)}>
       <input id={id} className={`input ${error ? 'input--error' : ''} ${className}`.trim()} aria-invalid={Boolean(error)} {...rest} />
+    </Shell>
+  );
+}
+
+/**
+ * A password field you can choose to read back.
+ *
+ * Typing a password blind is where sign-in failures come from — especially a
+ * demo credential someone is copying off a slide. The toggle is inside the
+ * field so it travels with it, and it reports its state to screen readers
+ * rather than being a nameless icon.
+ */
+export function PasswordField({ label, required, hint, error, id: providedId, className = '', ...rest }) {
+  const generated = useId();
+  const id = providedId ?? generated;
+  const [shown, setShown] = useState(false);
+
+  return (
+    <Shell label={label} required={required} hint={hint} error={error} htmlFor={id} span="md">
+      <span className="password">
+        <input
+          id={id}
+          type={shown ? 'text' : 'password'}
+          className={`input password__input ${error ? 'input--error' : ''} ${className}`.trim()}
+          aria-invalid={Boolean(error)}
+          {...rest}
+        />
+        <button
+          type="button"
+          className="password__toggle"
+          onClick={() => setShown((v) => !v)}
+          aria-pressed={shown}
+          aria-label={shown ? 'Hide password' : 'Show password'}
+          title={shown ? 'Hide password' : 'Show password'}
+          /* Skipped in the tab order: it sits between the password box and the
+             sign-in button, and someone tabbing to submit does not want to
+             land on it first. */
+          tabIndex={-1}
+        >
+          <Icon name={shown ? 'eyeOff' : 'eye'} size={16} />
+        </button>
+      </span>
     </Shell>
   );
 }

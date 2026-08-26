@@ -2462,3 +2462,18 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
   display: inline-flex; align-items: center; gap: 6px; margin-right: auto;
   font-size: var(--fs-small); font-weight: 600; color: var(--c-accent-deep);
 }
+
+/* ---------- Password reveal ---------- */
+
+.password { position: relative; display: block; }
+/* Room for the button so a long password never runs under it. */
+.password__input { padding-right: 38px; width: 100%; }
+.password__toggle {
+  position: absolute; top: 50%; right: 4px; transform: translateY(-50%);
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; padding: 0;
+  border: 0; border-radius: var(--r-sm); background: transparent;
+  color: var(--c-ink-subtle); cursor: pointer;
+}
+.password__toggle:hover { color: var(--c-primary-deep); background: var(--c-primary-wash); }
+.password__toggle[aria-pressed='true'] { color: var(--c-primary-deep); }

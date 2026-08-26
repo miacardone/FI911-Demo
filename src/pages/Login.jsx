@@ -4,7 +4,7 @@ import Wordmark from '@/brand/Wordmark';
 import { useBrand } from '@/brand/BrandProvider';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/Surface';
-import { TextField } from '@/components/ui/Form';
+import { PasswordField, TextField } from '@/components/ui/Form';
 import Icon from '@/components/ui/Icon';
 import { routes } from '@/data/navigation';
 
@@ -66,9 +66,8 @@ export function Login() {
 
         <form className="stack" onSubmit={submit}>
           <TextField label="Username" value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" autoFocus required />
-          <TextField
+          <PasswordField
             label="Password"
-            type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="current-password"
