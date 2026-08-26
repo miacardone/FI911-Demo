@@ -2536,3 +2536,43 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 
 /* Record-level tabs sit between the KPI strip and the view they switch. */
 .tabs--record { margin-bottom: var(--s-3); }
+
+/* ============================================================
+   HORIZONTAL SCROLL AFFORDANCE
+   Review feedback: "with all grid view reports, I am unable to
+   scroll sideways". The grids DO scroll in Comfortable — but
+   nothing on screen says so, and Fit to width compresses until
+   there is nothing left to scroll, so the reviewer concluded the
+   feature was broken rather than mode-dependent.
+
+   Classic background-attachment:local scroll shadows: the two
+   `local` gradients travel WITH the content and mask the two
+   `scroll` shadows pinned to the edges, so a shadow shows on the
+   right only while there is more table to the right of it. Pure
+   CSS on purpose — the ResizeObserver version of this idea is
+   what made navigation take 18 seconds.
+   ============================================================ */
+
+.dt-wrap {
+  background-image:
+    linear-gradient(to right, var(--c-surface) 40%, rgba(0, 0, 0, 0)),
+    linear-gradient(to left, var(--c-surface) 40%, rgba(0, 0, 0, 0)),
+    linear-gradient(to right, rgba(20, 30, 48, 0.16), rgba(20, 30, 48, 0)),
+    linear-gradient(to left, rgba(20, 30, 48, 0.16), rgba(20, 30, 48, 0));
+  background-position: left center, right center, left center, right center;
+  background-repeat: no-repeat;
+  background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+  background-attachment: local, local, scroll, scroll;
+}
+
+/* The shadow must not sit on top of the pinned Actions column, which is
+   opaque and travels with the left edge. */
+.dt-wrap .dt td.is-pinned,
+.dt-wrap .dt th.is-pinned { background-clip: padding-box; }
+
+/* A two-line popover item: the format on top, what it is for underneath.
+   "Excel" and "CSV" alone do not tell an operator which one to pick. */
+.popover__item--stacked { align-items: flex-start; padding: 8px var(--s-3); }
+.popover__item-icon { color: var(--c-primary-deep); flex: none; margin-top: 1px; }
+.popover__item-text { display: grid; gap: 1px; min-width: 0; }
+.popover__item-text .subtle { font-size: var(--fs-nano); line-height: 1.3; }

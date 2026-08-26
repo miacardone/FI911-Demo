@@ -80,14 +80,70 @@ export function ColumnToggle({ columns, hidden, onChange }) {
   );
 }
 
-/* ---------- Export ---------- */
+/* ---------- Export ----------
+   Three bare icons read as decoration next to a labeled "Columns" button, and
+   getting data out of a grid is the single most-used thing an operator does
+   with one. So the actions carry their labels, at the same weight as Columns.
+
+   Copy stays its own button because it is one click and needs no choice.
+   Excel and CSV stack behind one Download button: they answer the same
+   question ("give me this as a file") and differ only in format, so spending
+   two toolbar slots on that distinction buys nothing. */
 
 export function ExportButtons({ columns, rows, name = 'export', onCopied }) {
+  const count = rows.length;
+  const suffix = count === 1 ? '1 row' : `${count} rows`;
+
   return (
     <div className="row row--xtight row--nowrap">
-      <IconButton icon="copy" label="Copy to clipboard" onClick={async () => { const ok = await copyToClipboard(columns, rows); onCopied?.(ok); }} />
-      <IconButton icon="excel" label="Download as Excel" onClick={() => downloadExcel(columns, rows, name)} />
-      <IconButton icon="csv" label="Download as CSV" onClick={() => downloadCsv(columns, rows, name)} />
+      <Tooltip label={`Copy all ${suffix} to the clipboard, tab-separated — paste straight into a spreadsheet`}>
+        <Button
+          variant="secondary"
+          size="sm"
+          icon="copy"
+          onClick={async () => { const ok = await copyToClipboard(columns, rows); onCopied?.(ok); }}
+        >
+          Copy
+        </Button>
+      </Tooltip>
+
+      <Popover
+        width={214}
+        align="right"
+        trigger={({ toggle }) => (
+          <Button variant="secondary" size="sm" icon="download" iconAfter="chevronDown" onClick={toggle}>
+            Download
+          </Button>
+        )}
+      >
+        {({ close }) => (
+          <>
+            <div className="popover__label t-section-label">Download {suffix}</div>
+            <button
+              type="button"
+              className="popover__item popover__item--stacked"
+              onClick={() => { close(); downloadExcel(columns, rows, name); }}
+            >
+              <Icon name="excel" size={16} className="popover__item-icon" />
+              <span className="popover__item-text">
+                <span className="strong">Excel</span>
+                <span className="subtle">.xls — keeps column formatting</span>
+              </span>
+            </button>
+            <button
+              type="button"
+              className="popover__item popover__item--stacked"
+              onClick={() => { close(); downloadCsv(columns, rows, name); }}
+            >
+              <Icon name="csv" size={16} className="popover__item-icon" />
+              <span className="popover__item-text">
+                <span className="strong">CSV</span>
+                <span className="subtle">.csv — plain text, opens anywhere</span>
+              </span>
+            </button>
+          </>
+        )}
+      </Popover>
     </div>
   );
 }
