@@ -5,10 +5,12 @@ import {
   SelectField, TextField, ToggleRow, useForm,
 } from '@/components/fi911/DetailPage';
 import { FeeScheduleSection } from '@/components/fi911/AgreementSections';
+import { ScoreCard, ThirdPartyChecks } from '@/components/fi911/Underwriting';
 import { AttachmentsModal, NotesModal } from '@/components/fi911/RecordModals';
 import { useDetailCrumb } from '@/components/layout/AppLayout';
 import { UNDERWRITING, attachmentsFor, notesFor } from '@/data/participants';
 import { routes } from '@/data/navigation';
+import { useToast } from '@/context/ToastContext';
 import brand from '@/brand/brand.config';
 
 /**
@@ -30,6 +32,7 @@ export function UnderwritingDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const record = UNDERWRITING.find((r) => r.id === id) ?? UNDERWRITING[0];
+  const toast = useToast();
 
   useDetailCrumb(record.merchant);
   const [modal, setModal] = useState(null);
@@ -250,6 +253,32 @@ export function UnderwritingDetail() {
           ))}
         </Section>
               </>
+            ),
+          },
+          {
+            /* The application is captured by this point; these two steps are
+               where it gets DECIDED. The review found both missing — the
+               wizard described a file without ever scoring it or running the
+               services that verify what the applicant claimed. */
+            label: 'Verification',
+            render: () => (
+              <Section
+                title="Third-Party Verification"
+                description="External services run against this file. Each returns independently — one failing does not stop the others."
+              >
+                <ThirdPartyChecks record={record} onNotify={(msg, tone) => toast.notify(msg, tone)} />
+              </Section>
+            ),
+          },
+          {
+            label: 'Score Card',
+            render: () => (
+              <Section
+                title="Underwriting Score Card"
+                description="Weighted model across principal, business, processing history and exposure. Hover a factor for what it measures."
+              >
+                <ScoreCard record={record} />
+              </Section>
             ),
           },
         ]}
