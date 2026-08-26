@@ -10,6 +10,9 @@ import { ROLES } from '@/apm/data/setup';
 import { routes } from '@/apm/data/navigation';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/context/ToastContext';
+import { useRecords } from '@/hooks/useRecords';
+import { RecordFormModal } from '@/components/fi911/RecordFormModal';
+import { downloadCsv } from '@/utils/export';
 
 /**
  * Setup > Admin > Document Library.
@@ -25,26 +28,31 @@ import { useToast } from '@/context/ToastContext';
  * here and drives an expiry count.
  */
 
-function CategoriesTab() {
+function CategoriesTab({ store, onEdit }) {
   const navigate = useNavigate();
   const toast = useToast();
 
   /* Documents inherit their category's retention, so the expiry count is
      derived rather than stored — it cannot disagree with the rule above it. */
-  const withExpiry = useMemo(() => DOC_CATEGORIES.map((c) => {
+  const withExpiry = useMemo(() => store.rows.map((c) => {
     const docs = DOCUMENTS.filter((d) => d.retentionYears === c.retentionYears);
     const expiringSoon = docs.filter((d) => {
       const year = Number(String(d.uploaded).slice(0, 4));
       return year + c.retentionYears <= 2027;
     }).length;
     return { ...c, expiringSoon };
-  }), []);
+  }), [store.rows]);
 
   const columns = [
     menuColumn((r) => [
-      { label: 'Edit category', icon: 'edit', onSelect: () => toast.notify(`Editing "${r.name}".`) },
+      { label: 'Edit category', icon: 'edit', onSelect: () => onEdit(r) },
       { label: 'View documents', icon: 'folder', onSelect: () => navigate(routes.documentCenter) },
-      { label: 'Change status', icon: 'power', onSelect: () => toast.notify(`"${r.name}" status changed.`) },
+      {
+        label: r.status === 'Active' ? 'Deactivate' : 'Activate',
+        icon: 'power',
+        tone: r.status === 'Active' ? 'danger' : undefined,
+        onSelect: () => toast.notify(`"${r.name}" is now ${store.toggleStatus(r).toLowerCase()}.`),
+      },
     ]),
     {
       key: 'name', header: 'Category', fw: 20, sortable: true,
@@ -109,15 +117,26 @@ function CategoriesTab() {
   );
 }
 
-function DocumentsTab() {
+function DocumentsTab({ categories, onMove }) {
   const navigate = useNavigate();
   const toast = useToast();
 
   const columns = [
     menuColumn((r) => [
-      { label: 'Download', icon: 'download', onSelect: () => toast.notify(`Downloading ${r.name}.`) },
+      {
+        label: 'Download',
+        icon: 'download',
+        onSelect: () => {
+          downloadCsv(
+            [{ key: 'name', header: 'Document' }, { key: 'type', header: 'Type' }, { key: 'participant', header: 'Participant' }, { key: 'uploaded', header: 'Uploaded' }],
+            [r],
+            r.name.replace(/\.[^.]+$/, ''),
+          );
+          toast.notify(`${r.name} downloaded.`);
+        },
+      },
       { label: 'Open in Document Center', icon: 'external', onSelect: () => navigate(routes.documentCenter) },
-      { label: 'Move category', icon: 'folder', onSelect: () => toast.notify(`Move ${r.name} to another category.`) },
+      { label: 'Move category…', icon: 'folder', onSelect: () => onMove(r) },
     ]),
     {
       key: 'name', header: 'Document', fw: 24, sortable: true,
@@ -154,23 +173,63 @@ function DocumentsTab() {
   );
 }
 
+const CATEGORY_FIELDS = [
+  { name: 'name', label: 'Category Name', required: true },
+  { name: 'retentionYears', label: 'Retention (years)', type: 'number', required: true },
+  { name: 'description', label: 'Description', type: 'textarea' },
+];
+
 export function DocumentLibrary() {
   const toast = useToast();
   const [tab, setTab] = useState('categories');
+  const categories = useRecords(DOC_CATEGORIES, { key: 'id' });
+
+  const [draft, setDraft] = useState(null);
+  const editing = draft && Object.keys(draft).length > 0 ? draft : null;
+  const [moving, setMoving] = useState(null);
 
   return (
     <ListPage
       title="Document Library"
       description="Categories, retention periods, and who each category is visible to"
       tabs={[
-        { value: 'categories', label: 'Categories', count: DOC_CATEGORIES.length },
+        { value: 'categories', label: 'Categories', count: categories.rows.length },
         { value: 'documents', label: 'Documents', count: DOCUMENTS.length },
       ]}
       tab={tab}
       onTabChange={setTab}
-      headerActions={<Button variant="primary" size="sm" icon="plus" onClick={() => toast.notify('New category.')}>New category</Button>}
+      headerActions={<Button variant="primary" size="sm" icon="plus" onClick={() => setDraft({})}>New category</Button>}
     >
-      {tab === 'categories' ? <CategoriesTab /> : <DocumentsTab />}
+      {tab === 'categories'
+        ? <CategoriesTab store={categories} onEdit={setDraft} />
+        : <DocumentsTab categories={categories.rows} onMove={setMoving} />}
+
+      <RecordFormModal
+        open={Boolean(draft)}
+        onClose={() => setDraft(null)}
+        title="category"
+        fields={CATEGORY_FIELDS}
+        initial={editing}
+        onSubmit={(v) => (editing
+          ? categories.update(editing, v)
+          : categories.create({
+            id: `new-cat-${categories.rows.length}`,
+            status: 'Active', confidential: false, documents: 0, profiles: [],
+            ...v,
+          }))}
+      />
+
+      {/* Move is a one-field choice, so it gets the same generic dialog rather
+          than a bespoke one. */}
+      <RecordFormModal
+        open={Boolean(moving)}
+        onClose={() => setMoving(null)}
+        title="category assignment"
+        submitLabel="Move document"
+        fields={[{ name: 'category', label: 'Move to category', type: 'select', options: categories.rows.map((c) => c.name), required: true }]}
+        initial={moving ? { category: '' } : null}
+        onSubmit={(v) => toast.notify(`${moving.name} moved to ${v.category}.`)}
+      />
     </ListPage>
   );
 }

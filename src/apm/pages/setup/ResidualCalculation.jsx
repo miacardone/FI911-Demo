@@ -8,7 +8,8 @@ import { Badge, Button, Kpi } from '@/components/ui/Surface';
 import { Tooltip } from '@/components/ui/Overlay';
 import Icon from '@/components/ui/Icon';
 import { CALCULATION_RUNS, CALCULATION_TYPES, LAST_CALCULATED_MONTH } from '@/apm/data/setup';
-import { setupRoutes } from '@/apm/data/navigation';
+import { routes, setupRoutes } from '@/apm/data/navigation';
+import { useRecords } from '@/hooks/useRecords';
 import { useToast } from '@/context/ToastContext';
 import brand from '@/apm/brand.config';
 
@@ -17,7 +18,7 @@ import brand from '@/apm/brand.config';
  *
  * Run the month, watch it land.
  *
- * The reference shows a bare percentage bar labelled "Calculation Progress…"
+ * The reference shows a bare percentage bar labeled "Calculation Progress…"
  * with no stage names and no estimate — a 14% that could mean four minutes or
  * forty. Here the run reports which STAGE it is in, so the number means
  * something, and the summary tab records how long each past run took, which is
@@ -177,11 +178,22 @@ function RunPanel() {
 
 function SummaryTab() {
   const toast = useToast();
+  const navigate = useNavigate();
+  const store = useRecords(CALCULATION_RUNS, { key: 'id' });
 
   const columns = [
     menuColumn((r) => [
-      { label: 'View payouts', icon: 'table', onSelect: () => toast.notify(`${r.merchants} merchants in the ${r.residualMonth} run.`) },
-      r.status === 'Failed' && { label: 'Re-run', icon: 'refresh', onSelect: () => toast.notify(`${r.residualMonth} queued for re-calculation.`) },
+      { label: 'View payouts', icon: 'table', onSelect: () => navigate(routes.payoutDetails) },
+      r.status === 'Failed' && {
+        label: 'Re-run',
+        icon: 'refresh',
+        /* A queued run has to LOOK queued — the row moves to In Progress and
+           clears its end time, which is what the grid is there to show. */
+        onSelect: () => {
+          store.update(r, { status: 'In Progress', endedAt: '', durationMinutes: null });
+          toast.notify(`${r.residualMonth} queued for re-calculation.`);
+        },
+      },
     ]),
     { key: 'processor', header: 'Processor', fw: 12, sortable: true },
     { key: 'residualMonth', header: 'Residual Month', fw: 9, align: 'center', sortable: true },
@@ -217,7 +229,7 @@ function SummaryTab() {
 
       <ListTable
         columns={columns}
-        rows={CALCULATION_RUNS}
+        rows={store.rows}
         searchPlaceholder="Search processor or month"
         exportName="calculation-summary"
         totals={['merchants', 'payout']}

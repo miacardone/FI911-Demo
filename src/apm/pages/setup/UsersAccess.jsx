@@ -10,7 +10,11 @@ import {
   LANDING_PAGES, PROFILE_TYPES, ROLES, SETUP_USERS, USER_GROUPS, USER_TABS,
 } from '@/apm/data/setup';
 import { PERMISSION_AREAS } from '@/apm/data/navigation';
+import { RecordFormModal } from '@/components/fi911/RecordFormModal';
+import brand from '@/apm/brand.config';
 import { useToast } from '@/context/ToastContext';
+import { useRecords } from '@/hooks/useRecords';
+import { CURRENT_USER } from '@/apm/data/people';
 
 /**
  * Setup > Admin > Users & Access Control.
@@ -80,23 +84,39 @@ function RoleDrawer({ role, onClose }) {
   );
 }
 
-function UsersTab() {
+function UsersTab({ store, onEdit }) {
   const toast = useToast();
   const [tab, setTab] = useState('all');
+  const all = store.rows;
   const rows = useMemo(
-    () => SETUP_USERS.filter((USER_TABS.find((t) => t.value === tab) ?? USER_TABS[0]).match),
-    [tab],
+    () => all.filter((USER_TABS.find((t) => t.value === tab) ?? USER_TABS[0]).match),
+    [tab, all],
   );
 
-  const dormant = SETUP_USERS.filter((u) => u.dormant && u.status === 'Active');
-  const noMfa = SETUP_USERS.filter((u) => !u.mfa);
+  /* Read off the live rows — enrolling MFA on a user has to move the banner
+     that is counting users without it. */
+  const dormant = all.filter((u) => u.dormant && u.status === 'Active');
+  const noMfa = all.filter((u) => !u.mfa);
 
   const columns = [
     menuColumn((r) => [
-      { label: 'Edit user', icon: 'edit', onSelect: () => toast.notify(`Editing ${r.name}.`) },
-      { label: 'Reset password', icon: 'refresh', onSelect: () => toast.notify(`Password reset sent to ${r.email}.`) },
-      !r.mfa && { label: 'Require MFA', icon: 'shieldCheck', onSelect: () => toast.notify(`${r.name} must enrol a second factor at next sign-in.`) },
-      { label: r.status === 'Locked' ? 'Unlock account' : 'Lock account', icon: 'lock', tone: r.status === 'Locked' ? undefined : 'danger', onSelect: () => toast.notify(`${r.name} ${r.status === 'Locked' ? 'unlocked' : 'locked'}.`) },
+      { label: 'Edit user', icon: 'edit', onSelect: () => onEdit(r) },
+      { label: 'Reset password', icon: 'refresh', onSelect: () => toast.notify(`Password reset link sent to ${r.email}.`) },
+      !r.mfa && {
+        label: 'Require MFA',
+        icon: 'shieldCheck',
+        onSelect: () => { store.update(r, { mfa: true }); toast.notify(`${r.name} must enroll a second factor at next sign-in.`); },
+      },
+      {
+        label: r.status === 'Locked' ? 'Unlock account' : 'Lock account',
+        icon: 'lock',
+        tone: r.status === 'Locked' ? undefined : 'danger',
+        onSelect: () => {
+          const next = r.status === 'Locked' ? 'Active' : 'Locked';
+          store.update(r, { status: next });
+          toast.notify(`${r.name} ${next === 'Locked' ? 'locked' : 'unlocked'}.`);
+        },
+      },
     ]),
     { key: 'name', header: 'User', fw: 16, sortable: true, cell: (r) => <TwoLine primary={r.name} secondary={r.email} />, text: (r) => `${r.name} ${r.email}` },
     { key: 'role', header: 'Role', fw: 13, sortable: true, cell: (r) => <TwoLine primary={r.role} secondary={r.profileType} />, text: (r) => `${r.role} ${r.profileType}` },
@@ -156,15 +176,27 @@ function UsersTab() {
   );
 }
 
-function RolesTab() {
+function RolesTab({ store }) {
   const toast = useToast();
   const [editing, setEditing] = useState(null);
 
   const columns = [
     menuColumn((r) => [
       { label: 'View / edit', icon: 'eye', onSelect: () => setEditing(r) },
-      { label: 'Clone role', icon: 'copy', onSelect: () => toast.notify(`"${r.name}" cloned.`) },
-      { label: 'Change status', icon: 'power', onSelect: () => toast.notify(`"${r.name}" status changed.`) },
+      {
+        label: 'Clone role',
+        icon: 'copy',
+        /* A cloned role starts with nobody in it — inheriting the original's
+           user count would claim accounts hold a role that did not exist a
+           second ago. */
+        onSelect: () => { store.clone(r, { patch: { userCount: 0 } }); toast.notify(`"${r.name}" cloned. The copy is inactive and holds no users.`); },
+      },
+      {
+        label: r.status === 'Active' ? 'Deactivate' : 'Activate',
+        icon: 'power',
+        tone: r.status === 'Active' ? 'danger' : undefined,
+        onSelect: () => toast.notify(`"${r.name}" is now ${store.toggleStatus(r).toLowerCase()}.`),
+      },
     ]),
     { key: 'name', header: 'Role', fw: 16, sortable: true, cell: (r) => <TwoLine primary={r.name} secondary={r.profileType} />, text: (r) => `${r.name} ${r.profileType}` },
     {
@@ -187,7 +219,7 @@ function RolesTab() {
     <>
       <ListTable
         columns={columns}
-        rows={ROLES}
+        rows={store.rows}
         searchPlaceholder="Search role name"
         exportName="roles"
         totals={['userCount']}
@@ -199,13 +231,18 @@ function RolesTab() {
   );
 }
 
-function GroupsTab() {
+function GroupsTab({ store, onEdit }) {
   const toast = useToast();
 
   const columns = [
     menuColumn((r) => [
-      { label: 'Edit group', icon: 'edit', onSelect: () => toast.notify(`Editing "${r.name}".`) },
-      { label: 'View members', icon: 'users', onSelect: () => toast.notify(`${r.users} users, ${r.merchants} merchants.`) },
+      { label: 'Edit group', icon: 'edit', onSelect: () => onEdit(r) },
+      {
+        label: r.status === 'Active' ? 'Deactivate' : 'Activate',
+        icon: 'power',
+        tone: r.status === 'Active' ? 'danger' : undefined,
+        onSelect: () => toast.notify(`"${r.name}" is now ${store.toggleStatus(r).toLowerCase()}.`),
+      },
     ]),
     { key: 'name', header: 'Group', fw: 18, sortable: true },
     { key: 'type', header: 'Type', fw: 16, sortable: true, description: 'Whether the group scopes by business entity or by region/department' },
@@ -225,7 +262,7 @@ function GroupsTab() {
   return (
     <ListTable
       columns={columns}
-      rows={USER_GROUPS}
+      rows={store.rows}
       searchPlaceholder="Search group name"
       exportName="user-groups"
       totals={['users', 'merchants']}
@@ -234,31 +271,92 @@ function GroupsTab() {
   );
 }
 
+const NEW_FIELDS = {
+  users: [
+    { name: 'name', label: 'Full Name', required: true },
+    { name: 'email', label: 'Email', required: true },
+    { name: 'role', label: 'Role', type: 'select', options: ROLES.map((r) => r.name), required: true },
+    { name: 'phone', label: 'Phone' },
+    { name: 'group', label: 'Group', type: 'select', options: USER_GROUPS.map((g) => g.name) },
+  ],
+  roles: [
+    { name: 'name', label: 'Role Name', required: true },
+    { name: 'profileType', label: 'Profile Type', type: 'select', options: PROFILE_TYPES, required: true },
+    { name: 'homeLanding', label: 'Home Landing Page', type: 'select', options: LANDING_PAGES, required: true },
+    { name: 'setupLanding', label: 'Setup Landing Page', type: 'select', options: LANDING_PAGES },
+    { name: 'description', label: 'Description', type: 'textarea' },
+  ],
+  groups: [
+    { name: 'name', label: 'Group Name', required: true },
+    { name: 'type', label: 'Type', type: 'select', options: ['Group / Business Entity', 'Region / Channel-Department'], required: true },
+    { name: 'region', label: 'Region' },
+  ],
+};
+
 export function UsersAccess() {
   const toast = useToast();
   const [tab, setTab] = useState('users');
+
+  const users = useRecords(SETUP_USERS, { key: 'id' });
+  const roles = useRecords(ROLES, { key: 'id' });
+  const groups = useRecords(USER_GROUPS, { key: 'id' });
+  const store = tab === 'users' ? users : tab === 'roles' ? roles : groups;
+
+  /* `null` closed, a row means Edit, `{}` means New. A boolean plus a row is
+     how Create once ended up taking the Edit path and changing nothing. */
+  const [draft, setDraft] = useState(null);
+  const editing = draft && Object.keys(draft).length > 0 ? draft : null;
+
+  const submit = (v) => {
+    if (editing) {
+      store.update(editing, { ...v, updated: brand.today.replace(/-/g, '/'), updatedBy: CURRENT_USER.name });
+      return;
+    }
+    store.create({
+      id: `new-${tab}-${store.rows.length}`,
+      status: 'Active',
+      created: brand.today.replace(/-/g, '/'),
+      updated: brand.today.replace(/-/g, '/'),
+      startDate: brand.today.replace(/-/g, '/'),
+      lastActiveDays: 0, dormant: false, mfa: true,
+      linkedProfiles: 0, reportingUsers: 0, partner: '',
+      userCount: 0, permissions: 0, users: 0, merchants: 0,
+      profileType: v.profileType ?? 'Company Admin',
+      createdBy: CURRENT_USER.name, updatedBy: CURRENT_USER.name,
+      ...v,
+    });
+  };
 
   return (
     <ListPage
       title="Users & Access Control"
       description="Accounts, roles, groups and what each of them can reach"
       tabs={[
-        { value: 'users', label: 'Users', count: SETUP_USERS.length },
-        { value: 'roles', label: 'Roles', count: ROLES.length },
-        { value: 'groups', label: 'Groups', count: USER_GROUPS.length },
+        { value: 'users', label: 'Users', count: users.rows.length },
+        { value: 'roles', label: 'Roles', count: roles.rows.length },
+        { value: 'groups', label: 'Groups', count: groups.rows.length },
       ]}
       tab={tab}
       onTabChange={setTab}
       headerActions={(
         <>
           <Button variant="secondary" size="sm" icon="download" onClick={() => toast.notify('Access review exported.')}>Export</Button>
-          <Button variant="primary" size="sm" icon="plus" onClick={() => toast.notify('New account.')}>New</Button>
+          <Button variant="primary" size="sm" icon="plus" onClick={() => setDraft({})}>New</Button>
         </>
       )}
     >
-      {tab === 'users' && <UsersTab />}
-      {tab === 'roles' && <RolesTab />}
-      {tab === 'groups' && <GroupsTab />}
+      {tab === 'users' && <UsersTab store={users} onEdit={setDraft} />}
+      {tab === 'roles' && <RolesTab store={roles} />}
+      {tab === 'groups' && <GroupsTab store={groups} onEdit={setDraft} />}
+
+      <RecordFormModal
+        open={Boolean(draft)}
+        onClose={() => setDraft(null)}
+        title={tab === 'users' ? 'user' : tab === 'roles' ? 'role' : 'group'}
+        fields={NEW_FIELDS[tab]}
+        initial={editing}
+        onSubmit={submit}
+      />
     </ListPage>
   );
 }
