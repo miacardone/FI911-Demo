@@ -85,6 +85,7 @@ const PATHS = {
   pound: ['M8 12h6M15 5.5A3.5 3.5 0 0 0 9 8v6c0 2-1 3.5-2 4.5h11'],
   /* The console prices, settles and pays out in USD; a sterling glyph on the
      Residuals rail was left over from the reference. */
+  megaphone: ['M3 11v2a1 1 0 0 0 1 1h3l5 4V6L7 10H4a1 1 0 0 0-1 1z', 'M16 9a3 3 0 0 1 0 6'],
   dollar: ['M12 3v18', 'M16 7.5A3.5 3.5 0 0 0 12.5 5h-1a3.5 3.5 0 1 0 0 7h1a3.5 3.5 0 1 1 0 7h-1A3.5 3.5 0 0 1 8 16.5'],
   menu: ['M4 7h16M4 12h16M4 17h16'],
   dots: ['M12 6h.01M12 12h.01M12 18h.01'],

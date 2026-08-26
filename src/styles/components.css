@@ -500,7 +500,30 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 .dt tbody tr:last-child td { border-bottom: 0; }
 .dt tbody tr:hover { background: var(--c-primary-wash); }
 .dt tbody tr.is-selected { background: var(--c-primary-tint); }
+/* A row that opens a record needs to SAY so before you hover it — a cursor
+   change is only discoverable once your mouse is already there, which is no
+   help when you are scanning a grid deciding what to open. A standing accent
+   on the leading edge marks every openable row; hover deepens it. */
 .dt tbody tr.is-clickable { cursor: pointer; }
+.dt tbody tr.is-clickable > td:first-child {
+  box-shadow: inset 3px 0 0 var(--c-primary-tint);
+  transition: box-shadow var(--dur-fast) var(--ease);
+}
+.dt tbody tr.is-clickable:hover > td:first-child { box-shadow: inset 3px 0 0 var(--c-primary); }
+.dt tbody tr.is-clickable:hover { background: var(--c-primary-wash); }
+
+/* And a chevron on the trailing edge, so the row reads as "opens something"
+   in both directions. Hover-only: eleven static chevrons down a grid is
+   noise, but one under the pointer confirms the click will do something. */
+.dt tbody tr.is-clickable > td:last-child { position: relative; }
+.dt tbody tr.is-clickable:hover > td:last-child::after {
+  content: '';
+  position: absolute; right: 4px; top: 50%; width: 6px; height: 6px;
+  margin-top: -4px;
+  border-right: 1.5px solid var(--c-primary);
+  border-top: 1.5px solid var(--c-primary);
+  transform: rotate(45deg);
+}
 
 .dt__lead { width: 34px; padding: 0 !important; text-align: center; }
 /* Fit mode caps every real column — .dt__flex at max-width:0 and .dt__num at
@@ -1982,22 +2005,61 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 .case__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s-3); }
 .case__merchant-name { display: block; font-weight: 600; color: var(--c-ink); }
 .case__merchant-mid { display: block; font-size: var(--fs-micro); color: var(--c-ink-subtle); }
-.case__grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3); }
-.case__field { display: grid; gap: 3px; min-width: 0; }
-.case__label { font-size: var(--fs-micro); color: var(--c-ink-subtle); text-transform: uppercase; letter-spacing: .04em; }
-.case__score { display: flex; align-items: center; gap: 6px; }
-.case__score-bar { flex: 1; height: 5px; border-radius: var(--r-pill); background: var(--c-surface-sunken); border: 1px solid var(--c-line); overflow: hidden; }
-.case__score-fill { display: block; height: 100%; background: var(--c-primary); }
+/* Tiles, not bare label/value pairs — eight unbounded rows of figures read
+   as a wall of text in a 420px drawer. */
+.case__stats {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px; background: var(--c-line);
+  border: 1px solid var(--c-line); border-radius: var(--r-md); overflow: hidden;
+}
+.case__stat {
+  display: grid; gap: 3px; align-content: start;
+  padding: 8px var(--s-3); background: var(--c-surface); min-width: 0;
+}
+.case__label { font-size: var(--fs-nano); color: var(--c-ink-subtle); text-transform: uppercase; letter-spacing: .05em; }
+.case__figure { font-variant-numeric: tabular-nums; }
+.case__priority { text-transform: capitalize; }
 
-.case__block { display: grid; gap: 6px; padding-top: var(--s-3); border-top: 1px solid var(--c-line); }
+/* The risk meter spans the drawer: a score is a position on a scale, and it
+   needs the width to read as one. It also has to be BOUNDED — as an inline
+   span with flex:1 the bar escaped the drawer entirely. */
+.case__risk {
+  display: grid; gap: 5px;
+  padding: var(--s-3); border: 1px solid var(--c-line); border-radius: var(--r-md);
+  background: var(--c-surface-sunken); min-width: 0;
+}
+.case__score { display: flex; align-items: center; gap: var(--s-2); min-width: 0; width: 100%; }
+.case__score-bar {
+  flex: 1 1 auto; min-width: 0;
+  height: 7px; border-radius: var(--r-pill);
+  background: var(--c-surface); border: 1px solid var(--c-line); overflow: hidden;
+}
+.case__score-fill { display: block; height: 100%; border-radius: var(--r-pill); background: var(--c-primary); }
+.case__score-fill--low { background: var(--c-success); }
+.case__score-fill--mid { background: var(--c-warning); }
+.case__score-fill--high { background: var(--c-danger); }
+.case__score-value { flex: none; font-variant-numeric: tabular-nums; font-size: 1rem; }
+
+.case__block { display: grid; gap: var(--s-2); padding-top: var(--s-3); border-top: 1px solid var(--c-line); min-width: 0; }
 .case__block-title { font-size: var(--fs-small); font-weight: 700; color: var(--c-ink); }
 .case__empty { font-size: var(--fs-small); color: var(--c-ink-subtle); }
 .case__files { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
 .case__files li { display: flex; align-items: center; gap: 6px; font-size: var(--fs-small); }
 .case__file-size { margin-left: auto; font-size: var(--fs-micro); color: var(--c-ink-subtle); }
 .case__comments { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-2); }
-.case__comments li { padding: var(--s-2); border-radius: var(--r-md); background: var(--c-surface-sunken); border: 1px solid var(--c-line); }
-.case__comment-head { display: flex; justify-content: space-between; font-size: var(--fs-micro); margin-bottom: 3px; }
+.case__comments li {
+  display: flex; gap: var(--s-2); align-items: flex-start;
+  padding: var(--s-2); border-radius: var(--r-md);
+  background: var(--c-surface-sunken); border: 1px solid var(--c-line);
+}
+.case__avatar {
+  flex: none; width: 24px; height: 24px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--c-primary-tint); color: var(--c-primary-deep);
+  font-size: var(--fs-nano); font-weight: 700;
+}
+.case__comment { display: grid; gap: 2px; min-width: 0; flex: 1; }
+.case__comment-head { display: flex; justify-content: space-between; gap: var(--s-2); font-size: var(--fs-micro); }
 .case__comment-date { color: var(--c-ink-subtle); }
 .case__comment-body { font-size: var(--fs-small); color: var(--c-ink-muted); line-height: 1.45; }
 .case__draft { resize: vertical; }
@@ -2719,3 +2781,41 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 .doc-meta__item { display: inline-flex; align-items: center; gap: 5px; }
 .doc-frame { border: 1px solid var(--c-line); border-radius: var(--r-md); overflow: hidden; background: var(--c-surface-sunken); }
 .doc-frame .doc-page { max-width: none; margin: var(--s-3) auto; box-shadow: var(--shadow-raised); }
+
+/* ---- Banner artwork ----
+   Was a random-hue gradient per card: twelve unrelated colors that read as
+   decoration and told the admin nothing. It now renders the announcement
+   roughly as the console will show it, in the console's own palette. */
+.banner__art {
+  height: 74px; padding: var(--s-2) var(--s-3);
+  display: flex; flex-direction: column; justify-content: center; gap: 4px;
+  background: var(--c-nav-rail); color: #fff; overflow: hidden;
+}
+.banner__art--flyout {
+  background:
+    linear-gradient(135deg, var(--c-primary-deep), var(--c-nav-rail));
+}
+.banner__art-chrome {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: var(--fs-nano); text-transform: uppercase; letter-spacing: 0.07em;
+  color: rgba(255, 255, 255, 0.7);
+}
+.banner__art-title {
+  font-size: var(--fs-small); font-weight: 600; line-height: 1.3;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* The larger preview shown from the row menu. */
+.banner-preview {
+  display: grid; gap: 6px; padding: var(--s-4);
+  border-radius: var(--r-md); background: var(--c-nav-rail); color: #fff;
+}
+.banner-preview--flyout { background: linear-gradient(135deg, var(--c-primary-deep), var(--c-nav-rail)); }
+.banner-preview__chrome {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: var(--fs-micro); text-transform: uppercase; letter-spacing: 0.07em;
+  color: rgba(255, 255, 255, 0.72);
+}
+.banner-preview__title { font-size: 1.0625rem; font-weight: 700; line-height: 1.3; }
+.banner-preview__dates { font-size: var(--fs-micro); color: rgba(255, 255, 255, 0.7); }

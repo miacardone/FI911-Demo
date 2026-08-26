@@ -10,6 +10,7 @@ import { Drawer, Tooltip } from '@/components/ui/Overlay';
 import Icon from '@/components/ui/Icon';
 import { ACTION_HISTORY, ACTION_TABS } from '@/data/riskQueue';
 import { useToast } from '@/context/ToastContext';
+import { CURRENT_USER, initialsFor } from '@/data/people';
 import brand from '@/brand/brand.config';
 
 /**
@@ -74,21 +75,35 @@ function CaseDrawer({ row, onClose }) {
           </Badge>
         </div>
 
-        <div className="case__grid">
-          <span className="case__field"><span className="case__label">Case Status</span><StatusBadge value={c.caseStatus} /></span>
-          <span className="case__field"><span className="case__label">Transaction Status</span><StatusBadge value={row.actionStatus} /></span>
-          <span className="case__field"><span className="case__label">Flagged Amount</span><strong><Money value={c.flaggedAmount} /></strong></span>
-          <span className="case__field"><span className="case__label">Total Settlements</span><strong><Money value={c.totalSettlements} /></strong></span>
-          <span className="case__field">
-            <span className="case__label">Risk Score</span>
-            <span className="case__score">
-              <span className="case__score-bar"><span className="case__score-fill" style={{ width: `${c.riskScore}%` }} /></span>
-              <strong>{c.riskScore}</strong>
-            </span>
+        {/* A stat STRIP rather than eight bare label/value pairs: the figures
+            are what an analyst scans, and unbounded rows of them read as a
+            wall of text. The risk meter takes the full width because it is a
+            position on a scale, not a value. */}
+        <div className="case__stats">
+          <span className="case__stat"><span className="case__label">Case Status</span><StatusBadge value={c.caseStatus} /></span>
+          <span className="case__stat"><span className="case__label">Transaction</span><StatusBadge value={row.actionStatus} /></span>
+          <span className="case__stat"><span className="case__label">Flagged Amount</span><strong className="case__figure"><Money value={c.flaggedAmount} /></strong></span>
+          <span className="case__stat"><span className="case__label">Total Settlements</span><strong className="case__figure"><Money value={c.totalSettlements} /></strong></span>
+          <span className="case__stat"><span className="case__label">Created</span><strong>{c.createdDate}</strong></span>
+          <span className="case__stat">
+            <span className="case__label">Decided</span>
+            <strong>{row.actionDate} <ResponseTime days={row.responseDays} /></strong>
           </span>
-          <span className="case__field"><span className="case__label">Created</span><strong>{c.createdDate}</strong></span>
-          <span className="case__field"><span className="case__label">Assigned To</span><strong>{c.assignedTo || <Muted>Unassigned</Muted>}</strong></span>
-          <span className="case__field"><span className="case__label">Decided</span><strong>{row.actionDate} <ResponseTime days={row.responseDays} /></strong></span>
+          <span className="case__stat"><span className="case__label">Assigned To</span><strong>{c.assignedTo || <Muted>Unassigned</Muted>}</strong></span>
+          <span className="case__stat"><span className="case__label">Priority</span><strong className="case__priority">{c.priority}</strong></span>
+        </div>
+
+        <div className="case__risk">
+          <span className="case__label">Risk Score</span>
+          <span className="case__score">
+            <span className="case__score-bar">
+              <span
+                className={`case__score-fill case__score-fill--${c.riskScore >= 66 ? 'high' : c.riskScore >= 33 ? 'mid' : 'low'}`}
+                style={{ width: `${Math.min(Math.max(c.riskScore, 0), 100)}%` }}
+              />
+            </span>
+            <strong className="case__score-value">{c.riskScore}</strong>
+          </span>
         </div>
 
         <div className="case__block">
@@ -119,11 +134,14 @@ function CaseDrawer({ row, onClose }) {
           <ul className="case__comments">
             {all.map((cm) => (
               <li key={cm.id}>
-                <span className="case__comment-head">
-                  <strong>{cm.author}</strong>
-                  <span className="case__comment-date">{cm.date}</span>
+                <span className="case__avatar" aria-hidden="true">{initialsFor(cm.author)}</span>
+                <span className="case__comment">
+                  <span className="case__comment-head">
+                    <strong>{cm.author}</strong>
+                    <span className="case__comment-date">{cm.date}</span>
+                  </span>
+                  <span className="case__comment-body">{cm.text}</span>
                 </span>
-                <span className="case__comment-body">{cm.text}</span>
               </li>
             ))}
           </ul>
@@ -141,7 +159,7 @@ function CaseDrawer({ row, onClose }) {
             icon="send"
             disabled={!draft.trim()}
             onClick={() => {
-              setComments((list) => [...list, { id: `new-${list.length}`, author: 'Mia Cardone', date: brand.today.replace(/-/g, '/'), text: draft.trim() }]);
+              setComments((list) => [...list, { id: `new-${list.length}`, author: CURRENT_USER.name, date: brand.today.replace(/-/g, '/'), text: draft.trim() }]);
               setDraft('');
               toast.notify('Comment added to the case.');
             }}
