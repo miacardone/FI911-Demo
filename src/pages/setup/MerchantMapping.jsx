@@ -5,6 +5,7 @@ import { Badge, Button, Kpi } from '@/components/ui/Surface';
 import { Tooltip } from '@/components/ui/Overlay';
 import Icon from '@/components/ui/Icon';
 import { MAPPING_TABS, MERCHANT_MAPPING, PORTFOLIO_PROFILES } from '@/data/setup';
+import { RecordFormModal } from '@/components/fi911/RecordFormModal';
 import { useToast } from '@/context/ToastContext';
 import brand from '@/brand/brand.config';
 
@@ -39,6 +40,8 @@ export function MerchantMapping() {
   const highConfidence = suggested.filter((r) => r.suggestion.confidence >= 85);
   const unmappedVolume = unmapped.reduce((s, r) => s + r.monthlyVolume, 0);
 
+  const [mapping, setMapping] = useState(null);
+
   const mapTo = (ids, portfolio, label) => {
     setRows((rs) => rs.map((r) => (ids.includes(r.id)
       ? { ...r, portfolio, suggestion: null, effectiveStart: brand.today.replace(/-/g, '/'), updated: brand.today.replace(/-/g, '/') }
@@ -53,7 +56,9 @@ export function MerchantMapping() {
         icon: 'check',
         onSelect: () => mapTo([r.id], r.suggestion.portfolio, `${r.merchant} mapped to ${r.suggestion.portfolio}.`),
       },
-      { label: 'Map manually…', icon: 'branch', onSelect: () => toast.notify(target ? `Pick "${target}" above and press Assign.` : 'Choose a portfolio in the toolbar, then Assign.') },
+      /* Was a hint pointing at the toolbar, which is a dead end from inside a
+         row menu. Picking the portfolio here is what the menu item promises. */
+      { label: 'Map manually…', icon: 'branch', onSelect: () => setMapping(r) },
       r.portfolio && { label: 'Unmap', icon: 'close', tone: 'danger', onSelect: () => mapTo([r.id], '', `${r.merchant} unmapped.`) },
     ]),
     {
@@ -158,6 +163,21 @@ export function MerchantMapping() {
           </Button>
         )}
         empty="Nothing in this view."
+      />
+      <RecordFormModal
+        open={Boolean(mapping)}
+        onClose={() => setMapping(null)}
+        title="mapping"
+        submitLabel="Map merchant"
+        fields={[{
+          name: 'portfolio',
+          label: 'Map to portfolio',
+          type: 'select',
+          required: true,
+          options: PORTFOLIO_PROFILES.map((x) => x.name),
+        }]}
+        initial={mapping ? { portfolio: mapping.portfolio ?? '' } : null}
+        onSubmit={(v) => mapTo([mapping.id], v.portfolio, `${mapping.merchant} mapped to ${v.portfolio}.`)}
       />
     </ListPage>
   );

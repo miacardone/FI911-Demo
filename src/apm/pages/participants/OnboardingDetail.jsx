@@ -7,6 +7,9 @@ import {
   NatureOfBusinessSection, ParticipantRiskRulesSection, TransactionInformationSection,
 } from '@/components/fi911/AgreementSections';
 import { AttachmentsModal, ChangeStatusModal, NotesModal } from '@/components/fi911/RecordModals';
+import { RecordFormModal } from '@/components/fi911/RecordFormModal';
+import { useToast } from '@/context/ToastContext';
+import { ASSIGNEES } from '@/data/people';
 import { useDetailCrumb } from '@/components/layout/AppLayout';
 import { ONBOARDING, ONBOARDING_STATUS, attachmentsFor, notesFor, statusOptionsFor } from '@/apm/data/participants';
 import { routes } from '@/apm/data/navigation';
@@ -30,7 +33,9 @@ export function OnboardingDetail() {
   useDetailCrumb(record.participant);
 
   const [status, setStatus] = useState(record.status);
+  const toast = useToast();
   const [modal, setModal] = useState(null);
+  const [assignedTo, setAssignedTo] = useState(record.assignedTo ?? '');
 
   const form = useForm({
     agentName: record.agent,
@@ -90,10 +95,10 @@ export function OnboardingDetail() {
         onDiscard={() => form.reset()}
         actions={<Button variant="primary" size="sm" onClick={() => setModal({ kind: 'status' })}>Update Status</Button>}
         headerIcons={[
-          { icon: 'menu', label: 'More actions', onSelect: () => {} },
+          { icon: 'printer', label: 'Print record', onSelect: () => window.print() },
           { icon: 'message', label: 'Notes', onSelect: () => setModal({ kind: 'notes' }) },
           { icon: 'paperclip', label: 'Attachments', onSelect: () => setModal({ kind: 'attachments' }) },
-          { icon: 'userCheck', label: 'Assign participant', onSelect: () => {} },
+          { icon: 'userCheck', label: 'Assign', onSelect: () => setModal({ kind: 'assign' }) },
         ]}
         values={form.values}
         steps={[
@@ -151,6 +156,18 @@ export function OnboardingDetail() {
       />
       <AttachmentsModal open={modal?.kind === 'attachments'} onClose={() => setModal(null)} attachments={attachmentsFor(record.id)} />
       <NotesModal open={modal?.kind === 'notes'} onClose={() => setModal(null)} notes={notesFor(record.id)} />
+
+      {/* The Assign icon set a modal kind nothing rendered, so it read as a
+          working button that did nothing. */}
+      <RecordFormModal
+        open={modal?.kind === 'assign'}
+        onClose={() => setModal(null)}
+        title="assignment"
+        submitLabel="Assign"
+        fields={[{ name: 'assignedTo', label: 'Assign to', type: 'select', required: true, options: ASSIGNEES }]}
+        initial={{ assignedTo: assignedTo ?? '' }}
+        onSubmit={(v) => { setAssignedTo(v.assignedTo); toast.notify(`${record.participant ?? record.merchant} assigned to ${v.assignedTo}.`); }}
+      />
     </>
   );
 }

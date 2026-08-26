@@ -10,6 +10,8 @@ import {
 } from '@/components/fi911/AgreementSections';
 import { SummaryRow } from '@/components/fi911/cells';
 import { AttachmentsModal, NotesModal } from '@/components/fi911/RecordModals';
+import { downloadAttachment } from '@/utils/export';
+import { useToast } from '@/context/ToastContext';
 import { useDetailCrumb } from '@/components/layout/AppLayout';
 import { LIVE_PARTICIPANTS, attachmentsFor, notesFor } from '@/data/participants';
 import { institutionByName, routingNumberFor } from '@/data/reference';
@@ -31,6 +33,7 @@ import { statusTone } from '@/domain/statuses';
  */
 
 export function LiveParticipantDetail() {
+  const toast = useToast();
   const { id } = useParams();
   const navigate = useNavigate();
   const record = LIVE_PARTICIPANTS.find((r) => r.id === id) ?? LIVE_PARTICIPANTS[0];
@@ -104,10 +107,18 @@ export function LiveParticipantDetail() {
         onSave={() => form.markSaved()}
         onDiscard={() => form.reset()}
         headerIcons={[
-          { icon: 'file', label: 'Agreement PDF', onSelect: () => {} },
+          {
+            icon: 'file',
+            label: 'Agreement PDF',
+            onSelect: () => {
+              downloadAttachment({ name: `agreement-${record.id}.pdf`, description: 'Executed processing agreement' },
+                { Record: record.id, Status: record.status });
+              toast.notify('Agreement downloaded.');
+            },
+          },
           { icon: 'paperclip', label: 'Attachments', onSelect: () => setModal({ kind: 'attachments' }) },
           { icon: 'message', label: 'Notes', onSelect: () => setModal({ kind: 'notes' }) },
-          { icon: 'menu', label: 'More actions', onSelect: () => {} },
+          { icon: 'printer', label: 'Print record', onSelect: () => window.print() },
         ]}
         summary={(
           <section className="fi-section">

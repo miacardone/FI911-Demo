@@ -33,6 +33,7 @@ const ADVANCED_FIELDS = [
 
 
 export function Onboarding() {
+  const toast = useToast();
   const navigate = useNavigate();
   const [rows, setRows] = useState(ONBOARDING);
   const [tab, setTab] = useState('all');

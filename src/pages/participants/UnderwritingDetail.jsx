@@ -113,7 +113,7 @@ export function UnderwritingDetail() {
         headerIcons={[
           { icon: 'paperclip', label: 'Attachments', onSelect: () => setModal({ kind: 'attachments' }) },
           { icon: 'message', label: 'Notes', onSelect: () => setModal({ kind: 'notes' }) },
-          { icon: 'menu', label: 'More actions', onSelect: () => {} },
+          { icon: 'printer', label: 'Print record', onSelect: () => window.print() },
         ]}
         /* One section per step. The three-step version stacked two or three
            full sections into each, which still meant scrolling inside a

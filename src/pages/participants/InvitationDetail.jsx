@@ -87,7 +87,7 @@ export function InvitationDetail() {
         headerIcons={[
           { icon: 'paperclip', label: 'Attachments', onSelect: () => setModal({ kind: 'attachments' }) },
           { icon: 'message', label: 'Notes', onSelect: () => setModal({ kind: 'notes' }) },
-          { icon: 'menu', label: 'More actions', onSelect: () => {} },
+          { icon: 'printer', label: 'Print record', onSelect: () => window.print() },
         ]}
         /* A wizard, not a scroll. Four sections stacked ran to two and a half
            screens; a proposal is reviewed field by field, so it is paged. */
