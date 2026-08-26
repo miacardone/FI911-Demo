@@ -146,13 +146,17 @@ export const nav = [
     icon: 'pound',
     crumb: 'Residuals',
     children: [
-      { label: 'Payout Splits', path: routes.generalLedger, permission: 'Payout Splits', area: 'Residuals', crumb: 'Payout Splits' },
-      { label: 'Payout Adjustments', path: routes.feeAdjustments, permission: 'Payout Adjustments', area: 'Residuals', crumb: 'Payout Adjustments' },
+      /* Ordered by the residual HIERARCHY, top level first: the whole
+         portfolio, then the agent, then the merchant line items the agent's
+         number is built from, then how each payout splits and what was
+         adjusted. Reading down the list walks one level down the tree. */
+      { label: 'Portfolio Payout Details', path: routes.portfolioPayoutDetails, permission: 'Portfolio Payout Details', area: 'Residuals', crumb: 'Portfolio Payout Details' },
       { label: 'Agent Payout Summary', path: routes.agentPayoutSummary, permission: 'Agent Payout Summary', area: 'Residuals', crumb: 'Agent Payout Summary' },
       { label: 'Payout Details', path: routes.payoutDetails, permission: 'Payout Details', area: 'Residuals', crumb: 'Payout Details' },
+      { label: 'Payout Splits', path: routes.generalLedger, permission: 'Payout Splits', area: 'Residuals', crumb: 'Payout Splits' },
+      { label: 'Payout Adjustments', path: routes.feeAdjustments, permission: 'Payout Adjustments', area: 'Residuals', crumb: 'Payout Adjustments' },
       { label: 'Merchant Status', path: routes.participantStatus, permission: 'Merchant Status', area: 'Residuals', crumb: 'Merchant Status' },
       { label: 'Income / Expense', path: routes.incomeExpense, permission: 'Income / Expense', area: 'Residuals', crumb: 'Income / Expense' },
-      { label: 'Portfolio Payout Details', path: routes.portfolioPayoutDetails, permission: 'Portfolio Payout Details', area: 'Residuals', crumb: 'Portfolio Payout Details' },
     ],
   },
   {
@@ -181,9 +185,10 @@ export const nav = [
     icon: 'shield',
     crumb: 'risk',
     children: [
+      /* What there is to work, what was missed, what was decided. */
       { label: 'Work Queue', path: routes.workQueue, permission: 'Work Queue', area: 'Risk', crumb: 'Work Queue' },
-      { label: 'Action History', path: routes.actionHistory, permission: 'Action History', area: 'Risk', crumb: 'Action History' },
       { label: 'Unactioned Queue', path: routes.unactionedQueue, permission: 'Unactioned Queue', area: 'Risk', crumb: 'Unactioned Queue' },
+      { label: 'Action History', path: routes.actionHistory, permission: 'Action History', area: 'Risk', crumb: 'Action History' },
     ],
   },
   {
@@ -192,11 +197,13 @@ export const nav = [
     icon: 'calendar',
     crumb: 'Transactions',
     children: [
-      { label: 'ACH Listings', path: routes.achListings, permission: 'ACH Listings', area: 'Transactions', crumb: 'ACH Listings' },
+      /* The order money actually moves in: authorized, settled, qualified at
+         a rate, funded, paid out over ACH, less anything held in reserve. */
       { label: 'Authorizations', path: routes.authorizations, permission: 'Authorizations', area: 'Transactions', crumb: 'Authorizations' },
       { label: 'Settlements', path: routes.settlements, permission: 'Settlements', area: 'Transactions', crumb: 'Settlements' },
-      { label: 'Funding Deposits', path: routes.fundingDeposits, permission: 'Funding Deposits', area: 'Transactions', crumb: 'Funding Deposits' },
       { label: 'Qualifications', path: routes.qualifications, permission: 'Qualifications', area: 'Transactions', crumb: 'Qualifications' },
+      { label: 'Funding Deposits', path: routes.fundingDeposits, permission: 'Funding Deposits', area: 'Transactions', crumb: 'Funding Deposits' },
+      { label: 'ACH Listings', path: routes.achListings, permission: 'ACH Listings', area: 'Transactions', crumb: 'ACH Listings' },
       { label: 'Merchant Reserves', path: routes.merchantReserves, permission: 'Merchant Reserves', area: 'Transactions', crumb: 'Merchant Reserves' },
     ],
   },

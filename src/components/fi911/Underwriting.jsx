@@ -4,7 +4,7 @@ import { Tooltip } from '@/components/ui/Overlay';
 import Icon from '@/components/ui/Icon';
 import { Muted } from '@/components/fi911/cells';
 import {
-  VERIFICATION_TONE, scoreBandFor, scorecardFor, verificationsFor,
+  VERIFICATION_SERVICES, VERIFICATION_TONE, scoreBandFor, scorecardFor, verificationsFor,
 } from '@/data/underwriting';
 
 /**
@@ -162,17 +162,30 @@ export function ThirdPartyChecks({ record, onNotify }) {
     setResults((rs) => rs.map((r) => (r.key === key ? { ...r, status: 'Running', detail: '', reference: '' } : r)));
 
     const t = setTimeout(() => {
-      setResults((rs) => rs.map((r) => {
-        if (r.key !== key) return r;
-        const fresh = verificationsFor(record).find((v) => v.key === key);
-        /* A re-run of a check that had never been run has to come back with
-           SOMETHING, so fall back to a pass rather than back to "Not run". */
-        const settled = fresh && fresh.status !== 'Not run'
-          ? fresh
-          : { ...r, status: 'Passed', detail: 'Completed — no exceptions raised', reference: `${r.provider.slice(0, 3).toUpperCase()}-40118827` };
-        onNotify?.(`${settled.provider} ${settled.product} returned ${settled.status.toLowerCase()}.`, settled.status === 'Failed' ? 'danger' : 'default');
-        return { ...settled, completedAt: '2026/08/20 09:14' };
-      }));
+      /* Resolve the outcome OUTSIDE the state updater. React runs updater
+         functions during render, so notifying from inside one updates the
+         toast provider mid-render — which React rejects outright. */
+      const fresh = verificationsFor(record).find((v) => v.key === key);
+      /* A re-run of a check that had never been run has to come back with
+         SOMETHING, so fall back to a pass rather than back to "Not run". */
+      const settled = fresh && fresh.status !== 'Not run'
+        ? fresh
+        : { status: 'Passed', detail: 'Completed — no exceptions raised', reference: '' };
+
+      setResults((rs) => rs.map((r) => (r.key === key
+        ? {
+          ...r,
+          ...settled,
+          reference: settled.reference || `${r.provider.slice(0, 3).toUpperCase()}-40118827`,
+          completedAt: '2026/08/20 09:14',
+        }
+        : r)));
+
+      const service = VERIFICATION_SERVICES.find((v) => v.key === key);
+      onNotify?.(
+        `${service.provider} ${service.product} returned ${settled.status.toLowerCase()}.`,
+        settled.status === 'Failed' ? 'danger' : 'default',
+      );
     }, 1400);
 
     timers.current.push(t);
