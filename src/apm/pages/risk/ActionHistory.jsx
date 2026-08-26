@@ -9,6 +9,7 @@ import { Badge, Button, Kpi } from '@/components/ui/Surface';
 import { Drawer, Tooltip } from '@/components/ui/Overlay';
 import Icon from '@/components/ui/Icon';
 import { ACTION_HISTORY, ACTION_TABS } from '@/apm/data/riskQueue';
+import { downloadAttachment } from '@/utils/export';
 import { useToast } from '@/context/ToastContext';
 import { CURRENT_USER, initialsFor } from '@/data/people';
 import brand from '@/apm/brand.config';
@@ -120,7 +121,7 @@ function CaseDrawer({ row, onClose }) {
                 {c.attachments.map((a) => (
                   <li key={a.id}>
                     <Icon name="paperclip" size={13} className="subtle" />
-                    <button type="button" className="link" onClick={() => toast.notify(`Downloading ${a.name}.`)}>{a.name}</button>
+                    <button type="button" className="link" onClick={() => { downloadAttachment(a, { Case: c.caseId }); toast.notify(`${a.name} downloaded.`); }}>{a.name}</button>
                     <span className="case__file-size">{a.sizeMb} MB</span>
                   </li>
                 ))}

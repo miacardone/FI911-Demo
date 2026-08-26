@@ -13,6 +13,7 @@ import { useDetailCrumb } from '@/components/layout/AppLayout';
 import { merchantBatches, merchantProfile, queueTransactions, variance } from '@/data/riskQueue';
 import { routes } from '@/data/navigation';
 import { useToast } from '@/context/ToastContext';
+import { useRecords } from '@/hooks/useRecords';
 
 /**
  * One work-queue merchant, in three views.
@@ -92,8 +93,12 @@ export function WorkQueueMerchant() {
 
   const decoded = decodeURIComponent(mid ?? '');
   const merchant = useMemo(() => merchantProfile(decoded), [decoded]);
-  const rows = useMemo(() => queueTransactions(decoded), [decoded]);
-  const batches = useMemo(() => merchantBatches(decoded), [decoded]);
+  const txnSeed = useMemo(() => queueTransactions(decoded), [decoded]);
+  const batchSeed = useMemo(() => merchantBatches(decoded), [decoded]);
+  const txns = useRecords(txnSeed, { key: 'transactionId' });
+  const batchStore = useRecords(batchSeed, { key: 'id' });
+  const rows = txns.rows;
+  const batches = batchStore.rows;
 
   useDetailCrumb(merchant.merchant);
 
@@ -108,8 +113,17 @@ export function WorkQueueMerchant() {
 
   const transactionColumns = [
     menuColumn((r) => [
-      { label: 'Release transaction', icon: 'check', onSelect: () => toast.notify(`${r.transactionId} released.`) },
-      { label: 'Decline transaction', icon: 'ban', tone: 'danger', onSelect: () => toast.notify(`${r.transactionId} declined.`) },
+      {
+        label: 'Release transaction',
+        icon: 'check',
+        onSelect: () => { txns.update(r, { flaggedStatus: 'Released' }); toast.notify(`${r.transactionId} released.`); },
+      },
+      {
+        label: 'Decline transaction',
+        icon: 'ban',
+        tone: 'danger',
+        onSelect: () => { txns.update(r, { flaggedStatus: 'Declined' }); toast.notify(`${r.transactionId} declined.`); },
+      },
       { label: 'Open case', icon: 'folder', onSelect: () => navigate(routes.actionHistory) },
     ]),
     { key: 'transactionId', header: 'Transaction ID', fw: 12, sortable: true },
@@ -130,8 +144,8 @@ export function WorkQueueMerchant() {
   const batchColumns = [
     menuColumn((r) => [
       { label: 'View transactions', icon: 'table', onSelect: () => setView('transactions') },
-      { label: 'Release batch', icon: 'check', onSelect: () => toast.notify(`${r.batchId} released for settlement.`) },
-      { label: 'Hold batch', icon: 'pause', tone: 'danger', onSelect: () => toast.notify(`${r.batchId} held.`) },
+      { label: 'Release batch', icon: 'check', onSelect: () => { batchStore.update(r, { status: 'Released' }); toast.notify(`${r.batchId} released for settlement.`); } },
+      { label: 'Hold batch', icon: 'pause', tone: 'danger', onSelect: () => { batchStore.update(r, { status: 'Held' }); toast.notify(`${r.batchId} held.`); } },
     ]),
     { key: 'batchId', header: 'Batch ID', fw: 11, sortable: true },
     { key: 'settlementDate', header: 'Settlement Date', fw: 9, align: 'center', sortable: true },

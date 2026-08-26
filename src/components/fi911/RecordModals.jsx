@@ -4,6 +4,7 @@ import Modal from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Surface';
 import { SelectField, TextAreaField, TextField } from '@/components/ui/Form';
 import { RowMenu } from '@/components/fi911/cells';
+import { downloadAttachment } from '@/utils/export';
 import { useToast } from '@/context/ToastContext';
 import { CURRENT_USER, initialsFor } from '@/data/people';
 import { todayStamp } from '@/utils/format';
@@ -162,7 +163,7 @@ export function AttachmentsModal({ open, onClose, attachments = [], onChange, ti
                 <RowMenu
                   label={`Actions for ${a.name}`}
                   items={[
-                    { label: 'Download', icon: 'download', onSelect: () => toast.notify('Download started.') },
+                    { label: 'Download', icon: 'download', onSelect: () => { downloadAttachment(a); toast.notify(`${a.name} downloaded.`); } },
                     { label: 'Delete', icon: 'trash', tone: 'danger', onSelect: () => { commit(items.filter((x) => x.id !== a.id)); toast.notify('Attachment removed.'); } },
                   ]}
                 />

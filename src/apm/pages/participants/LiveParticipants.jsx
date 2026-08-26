@@ -11,6 +11,7 @@ import {
   LIVE_PARTICIPANTS, LIVE_STATUS, attachmentsFor, filterStage, notesFor, stageTabs, statementsFor,
 } from '@/apm/data/participants';
 import { routes } from '@/apm/data/navigation';
+import { ImportButton } from '@/components/fi911/ImportButton';
 import { useToast } from '@/context/ToastContext';
 import brand from '@/apm/brand.config';
 
@@ -144,7 +145,7 @@ export function LiveParticipants() {
             onClear={() => { setCriteria({}); setApplied({}); }}
           />
         )}
-        leftExtra={<Button variant="primary" size="sm" icon="upload" onClick={() => toast.notify('Import — choose a participant file to upload.')}>Import</Button>}
+        leftExtra={<ImportButton label="Import" noun="participants" />}
         empty="No live participants match these criteria."
       />
 

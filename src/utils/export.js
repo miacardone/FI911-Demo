@@ -46,3 +46,34 @@ export async function copyToClipboard(columns, rows) {
     return false;
   }
 }
+
+/**
+ * Download an attachment.
+ *
+ * These are generated records with no bytes behind them, so instead of
+ * pretending to stream a PDF the console writes a short receipt naming the
+ * file, its size and where it came from. That is a real download of the only
+ * thing the demo actually holds — and it beats a "Download started." toast
+ * that starts nothing.
+ */
+export function downloadAttachment(attachment, context = {}) {
+  const lines = [
+    `File: ${attachment.name}`,
+    attachment.sizeMb != null ? `Size: ${attachment.sizeMb} MB` : null,
+    attachment.description ? `Description: ${attachment.description}` : null,
+    ...Object.entries(context).map(([k, v]) => `${k}: ${v}`),
+    '',
+    'This demo holds generated records rather than real files. This receipt',
+    'stands in for the document itself.',
+  ].filter(Boolean);
+
+  const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${String(attachment.name).replace(/\.[^.]+$/, '')}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}

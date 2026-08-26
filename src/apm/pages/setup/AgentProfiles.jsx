@@ -6,6 +6,7 @@ import { Tooltip } from '@/components/ui/Overlay';
 import { useNavigate } from 'react-router-dom';
 import { PAYOUT_PROFILES, PORTFOLIO_PROFILES, PRICING_SCHEDULES } from '@/apm/data/setup';
 import { routes } from '@/apm/data/navigation';
+import { ImportButton } from '@/components/fi911/ImportButton';
 import { useToast } from '@/context/ToastContext';
 import { useRecords } from '@/hooks/useRecords';
 import { RecordFormModal } from '@/components/fi911/RecordFormModal';
@@ -198,7 +199,7 @@ export function AgentProfiles() {
       onTabChange={setTab}
       headerActions={(
         <>
-          <Button variant="secondary" size="sm" icon="upload" onClick={() => toast.notify('Import profiles as CSV.')}>Import</Button>
+          <ImportButton noun="profiles" />
           <Button variant="primary" size="sm" icon="plus" onClick={() => setDraft({})}>New</Button>
         </>
       )}

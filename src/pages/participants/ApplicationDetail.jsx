@@ -119,8 +119,15 @@ export function ApplicationDetail() {
         headerIcons={[
           { icon: 'paperclip', label: 'Attachments', onSelect: () => setModal({ kind: 'attachments' }) },
           { icon: 'message', label: 'Notes', onSelect: () => setModal({ kind: 'notes' }) },
-          { icon: 'mail', label: 'Email merchant', onSelect: () => toast.notify('Draft email opened.') },
-          { icon: 'edit', label: 'Edit', onSelect: () => {} },
+          {
+            icon: 'mail',
+            label: 'Email merchant',
+            /* Hands off to the operator's own mail client — the console has no
+               outbox, and a fake compose window would be worse. */
+            onSelect: () => {
+              window.location.href = `mailto:${record.email}?subject=${encodeURIComponent(`Your application — ${record.merchant ?? ''}`)}`;
+            },
+          },
         ]}
         values={form.values}
         /* A step is a screen, not a chapter. */

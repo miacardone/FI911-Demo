@@ -3,6 +3,8 @@ import { ListPage } from '@/components/fi911/ListPage';
 import { LinkCell, Money, moneyText } from '@/components/fi911/cells';
 import { AGENT_PAYOUTS, PAYOUT_SCOPE } from '@/data/residuals';
 import { formatNumber } from '@/utils/format';
+import { useNavigate } from 'react-router-dom';
+import { routes } from '@/data/navigation';
 import { useToast } from '@/context/ToastContext';
 
 /** Agent Payout Summary — one row per agent per payout month.
@@ -10,6 +12,7 @@ import { useToast } from '@/context/ToastContext';
  *  drills into the set behind the number. */
 
 export function AgentPayoutSummary() {
+  const navigate = useNavigate();
   const toast = useToast();
 
   const columns = [
@@ -19,11 +22,11 @@ export function AgentPayoutSummary() {
     { key: 'agent', header: 'Agent', fw: 14, sortable: true },
     {
       key: 'profiles', header: 'No Of Profiles', fw: 9, align: 'right', sortable: true,
-      cell: (r) => <LinkCell onClick={() => toast.notify(`${r.profiles} profile(s) for ${r.agent}.`)}>{r.profiles}</LinkCell>,
+      cell: (r) => <LinkCell onClick={() => navigate(routes.payoutDetails)}>{r.profiles}</LinkCell>,
     },
     {
       key: 'merchants', header: 'Merchants', fw: 9, align: 'right', sortable: true,
-      cell: (r) => <LinkCell onClick={() => toast.notify(`${r.merchants} merchants under ${r.agent}.`)}>{r.merchants}</LinkCell>,
+      cell: (r) => <LinkCell onClick={() => navigate(routes.portfolioPayoutDetails)}>{r.merchants}</LinkCell>,
     },
     { key: 'transactions', header: 'Transactions', fw: 9, align: 'right', sortable: true, cell: (r) => formatNumber(r.transactions) },
     { key: 'volume', header: 'Volume', fw: 10, align: 'right', sortable: true, sortValue: (r) => r.volume, text: (r) => moneyText(r.volume), cell: (r) => <Money value={r.volume} /> },

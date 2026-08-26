@@ -9,6 +9,7 @@ import { INSTITUTIONS } from '@/apm/data/reference';
 import { Tooltip } from '@/components/ui/Overlay';
 import { DocumentPreview } from '@/components/fi911/DocumentPreview';
 import { downloadCsv } from '@/utils/export';
+import { ImportButton } from '@/components/fi911/ImportButton';
 import { useToast } from '@/context/ToastContext';
 
 /**
@@ -185,7 +186,7 @@ export function DocumentCenter() {
           onClear={() => { setCriteria({}); setApplied({}); }}
         />
       )}
-      leftExtra={<Button variant="primary" size="sm" icon="upload" onClick={() => toast.notify('Choose a file to upload.')}>Upload</Button>}
+      leftExtra={<ImportButton label="Upload" noun="documents" />}
       footer={<DocumentPreview doc={preview} onClose={() => setPreview(null)} onDownload={download} />}
       empty="No documents match these criteria."
     />

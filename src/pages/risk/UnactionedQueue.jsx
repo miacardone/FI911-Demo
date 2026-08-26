@@ -9,6 +9,7 @@ import { Tooltip } from '@/components/ui/Overlay';
 import { UNACTIONED, UNACTIONED_SLA_DAYS, UNACTIONED_TABS, unactionedSummary } from '@/data/riskQueue';
 import { routes } from '@/data/navigation';
 import { useToast } from '@/context/ToastContext';
+import { useRecords } from '@/hooks/useRecords';
 import brand from '@/brand/brand.config';
 
 /**
@@ -54,22 +55,34 @@ export function UnactionedQueue() {
   const [criteria, setCriteria] = useState({});
   const [applied, setApplied] = useState({});
 
+  /* In state so Release and Decline settle a row instead of announcing it. */
+  const store = useRecords(UNACTIONED, { key: 'id' });
+
   const rows = useMemo(
     () => applyFilters(
-      UNACTIONED.filter((UNACTIONED_TABS.find((t) => t.value === tab) ?? UNACTIONED_TABS[0]).match),
+      store.rows.filter((UNACTIONED_TABS.find((t) => t.value === tab) ?? UNACTIONED_TABS[0]).match),
       ADVANCED_FIELDS,
       applied,
     ),
-    [tab, applied],
+    [tab, applied, store.rows],
   );
 
   const tabs = UNACTIONED_TABS.map((t) => ({ ...t, count: UNACTIONED.filter(t.match).length }));
-  const s = unactionedSummary();
+  const s = unactionedSummary(store.rows);
 
   const columns = [
     menuColumn((r) => [
-      { label: 'Release transaction', icon: 'check', onSelect: () => toast.notify(`${r.transactionId} released.`) },
-      { label: 'Decline transaction', icon: 'ban', tone: 'danger', onSelect: () => toast.notify(`${r.transactionId} declined.`) },
+      {
+        label: 'Release transaction',
+        icon: 'check',
+        onSelect: () => { store.update(r, { actionStatus: 'Released', daysUnactioned: 0, breached: false }); toast.notify(`${r.transactionId} released.`); },
+      },
+      {
+        label: 'Decline transaction',
+        icon: 'ban',
+        tone: 'danger',
+        onSelect: () => { store.update(r, { actionStatus: 'Declined', daysUnactioned: 0, breached: false }); toast.notify(`${r.transactionId} declined.`); },
+      },
       { label: 'Open merchant queue', icon: 'table', onSelect: () => navigate(routes.workQueue) },
     ]),
     {

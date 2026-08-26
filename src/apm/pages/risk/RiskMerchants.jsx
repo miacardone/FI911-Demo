@@ -3,6 +3,8 @@ import { ListPage } from '@/components/fi911/ListPage';
 import { AdvancedSearchPanel, applyFilters } from '@/components/fi911/Filters';
 import { LinkCell, RiskTriangle, StatusBadge, TaggedFlag, menuColumn } from '@/components/fi911/cells';
 import { MERCHANT_STATUSES, RISK_MERCHANT_ROWS, filterMerchants, merchantTabs } from '@/apm/data/risk';
+import { useNavigate } from 'react-router-dom';
+import { routes } from '@/apm/data/navigation';
 import { useToast } from '@/context/ToastContext';
 import brand from '@/apm/brand.config';
 
@@ -20,6 +22,7 @@ const ADVANCED_FIELDS = [
 ];
 
 export function RiskMerchants() {
+  const navigate = useNavigate();
   const toast = useToast();
   const [tab, setTab] = useState('all');
   const [advancedOpen, setAdvancedOpen] = useState(false);
@@ -35,7 +38,7 @@ export function RiskMerchants() {
   const columns = [
     { key: 'status', header: 'Status', fw: 9, sortable: true, cell: (r) => <StatusBadge value={r.status} /> },
     { key: 'boarded', header: 'Boarding Date', fw: 9, sortable: true },
-    { key: 'merchant', header: 'Operational Merchants', fw: 16, sortable: true, cell: (r) => <LinkCell onClick={() => toast.notify(`${r.merchant} risk profile`)}>{r.merchant}</LinkCell> },
+    { key: 'merchant', header: 'Operational Merchants', fw: 16, sortable: true, cell: (r) => <LinkCell onClick={() => navigate(routes.merchantRiskProfile)}>{r.merchant}</LinkCell> },
     { key: 'processor', header: 'Processor', fw: 10, sortable: true },
     { key: 'contact', header: 'Contact Name', fw: 11, sortable: true },
     { key: 'phone', header: 'Phone', fw: 11 },

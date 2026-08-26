@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/Surface';
 import { SelectField, TextField, fieldSpan } from '@/components/ui/Form';
+import { downloadAttachment } from '@/utils/export';
 import { useToast } from '@/context/ToastContext';
 
 /**
@@ -148,7 +149,22 @@ export function CustomFilterPanel({
         </div>
         <div className="fi-filter__report-actions">
           <Button variant="primary" size="sm" disabled={!hasName} onClick={save}>Save</Button>
-          <Button variant="secondary" size="sm" disabled={!hasSelection} onClick={() => toast.notify('Download started.')}>Download</Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            disabled={!hasSelection}
+            /* A saved report is a set of criteria; downloading it hands over
+               those criteria rather than announcing a download. */
+            onClick={() => {
+              downloadAttachment(
+                { name: `${name || selected}.criteria`, description: 'Saved report criteria' },
+                Object.fromEntries(Object.entries(values ?? {}).filter(([, v]) => v !== '' && v != null)),
+              );
+              toast.notify(`${name || selected} downloaded.`);
+            }}
+          >
+            Download
+          </Button>
           <Button variant="secondary" size="sm" disabled={!hasSelection} onClick={update}>Update Report</Button>
           <Button variant="danger" size="sm" disabled={!hasSelection} onClick={remove}>Delete Report</Button>
         </div>

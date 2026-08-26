@@ -7,6 +7,9 @@ import { CardBrand, LinkCell, Money, Muted, TwoLine, menuColumn, moneyText, mone
 import {
   ALERTS, ALERT_OUTCOME_META, ALERT_SOURCE_OPTIONS, alertImpact, alertOutcome,
 } from '@/data/reports';
+import { useNavigate } from 'react-router-dom';
+import { NotesModal } from '@/components/fi911/RecordModals';
+import { notesFor } from '@/data/participants';
 import { routes } from '@/data/navigation';
 import { useToast } from '@/context/ToastContext';
 import { formatCurrency, formatPercent } from '@/utils/format';
@@ -68,6 +71,8 @@ function Impact({ stats }) {
 }
 
 export function ChargebacksAlerts() {
+  const navigate = useNavigate();
+  const [notesRow, setNotesRow] = useState(null);
   const toast = useToast();
   const [rows, setRows] = useState(ALERTS);
   const [tab, setTab] = useState('all');
@@ -131,44 +136,52 @@ export function ChargebacksAlerts() {
     menuColumn((row) => [
       row.outcome === 'pending' && { label: 'Refund now', icon: 'check', onSelect: () => resolve(row, 'refunded') },
       row.outcome === 'pending' && { label: 'Decline refund', icon: 'ban', onSelect: () => resolve(row, 'declined') },
-      row.caseNumber && { label: 'Open chargeback', icon: 'eye', onSelect: () => toast.notify(`Case ${row.caseNumber}`) },
-      { label: 'Notes', icon: 'message', onSelect: () => toast.notify('Notes') },
+      row.caseNumber && { label: 'Open chargeback', icon: 'eye', onSelect: () => navigate(routes.disputeDetail(row.caseNumber)) },
+      { label: 'Notes', icon: 'message', onSelect: () => setNotesRow(row) },
     ].filter(Boolean)),
   ];
 
   return (
-    <ListPage
-      title="Chargebacks & Alerts"
-      description="Pre-dispute alerts and the chargebacks they did — or did not — prevent"
-      tabs={tabs}
-      tab={tab}
-      onTabChange={setTab}
-    >
-      <Impact stats={stats} />
+    <>
+      <ListPage
+        title="Chargebacks & Alerts"
+        description="Pre-dispute alerts and the chargebacks they did — or did not — prevent"
+        tabs={tabs}
+        tab={tab}
+        onTabChange={setTab}
+      >
+        <Impact stats={stats} />
 
-      <div className="fi-panel" style={{ marginTop: 'var(--s-3)' }}>
-        <ListTable
-          key={tab}
-          columns={columns}
-          rows={visible}
-          searchPlaceholder="Search alerts"
-          exportName="chargebacks-alerts"
-          totals={['amount']}
-          onAdvanced={() => setAdvancedOpen((v) => !v)}
-          advancedOpen={advancedOpen}
-          advanced={(
-            <AdvancedSearchPanel
-              fields={ADVANCED_FIELDS}
-              values={criteria}
-              onChange={setCriteria}
-              onSearch={() => { setApplied(criteria); setAdvancedOpen(false); }}
-              onClear={() => { setCriteria({}); setApplied({}); }}
-            />
-          )}
-          empty="No alerts match these criteria."
-        />
-      </div>
-    </ListPage>
+        <div className="fi-panel" style={{ marginTop: 'var(--s-3)' }}>
+          <ListTable
+            key={tab}
+            columns={columns}
+            rows={visible}
+            searchPlaceholder="Search alerts"
+            exportName="chargebacks-alerts"
+            totals={['amount']}
+            onAdvanced={() => setAdvancedOpen((v) => !v)}
+            advancedOpen={advancedOpen}
+            advanced={(
+              <AdvancedSearchPanel
+                fields={ADVANCED_FIELDS}
+                values={criteria}
+                onChange={setCriteria}
+                onSearch={() => { setApplied(criteria); setAdvancedOpen(false); }}
+                onClear={() => { setCriteria({}); setApplied({}); }}
+              />
+            )}
+            empty="No alerts match these criteria."
+          />
+        </div>
+      </ListPage>
+      <NotesModal
+        open={Boolean(notesRow)}
+        onClose={() => setNotesRow(null)}
+        notes={notesRow ? notesFor(notesRow.id) : []}
+        subject={notesRow ? { label: 'Alert', value: notesRow.alertId ?? notesRow.id } : undefined}
+      />
+    </>
   );
 }
 

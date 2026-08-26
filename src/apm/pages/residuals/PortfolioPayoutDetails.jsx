@@ -3,6 +3,8 @@ import { ListPage, ListTable } from '@/components/fi911/ListPage';
 import { LinkCell, Money, TwoLine, moneyText } from '@/components/fi911/cells';
 import { PAYOUT_SCOPE, PORTFOLIO_PAYOUTS } from '@/apm/data/residuals';
 import { formatNumber } from '@/utils/format';
+import { useNavigate } from 'react-router-dom';
+import { routes } from '@/apm/data/navigation';
 import { useToast } from '@/context/ToastContext';
 
 /** Portfolio Payout Details — payout traced to the individual participant
@@ -16,6 +18,7 @@ const money = (key, header, fw = 9) => ({
 });
 
 export function PortfolioPayoutDetails() {
+  const navigate = useNavigate();
   const [tab, setTab] = useState('portfolio');
   const toast = useToast();
 
@@ -27,7 +30,7 @@ export function PortfolioPayoutDetails() {
       cell: (r) => (
         <TwoLine
           primary={r.participant}
-          secondary={<LinkCell onClick={() => toast.notify(`MID ${r.mid}`)}>{r.mid}</LinkCell>}
+          secondary={<LinkCell onClick={() => navigate(routes.liveParticipants)}>{r.mid}</LinkCell>}
         />
       ),
       text: (r) => `${r.participant} ${r.mid}`,

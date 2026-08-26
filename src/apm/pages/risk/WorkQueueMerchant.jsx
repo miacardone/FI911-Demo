@@ -10,6 +10,7 @@ import { useDetailCrumb } from '@/components/layout/AppLayout';
 import { queueTransactions, workQueueRow } from '@/apm/data/riskQueue';
 import { routes } from '@/apm/data/navigation';
 import { useToast } from '@/context/ToastContext';
+import { useRecords } from '@/hooks/useRecords';
 
 /**
  * The transactions behind one work-queue merchant.
@@ -46,7 +47,9 @@ export function WorkQueueMerchant() {
 
   const decoded = decodeURIComponent(mid ?? '');
   const merchant = workQueueRow(decoded);
-  const rows = useMemo(() => queueTransactions(decoded), [decoded]);
+  const seed = useMemo(() => queueTransactions(decoded), [decoded]);
+  const store = useRecords(seed, { key: 'transactionId' });
+  const rows = store.rows;
 
   useDetailCrumb(merchant.merchant);
 
@@ -56,8 +59,23 @@ export function WorkQueueMerchant() {
 
   const columns = [
     menuColumn((r) => [
-      { label: 'Release transaction', icon: 'check', onSelect: () => toast.notify(`${r.transactionId} released.`) },
-      { label: 'Decline transaction', icon: 'ban', tone: 'danger', onSelect: () => toast.notify(`${r.transactionId} declined.`) },
+      {
+        label: 'Release transaction',
+        icon: 'check',
+        onSelect: () => {
+          store.update(r, { flaggedStatus: 'Released' });
+          toast.notify(`${r.transactionId} released.`);
+        },
+      },
+      {
+        label: 'Decline transaction',
+        icon: 'ban',
+        tone: 'danger',
+        onSelect: () => {
+          store.update(r, { flaggedStatus: 'Declined' });
+          toast.notify(`${r.transactionId} declined.`);
+        },
+      },
       { label: 'Open case', icon: 'folder', onSelect: () => navigate(routes.actionHistory) },
     ]),
     { key: 'transactionId', header: 'Transaction ID', fw: 12, sortable: true },

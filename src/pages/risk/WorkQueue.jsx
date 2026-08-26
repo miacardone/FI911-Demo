@@ -16,6 +16,8 @@ import {
 import { MERCHANT_STATUSES } from '@/data/risk';
 import { routes } from '@/data/navigation';
 import { useToast } from '@/context/ToastContext';
+import { downloadCsv } from '@/utils/export';
+import { useRecords } from '@/hooks/useRecords';
 import brand from '@/brand/brand.config';
 
 /**
@@ -93,9 +95,12 @@ function FlaggedTab() {
 
   /* Local assignment overrides sit on top of the seeded data so the Assign
      action visibly changes the row it was invoked from. */
+  /* In state so Hold merchant sets a status rather than announcing one. */
+  const store = useRecords(WORK_QUEUE, { key: 'id' });
+
   const base = useMemo(
-    () => WORK_QUEUE.map((r) => (assigned[r.id] ? { ...r, assignedUser: assigned[r.id] } : r)),
-    [assigned],
+    () => store.rows.map((r) => (assigned[r.id] ? { ...r, assignedUser: assigned[r.id] } : r)),
+    [assigned, store.rows],
   );
 
   const rows = useMemo(() => {
@@ -122,7 +127,16 @@ function FlaggedTab() {
       { label: 'View transactions', icon: 'table', onSelect: () => openMerchant(r, 'transactions') },
       { label: 'View batches', icon: 'layers', onSelect: () => openMerchant(r, 'batches') },
       { label: 'View chargebacks', icon: 'alert', onSelect: () => navigate(routes.chargebacksAlerts) },
-      { label: 'Hold merchant', icon: 'pause', tone: 'danger', onSelect: () => toast.notify(`${r.merchant} placed on hold.`) },
+      {
+        label: r.merchantStatus === 'Merchant On Hold' ? 'Release merchant' : 'Hold merchant',
+        icon: r.merchantStatus === 'Merchant On Hold' ? 'play' : 'pause',
+        tone: r.merchantStatus === 'Merchant On Hold' ? undefined : 'danger',
+        onSelect: () => {
+          const next = r.merchantStatus === 'Merchant On Hold' ? 'Active' : 'Merchant On Hold';
+          store.update(r, { merchantStatus: next });
+          toast.notify(next === 'Active' ? `${r.merchant} released from hold.` : `${r.merchant} placed on hold — settlement suspended.`);
+        },
+      },
     ]),
     { key: 'triageScore', header: 'Triage', fw: 6, align: 'center', sortable: true, cell: (r) => <TriageScore value={r.triageScore} />, description: 'Queue ordering — alert severity, exposed value and chargeback ratio combined' },
     {
@@ -225,21 +239,45 @@ function FlaggedTab() {
  * Batch File Processing tab
  * ------------------------------------------------------------------ */
 
-function BatchTab() {
+function BatchTab({ onViewFlagged }) {
   const toast = useToast();
   const [tab, setTab] = useState('all');
+  const store = useRecords(BATCH_FILES, { key: 'id' });
 
   const rows = useMemo(
-    () => BATCH_FILES.filter((BATCH_FILE_TABS.find((t) => t.value === tab) ?? BATCH_FILE_TABS[0]).match),
-    [tab],
+    () => store.rows.filter((BATCH_FILE_TABS.find((t) => t.value === tab) ?? BATCH_FILE_TABS[0]).match),
+    [tab, store.rows],
   );
-  const tabs = BATCH_FILE_TABS.map((t) => ({ ...t, count: BATCH_FILES.filter(t.match).length }));
+  const tabs = BATCH_FILE_TABS.map((t) => ({ ...t, count: store.rows.filter(t.match).length }));
 
   const columns = [
     menuColumn((r) => [
-      { label: 'View flagged rows', icon: 'table', onSelect: () => toast.notify(`${r.flaggedCount} flagged rows in ${r.batchId}.`) },
-      { label: 'Download source file', icon: 'download', onSelect: () => toast.notify(`Downloading ${r.fileName}.`) },
-      r.status === 'Failed' && { label: 'Re-run import', icon: 'refresh', onSelect: () => toast.notify(`${r.batchId} queued for re-import.`) },
+      r.flaggedCount > 0 && { label: `View ${r.flaggedCount} flagged rows`, icon: 'table', onSelect: onViewFlagged },
+      {
+        label: 'Download source file',
+        icon: 'download',
+        onSelect: () => {
+          downloadCsv(
+            [
+              { key: 'batchId', header: 'Batch ID' }, { key: 'fileName', header: 'File Name' },
+              { key: 'processor', header: 'Processor' }, { key: 'startedAt', header: 'Started' },
+              { key: 'txnCount', header: 'Transactions' }, { key: 'flaggedCount', header: 'Flagged' },
+              { key: 'status', header: 'Status' },
+            ],
+            [r],
+            r.fileName.replace(/\.[^.]+$/, ''),
+          );
+          toast.notify(`${r.fileName} downloaded.`);
+        },
+      },
+      r.status === 'Failed' && {
+        label: 'Re-run import',
+        icon: 'refresh',
+        onSelect: () => {
+          store.update(r, { status: 'In Progress', endedAt: '', durationMinutes: null });
+          toast.notify(`${r.batchId} queued for re-import.`);
+        },
+      },
     ]),
     { key: 'batchId', header: 'Batch ID', fw: 10, sortable: true },
     { key: 'fileName', header: 'File Name', fw: 18, sortable: true },
@@ -321,7 +359,7 @@ export function WorkQueue() {
         <Kpi label="Import problems" value={failures} meta="Files failed or completed with errors" invert />
       </div>
 
-      {tab === 'flagged' ? <FlaggedTab /> : <BatchTab />}
+      {tab === 'flagged' ? <FlaggedTab /> : <BatchTab onViewFlagged={() => setTab('flagged')} />}
     </ListPage>
   );
 }

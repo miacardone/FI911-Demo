@@ -14,6 +14,7 @@ import { RecordFormModal } from '@/components/fi911/RecordFormModal';
 import brand from '@/apm/brand.config';
 import { useToast } from '@/context/ToastContext';
 import { useRecords } from '@/hooks/useRecords';
+import { downloadCsv } from '@/utils/export';
 import { CURRENT_USER } from '@/apm/data/people';
 
 /**
@@ -340,7 +341,27 @@ export function UsersAccess() {
       onTabChange={setTab}
       headerActions={(
         <>
-          <Button variant="secondary" size="sm" icon="download" onClick={() => toast.notify('Access review exported.')}>Export</Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            icon="download"
+            /* An access review is a file somebody signs off, not a toast. */
+            onClick={() => {
+              downloadCsv(
+                [
+                  { key: 'name', header: 'User' }, { key: 'email', header: 'Email' },
+                  { key: 'role', header: 'Role' }, { key: 'profileType', header: 'Profile Type' },
+                  { key: 'lastActiveDays', header: 'Days Since Last Sign-In' },
+                  { key: 'mfa', header: 'MFA Enrolled' }, { key: 'status', header: 'Status' },
+                ],
+                users.rows,
+                'access-review',
+              );
+              toast.notify(`Access review exported — ${users.rows.length} accounts.`);
+            }}
+          >
+            Export
+          </Button>
           <Button variant="primary" size="sm" icon="plus" onClick={() => setDraft({})}>New</Button>
         </>
       )}

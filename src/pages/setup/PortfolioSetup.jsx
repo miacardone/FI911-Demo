@@ -6,6 +6,7 @@ import { PORTFOLIO_SETUP } from '@/data/setup';
 import { setupRoutes } from '@/data/navigation';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ImportButton } from '@/components/fi911/ImportButton';
 import { useToast } from '@/context/ToastContext';
 import { useRecords } from '@/hooks/useRecords';
 import { RecordFormModal } from '@/components/fi911/RecordFormModal';
@@ -86,7 +87,7 @@ export function PortfolioSetup() {
               {totalUnmapped} unmapped
             </Button>
           )}
-          <Button variant="secondary" size="sm" icon="upload" onClick={() => toast.notify('Import portfolios as CSV.')}>Import</Button>
+          <ImportButton noun="portfolios" />
           <Button variant="primary" size="sm" icon="plus" onClick={() => setDraft({})}>New</Button>
         </>
       )}

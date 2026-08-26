@@ -11,6 +11,7 @@ import {
   LIVE_PARTICIPANTS, LIVE_STATUS, attachmentsFor, filterStage, notesFor, stageTabs, statementsFor,
 } from '@/data/participants';
 import { routes } from '@/data/navigation';
+import { ImportButton } from '@/components/fi911/ImportButton';
 import { useToast } from '@/context/ToastContext';
 import brand from '@/brand/brand.config';
 
@@ -147,7 +148,7 @@ export function LiveParticipants() {
             onClear={() => { setCriteria({}); setApplied({}); }}
           />
         )}
-        leftExtra={<Button variant="primary" size="sm" icon="upload" onClick={() => toast.notify('Import — choose a merchant file to upload.')}>Import</Button>}
+        leftExtra={<ImportButton label="Import" noun="merchants" />}
         empty="No live merchants match these criteria."
       />
 

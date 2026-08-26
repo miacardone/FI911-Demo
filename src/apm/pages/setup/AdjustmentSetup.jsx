@@ -5,6 +5,7 @@ import { Badge, Button, Kpi } from '@/components/ui/Surface';
 import { Tooltip } from '@/components/ui/Overlay';
 import { ADJUSTMENT_SETUP } from '@/apm/data/setup';
 import { AGENTS } from '@/apm/data/people';
+import { ImportButton } from '@/components/fi911/ImportButton';
 import { useToast } from '@/context/ToastContext';
 import { useRecords } from '@/hooks/useRecords';
 import { RecordFormModal } from '@/components/fi911/RecordFormModal';
@@ -125,7 +126,7 @@ export function AdjustmentSetup() {
       onTabChange={setTab}
       headerActions={(
         <>
-          <Button variant="secondary" size="sm" icon="upload" onClick={() => toast.notify('Import adjustments as CSV.')}>Import</Button>
+          <ImportButton noun="adjustments" />
           <Button variant="primary" size="sm" icon="plus" onClick={() => setDraft({})}>Create</Button>
         </>
       )}

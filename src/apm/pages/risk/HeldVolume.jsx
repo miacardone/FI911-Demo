@@ -4,6 +4,8 @@ import { AdvancedSearchPanel, applyFilters } from '@/components/fi911/Filters';
 import { LinkCell, Money, Muted, StatusBadge, moneyText } from '@/components/fi911/cells';
 import { HELD_VOLUME, filterHeld, heldTabs } from '@/apm/data/risk';
 import { formatNumber } from '@/utils/format';
+import { useNavigate } from 'react-router-dom';
+import { routes } from '@/apm/data/navigation';
 import { useToast } from '@/context/ToastContext';
 import brand from '@/apm/brand.config';
 
@@ -21,6 +23,7 @@ const ADVANCED_FIELDS = [
 ];
 
 export function HeldVolume() {
+  const navigate = useNavigate();
   const toast = useToast();
   const [tab, setTab] = useState('all');
   const [advancedOpen, setAdvancedOpen] = useState(false);
@@ -33,7 +36,7 @@ export function HeldVolume() {
   const columns = [
     { key: 'status', header: 'Alert Status', fw: 9, sortable: true, cell: (r) => <StatusBadge value={r.status} /> },
     { key: 'alertDate', header: 'Alert Date', fw: 9, sortable: true },
-    { key: 'merchant', header: 'Merchant', fw: 14, sortable: true, cell: (r) => <LinkCell onClick={() => toast.notify(`${r.merchant} held volume`)}>{r.merchant}</LinkCell> },
+    { key: 'merchant', header: 'Merchant', fw: 14, sortable: true, cell: (r) => <LinkCell onClick={() => navigate(routes.merchantRiskProfile)}>{r.merchant}</LinkCell> },
     { key: 'processor', header: 'Processor', fw: 10, sortable: true },
     { key: 'mcc', header: 'MCC', fw: 6, sortable: true },
     { key: 'boarded', header: 'Boarded Date', fw: 9, sortable: true },

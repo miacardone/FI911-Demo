@@ -3,6 +3,8 @@ import { ListPage, ListTable } from '@/components/fi911/ListPage';
 import { LinkCell, Money, TwoLine, moneyText } from '@/components/fi911/cells';
 import { AGENT_PAYOUTS, MY_INCOME, PAYOUT_SCOPE } from '@/data/residuals';
 import { formatNumber } from '@/utils/format';
+import { useNavigate } from 'react-router-dom';
+import { routes } from '@/data/navigation';
 import { useToast } from '@/context/ToastContext';
 
 /** Payout Details — the agent roll-up, and "My Income", which is the same
@@ -15,6 +17,7 @@ const money = (key, header, fw = 9) => ({
 });
 
 export function PayoutDetails() {
+  const navigate = useNavigate();
   const [tab, setTab] = useState('payout');
   const toast = useToast();
 
@@ -28,7 +31,7 @@ export function PayoutDetails() {
     },
     {
       key: 'merchants', header: 'Merchants', fw: 8, align: 'right', sortable: true,
-      cell: (r) => <LinkCell onClick={() => toast.notify(`${r.merchants} merchants under ${r.agent}.`)}>{r.merchants}</LinkCell>,
+      cell: (r) => <LinkCell onClick={() => navigate(routes.portfolioPayoutDetails)}>{r.merchants}</LinkCell>,
     },
     { key: 'transactions', header: 'Transactions', fw: 9, align: 'right', sortable: true, cell: (r) => formatNumber(r.transactions) },
     money('volume', 'Volume', 10),

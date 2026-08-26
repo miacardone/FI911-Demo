@@ -7,6 +7,7 @@ import { Tooltip } from '@/components/ui/Overlay';
 import { PRICING_SCHEDULES, PRICING_TYPES, SPLIT_TYPES } from '@/data/setup';
 import { RecordFormModal } from '@/components/fi911/RecordFormModal';
 import { setupRoutes } from '@/data/navigation';
+import { ImportButton } from '@/components/fi911/ImportButton';
 import { useToast } from '@/context/ToastContext';
 import brand from '@/brand/brand.config';
 
@@ -143,7 +144,7 @@ export function PricingSchedules() {
       onTabChange={setTab}
       headerActions={(
         <>
-          <Button variant="secondary" size="sm" icon="upload" onClick={() => toast.notify('Import a rate card as CSV.')}>Import</Button>
+          <ImportButton noun="rates" />
           <Button variant="primary" size="sm" icon="plus" onClick={() => setEditing({})}>Create</Button>
         </>
       )}

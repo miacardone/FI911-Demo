@@ -3,10 +3,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/Surface';
 import { ListPage } from '@/components/fi911/ListPage';
 import { AdvancedSearchPanel, applyFilters } from '@/components/fi911/Filters';
-import { StatusBadge, TypeBadge, menuColumn } from '@/components/fi911/cells';
+import { StatusBadge, SummaryRow, TypeBadge, menuColumn } from '@/components/fi911/cells';
+import Modal from '@/components/ui/Modal';
 import { useDetailCrumb } from '@/components/layout/AppLayout';
 import { LIVE_PARTICIPANTS, participantMerchants } from '@/data/participants';
 import { routes } from '@/data/navigation';
+import { ImportButton } from '@/components/fi911/ImportButton';
 import { useToast } from '@/context/ToastContext';
 
 /** The merchant book beneath one live participant, reached from that row's
@@ -30,6 +32,7 @@ export function ParticipantMerchants() {
   useDetailCrumb(participant.merchant);
 
   const rows = useMemo(() => participantMerchants(participant), [participant]);
+  const [viewing, setViewing] = useState(null);
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [criteria, setCriteria] = useState({});
   const [applied, setApplied] = useState({});
@@ -46,8 +49,10 @@ export function ParticipantMerchants() {
     { key: 'changed', header: 'Status Change Date', fw: 10, sortable: true },
     { key: 'created', header: 'Creation Date', fw: 9, sortable: true },
     { key: 'status', header: 'Status', fw: 9, sortable: true, cell: (r) => <StatusBadge value={r.status} /> },
-    menuColumn(() => [
-      { label: 'View', icon: 'eye', onSelect: () => toast.notify('Merchant detail is out of scope for this demo.') },
+    menuColumn((r) => [
+      /* There is no deeper record behind these rows, but the row itself is
+         real — showing it beats announcing that it cannot be shown. */
+      { label: 'View', icon: 'eye', onSelect: () => setViewing(r) },
     ]),
   ];
 
@@ -72,9 +77,32 @@ export function ParticipantMerchants() {
       )}
       leftExtra={(
         <>
-          <Button variant="primary" size="sm" icon="upload" onClick={() => toast.notify('Import — choose a merchant file to upload.')}>Import</Button>
+          <ImportButton label="Import" noun="merchants" />
           <Button variant="secondary" size="sm" onClick={() => navigate(routes.liveParticipants)}>Back to participants</Button>
         </>
+      )}
+      footer={(
+        <Modal
+          open={Boolean(viewing)}
+          onClose={() => setViewing(null)}
+          title={viewing?.name ?? ''}
+          size="sm"
+          footer={<Button variant="secondary" onClick={() => setViewing(null)}>Close</Button>}
+        >
+          {viewing && (
+            <div className="fi-summary fi-summary--single">
+              <SummaryRow label="Name">{viewing.name}</SummaryRow>
+              <SummaryRow label="Type">{viewing.type}</SummaryRow>
+              <SummaryRow label="MID">{viewing.mid}</SummaryRow>
+              <SummaryRow label="Agent">{viewing.agent}</SummaryRow>
+              <SummaryRow label="Contact">{viewing.contact}</SummaryRow>
+              <SummaryRow label="Email">{viewing.email}</SummaryRow>
+              <SummaryRow label="Created">{viewing.created}</SummaryRow>
+              <SummaryRow label="Status Changed">{viewing.changed}</SummaryRow>
+              <SummaryRow label="Status"><StatusBadge value={viewing.status} /></SummaryRow>
+            </div>
+          )}
+        </Modal>
       )}
       empty="No merchants for this merchant."
     />
