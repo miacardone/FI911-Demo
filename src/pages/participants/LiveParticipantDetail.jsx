@@ -8,6 +8,7 @@ import {
   ParticipantRiskRulesSection, PaymentTerminalsSection, PricingSection, ShippingMethodSection,
   TransactionInformationSection,
 } from '@/components/fi911/AgreementSections';
+import { SummaryRow } from '@/components/fi911/cells';
 import { AttachmentsModal, NotesModal } from '@/components/fi911/RecordModals';
 import { useDetailCrumb } from '@/components/layout/AppLayout';
 import { LIVE_PARTICIPANTS, attachmentsFor, notesFor } from '@/data/participants';
@@ -28,15 +29,6 @@ import { statusTone } from '@/domain/statuses';
  * previous one. Treating them as a linear wizard would make reviewing the
  * pricing of a live participant a four-click journey.
  */
-
-function SummaryRow({ label, children }) {
-  return (
-    <div className="fi-summary__row">
-      <span className="fi-summary__label">{label} :</span>
-      <span className="fi-summary__value">{children}</span>
-    </div>
-  );
-}
 
 export function LiveParticipantDetail() {
   const { id } = useParams();

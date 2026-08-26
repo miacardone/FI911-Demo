@@ -54,7 +54,7 @@ export const routes = {
 
   /* Risk Management */
   workQueue: '/risk/work-queue',
-  workQueueMerchant: (mid = ':mid') => `/risk-management/work-queue/${mid}`,
+  workQueueMerchant: (mid = ':mid') => `/risk/work-queue/${mid}`,
   actionHistory: '/risk/action-history',
   unactionedQueue: '/risk/unactioned-queue',
 

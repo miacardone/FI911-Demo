@@ -108,19 +108,26 @@ function FlaggedTab() {
 
   const tabs = WORK_QUEUE_TABS.map((t) => ({ ...t, count: base.filter(t.match).length }));
 
-  const openTransactions = (r) => navigate(routes.workQueueMerchant(encodeURIComponent(r.mid)));
+  /* All three land on the same record; `view` picks which of its tabs opens.
+     Clicking the merchant name goes to the profile, because that is what the
+     name is asking about. */
+  const openMerchant = (r, view) => navigate(
+    routes.workQueueMerchant(encodeURIComponent(r.mid)) + (view ? `?view=${view}` : ''),
+  );
 
   const columns = [
     menuColumn((r) => [
       { label: 'Assign to…', icon: 'userCheck', onSelect: () => setAssignTarget(r) },
-      { label: 'View transactions', icon: 'table', onSelect: () => openTransactions(r) },
+      { label: 'View merchant profile', icon: 'user', onSelect: () => openMerchant(r) },
+      { label: 'View transactions', icon: 'table', onSelect: () => openMerchant(r, 'transactions') },
+      { label: 'View batches', icon: 'layers', onSelect: () => openMerchant(r, 'batches') },
       { label: 'View chargebacks', icon: 'alert', onSelect: () => navigate(routes.chargebacksAlerts) },
       { label: 'Hold merchant', icon: 'pause', tone: 'danger', onSelect: () => toast.notify(`${r.merchant} placed on hold.`) },
     ]),
     { key: 'triageScore', header: 'Triage', fw: 6, align: 'center', sortable: true, cell: (r) => <TriageScore value={r.triageScore} />, description: 'Queue ordering — alert severity, exposed value and chargeback ratio combined' },
     {
       key: 'merchant', header: 'Merchant', fw: 18, sortable: true,
-      cell: (r) => <TwoLine primary={<LinkCell onClick={() => openTransactions(r)}>{r.merchant}</LinkCell>} secondary={`MID: ${r.mid}`} />,
+      cell: (r) => <TwoLine primary={<LinkCell onClick={() => openMerchant(r)}>{r.merchant}</LinkCell>} secondary={`MID: ${r.mid}`} />,
       text: (r) => `${r.merchant} ${r.mid}`,
     },
     { key: 'partner', header: 'Partner', fw: 13, sortable: true, cell: (r) => <TwoLine primary={r.partner} secondary={r.partnerCode} />, text: (r) => `${r.partner} ${r.partnerCode}` },

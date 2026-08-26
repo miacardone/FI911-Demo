@@ -2477,3 +2477,62 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 }
 .password__toggle:hover { color: var(--c-primary-deep); background: var(--c-primary-wash); }
 .password__toggle[aria-pressed='true'] { color: var(--c-primary-deep); }
+
+/* ============================================================
+   RISK — MERCHANT PROFILE
+   The work-queue merchant record. Cards are deliberately NOT all
+   the same size: the approved-limits card and the ratio chart earn
+   the full width because they carry the judgement, and the four
+   reference cards tile beside each other because they are lookup.
+   ============================================================ */
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-3);
+  align-items: start;
+}
+.profile-grid__wide { grid-column: 1 / -1; }
+@media (max-width: 1080px) {
+  .profile-grid { grid-template-columns: 1fr; }
+}
+
+/* A single-column summary inside a card — the two-column default
+   collapses each label/value pair to about 90px in a half-width card,
+   which wraps every value onto its own line. */
+.fi-summary--single { grid-template-columns: 1fr; gap: var(--s-2) 0; }
+.fi-summary--single .fi-summary__label { min-width: 128px; }
+
+/* ---------- Approved vs observed ---------- */
+
+.limits {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-3) var(--s-5);
+}
+@media (max-width: 860px) { .limits { grid-template-columns: 1fr; } }
+
+.limit { display: grid; gap: 5px; justify-items: start; min-width: 0; }
+.limit__label {
+  font-size: var(--fs-micro); font-weight: 700; color: var(--c-ink-muted);
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.limit__figures { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; min-width: 0; }
+.limit__observed { font-size: 1.0625rem; font-weight: 700; color: var(--c-ink); font-variant-numeric: tabular-nums; }
+.limit__approved {
+  font-size: var(--fs-micro); color: var(--c-ink-subtle);
+  font-variant-numeric: tabular-nums; border-bottom: 1px dotted var(--c-line-strong); cursor: help;
+}
+.limit__meter {
+  width: 100%; height: 6px; border-radius: var(--r-pill);
+  background: var(--c-surface-sunken); border: 1px solid var(--c-line); overflow: hidden;
+}
+.limit__fill { display: block; height: 100%; border-radius: var(--r-pill); }
+.limit__fill--success { background: var(--c-success); }
+.limit__fill--warning { background: var(--c-warning); }
+.limit__fill--danger { background: var(--c-danger); }
+
+.profile-alerts { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; }
+
+/* Record-level tabs sit between the KPI strip and the view they switch. */
+.tabs--record { margin-bottom: var(--s-3); }

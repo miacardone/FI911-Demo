@@ -18,8 +18,8 @@
  */
 
 import { createDraw } from '@/data/rng';
-import { MERCHANTS, PARTNERS, RISK_MERCHANTS, midFor } from '@/data/reference';
-import { ASSIGNEES, CURRENT_USER } from '@/data/people';
+import { MERCHANTS, PARTNERS, RISK_MERCHANTS, midFor, routingNumberFor } from '@/data/reference';
+import { ASSIGNEES, CONTACTS, CURRENT_USER, emailFor } from '@/data/people';
 import brand from '@/brand/brand.config';
 
 /* ------------------------------------------------------------------ *
@@ -239,6 +239,133 @@ export function queueTransactions(mid, seed = 9103) {
 }
 
 export const workQueueRow = (mid) => WORK_QUEUE.find((r) => r.mid === mid) ?? WORK_QUEUE[0];
+
+/* ------------------------------------------------------------------ *
+ * Merchant profile
+ * ------------------------------------------------------------------ *
+ * An analyst who opens a work-queue row needs to answer one question before
+ * touching a transaction: is this merchant behaving outside what underwriting
+ * actually approved? So the profile stores the APPROVED figures next to the
+ * OBSERVED ones — a monthly cap next to month-to-date volume, an approved
+ * average ticket next to the real one — and derives the variance rather than
+ * leaving the analyst to divide two numbers in their head.
+ */
+
+const STREETS = ['Ashford Way', 'Kestrel Ridge Rd', 'Beaumont Ave', 'Lockridge St', 'Fairmount Blvd', 'Windsor Park Dr', 'Halstead Ln', 'Verona Ct'];
+const CITY_STATE = [
+  ['Charlotte', 'NC', '282'], ['Columbus', 'OH', '432'], ['Tempe', 'AZ', '852'],
+  ['Plano', 'TX', '750'], ['Naperville', 'IL', '605'], ['Boise', 'ID', '837'],
+  ['Alpharetta', 'GA', '300'], ['Bellevue', 'WA', '980'],
+];
+const ENTITY_TYPES = ['LLC', 'S-Corporation', 'C-Corporation', 'Sole Proprietorship'];
+const RESERVE_TYPES = ['Rolling', 'Capped', 'Upfront', 'None'];
+
+export function merchantProfile(mid) {
+  const row = workQueueRow(mid);
+  const d = createDraw(9105 + (Number(String(row.mid).slice(-5)) || 0));
+
+  const [city, state, zipPrefix] = d.pick(CITY_STATE);
+  const contact = d.pick(CONTACTS);
+  const mccEntry = brand.mccs.find((m) => m.code === row.mcc) ?? brand.mccs[0];
+
+  /* Approved at underwriting; the observed figures are what the merchant is
+     actually doing this month. The gap between them is the whole point. */
+  const approvedMonthly = d.money(180_000, 2_400_000);
+  const approvedAverageTicket = d.money(45, 520);
+  const approvedHighTicket = approvedAverageTicket * d.int(6, 14);
+  const monthToDateVolume = Math.round(approvedMonthly * d.float(0.42, 1.38));
+  const averageTicket = Math.round(approvedAverageTicket * d.float(0.7, 2.1) * 100) / 100;
+  const highestTicket = Math.round(averageTicket * d.int(4, 19) * 100) / 100;
+
+  const reserveType = d.weighted([['Rolling', 5], ['Capped', 2], ['None', 2], ['Upfront', 1]]);
+
+  return {
+    ...row,
+
+    /* Identity */
+    dbaName: row.merchant,
+    legalName: `${row.merchant.replace(/ (LLC|Inc|Co|Ltd)$/, '')} LLC`,
+    entityType: d.pick(ENTITY_TYPES),
+    taxId: `${d.int(10, 99)}-${d.digits(7)}`,
+    descriptor: row.merchant.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12),
+    mccLabel: mccEntry.label,
+    website: `www.${row.merchant.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`,
+
+    /* Where it is and who answers the phone */
+    addressLine: `${d.int(100, 9800)} ${d.pick(STREETS)}`,
+    city,
+    state,
+    zip: `${zipPrefix}${d.digits(2)}`,
+    contactName: contact,
+    contactPhone: `(${d.int(201, 989)}) ${d.int(200, 999)}-${d.digits(4)}`,
+    contactEmail: emailFor(contact, `${row.merchant.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`),
+
+    /* Banking and processing */
+    routingNumber: routingNumberFor(row.merchant),
+    accountNumber: `••••${d.digits(4)}`,
+    acquirer: d.pick(brand.processors),
+    openDate: `20${d.int(15, 24)}/${String(d.int(1, 12)).padStart(2, '0')}/${String(d.int(1, 28)).padStart(2, '0')}`,
+    lastReviewDate: `2026/0${d.int(4, 8)}/${String(d.int(1, 28)).padStart(2, '0')}`,
+
+    /* Approved vs observed — the reason this page exists */
+    approvedMonthly,
+    monthToDateVolume,
+    approvedAverageTicket,
+    averageTicket,
+    approvedHighTicket,
+    highestTicket,
+
+    /* Exposure */
+    reserveType,
+    reservePercent: reserveType === 'None' ? 0 : Math.round(d.float(2, 12) * 10) / 10,
+    reserveHeld: reserveType === 'None' ? 0 : d.money(4_000, 190_000),
+    rollingDays: reserveType === 'Rolling' ? d.pick([90, 120, 180]) : null,
+
+    /* Chargeback history — twelve months, most recent last */
+    chargebackHistory: Array.from({ length: 12 }, (_, i) => ({
+      label: `2025/${String(((i + 8) % 12) + 1).padStart(2, '0')}`,
+      value: Math.round(d.float(0.1, Math.max(0.4, row.mcbAmountRatio)) * 100) / 100,
+    })),
+  };
+}
+
+/* The variance an analyst is really asking about: how far past the approved
+   ceiling is this merchant running? Returned as a percentage delta so a
+   single sign test says whether it is a problem. */
+export const variance = (observed, approved) =>
+  (approved ? Math.round(((observed - approved) / approved) * 1000) / 10 : 0);
+
+/* Settlement batches belonging to ONE merchant. The page-level Batch File
+   Processing tab lists every file the platform ingested; this answers the
+   narrower question an analyst asks from a merchant row — which of THIS
+   merchant's batches tripped something. */
+export function merchantBatches(mid) {
+  const row = workQueueRow(mid);
+  const d = createDraw(9106 + (Number(String(row.mid).slice(-5)) || 0));
+
+  return Array.from({ length: d.int(6, 11) }, (_, i) => {
+    const day = 21 - i;
+    const txnCount = d.int(18, 640);
+    const flaggedCount = d.bool(0.55) ? d.int(1, Math.max(2, Math.round(txnCount * 0.14))) : 0;
+    const grossAmount = d.money(2_400, 148_000);
+    const codes = flaggedCount ? d.sample(BATCH_CODES, d.int(1, 3)) : [];
+
+    return {
+      id: `mb-${row.mid}-${i}`,
+      batchId: `B${2026080000 + i * 13 + (Number(String(row.mid).slice(-3)) || 0)}`,
+      settlementDate: `2026/08/${String(day).padStart(2, '0')}`,
+      submittedAt: `${String(d.int(1, 6)).padStart(2, '0')}:${String(d.int(0, 59)).padStart(2, '0')}`,
+      txnCount,
+      flaggedCount,
+      grossAmount,
+      netAmount: grossAmount - d.money(20, 900),
+      batchAlerts: codes,
+      scopeEvaluation: d.pick(['Settlement', 'Authorization']),
+      processor: row.processor,
+      status: flaggedCount ? d.weighted([['Held', 3], ['Released', 4], ['Under Review', 2]]) : 'Settled',
+    };
+  });
+}
 
 /* ------------------------------------------------------------------ *
  * Action History

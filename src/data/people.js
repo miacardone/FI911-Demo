@@ -9,6 +9,8 @@
  * which reads as a data bug in a demo.
  */
 
+import brand from '@/brand/brand.config';
+
 export const CURRENT_USER = {
   id: 'mia.cardone',
   name: 'Mia Cardone',
@@ -71,7 +73,7 @@ export const NOTE_AUTHORS = [
 const slug = (name) => name.toLowerCase().replace(/[^a-z]+/g, '.');
 
 /** Deterministic work email for any person, on the tenant's domain. */
-export const emailFor = (name, domain = 'ukpaymentsops.com') => `${slug(name)}@${domain}`;
+export const emailFor = (name, domain = brand.emailDomain) => `${slug(name)}@${domain}`;
 
 export const initialsFor = (name) =>
   name.split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();

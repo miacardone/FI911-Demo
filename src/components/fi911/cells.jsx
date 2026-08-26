@@ -245,3 +245,17 @@ export function GatewayMatch({ matched }) {
     </span>
   );
 }
+
+/**
+ * A label/value pair in a read-only record summary. Lived inside
+ * LiveParticipantDetail until the risk merchant profile needed the same
+ * pattern; a second copy would have been the moment the two drifted.
+ */
+export function SummaryRow({ label, children }) {
+  return (
+    <div className="fi-summary__row">
+      <span className="fi-summary__label">{label} :</span>
+      <span className="fi-summary__value">{children}</span>
+    </div>
+  );
+}
