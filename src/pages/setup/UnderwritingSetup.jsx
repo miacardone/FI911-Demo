@@ -4,7 +4,9 @@ import { Muted, StatusBadge, TwoLine, menuColumn } from '@/components/fi911/cell
 import { Badge, Button } from '@/components/ui/Surface';
 import { Tooltip } from '@/components/ui/Overlay';
 import Icon from '@/components/ui/Icon';
-import { RISK_CATEGORIES, UW_GROUPS, UW_KEYWORDS, UW_TEMPLATES } from '@/data/setup';
+import { PARAMETER_TYPES, RISK_CATEGORIES, TEMPLATE_LEVELS, UW_GROUPS, UW_KEYWORDS, UW_TEMPLATES } from '@/data/setup';
+import { RecordFormModal } from '@/components/fi911/RecordFormModal';
+import brand from '@/brand/brand.config';
 import { useToast } from '@/context/ToastContext';
 
 /**
@@ -46,12 +48,12 @@ function Usage({ count, lastUsed, noun = 'merchant' }) {
   );
 }
 
-function TemplatesTab() {
+function TemplatesTab({ added = [] }) {
   const toast = useToast();
   const [tab, setTab] = useState('all');
   const rows = useMemo(
-    () => UW_TEMPLATES.filter((TEMPLATE_TABS.find((t) => t.value === tab) ?? TEMPLATE_TABS[0]).match),
-    [tab],
+    () => [...added, ...UW_TEMPLATES].filter((TEMPLATE_TABS.find((t) => t.value === tab) ?? TEMPLATE_TABS[0]).match),
+    [tab, added],
   );
 
   const columns = [
@@ -115,7 +117,7 @@ function TemplatesTab() {
   );
 }
 
-function GroupsTab() {
+function GroupsTab({ added = [] }) {
   const toast = useToast();
 
   const columns = [
@@ -144,7 +146,7 @@ function GroupsTab() {
   return (
     <ListTable
       columns={columns}
-      rows={UW_GROUPS}
+      rows={[...added, ...UW_GROUPS]}
       searchPlaceholder="Search group name"
       exportName="uw-groups"
       totals={['members']}
@@ -153,7 +155,7 @@ function GroupsTab() {
   );
 }
 
-function KeywordsTab() {
+function KeywordsTab({ added = [] }) {
   const toast = useToast();
 
   const columns = [
@@ -191,7 +193,7 @@ function KeywordsTab() {
   return (
     <ListTable
       columns={columns}
-      rows={UW_KEYWORDS}
+      rows={[...added, ...UW_KEYWORDS]}
       searchPlaceholder="Search rule or term"
       exportName="uw-keywords"
       totals={['matchesLast30']}
@@ -200,26 +202,74 @@ function KeywordsTab() {
   );
 }
 
+/* One dialog per tab, so "New" always creates the thing the tab is showing
+   rather than raising a toast and leaving the grid unchanged. */
+const NEW_FIELDS = {
+  templates: [
+    { name: 'name', label: 'Template Name', required: true },
+    { name: 'level', label: 'Template Level', type: 'select', options: TEMPLATE_LEVELS, required: true },
+    { name: 'appliesTo', label: 'Applies To', type: 'select', options: brand.processors },
+    { name: 'category', label: 'Risk Category', type: 'select', options: RISK_CATEGORIES, required: true },
+    { name: 'rules', label: 'Checks', type: 'number' },
+  ],
+  groups: [
+    { name: 'name', label: 'Group Name', required: true },
+    { name: 'processor', label: 'Processor', type: 'select', options: brand.processors, required: true },
+    { name: 'parameterType', label: 'Parameter Type', type: 'select', options: PARAMETER_TYPES, required: true },
+    { name: 'members', label: 'Members', type: 'number' },
+  ],
+  keywords: [
+    { name: 'name', label: 'Rule Name', required: true },
+    { name: 'action', label: 'Action', type: 'select', options: ['Flag for review', 'Auto decline'], required: true },
+    { name: 'terms', label: 'Terms (comma separated)', type: 'textarea', required: true },
+  ],
+};
+
 export function UnderwritingSetup() {
   const toast = useToast();
   const [tab, setTab] = useState('templates');
+  const [creating, setCreating] = useState(false);
+  const [extra, setExtra] = useState({ templates: [], groups: [], keywords: [] });
+
+  const create = (v) => setExtra((x) => ({
+    ...x,
+    [tab]: [{
+      id: `new-${tab}-${x[tab].length}`,
+      status: 'Active',
+      updated: brand.today.replace(/-/g, '/'),
+      created: brand.today.replace(/-/g, '/'),
+      createdBy: 'Mia Cardone',
+      linkedMerchants: 0, lastApplied: '', isDefault: false,
+      usedByTemplates: 0, matchesLast30: 0,
+      ...v,
+      ...(tab === 'keywords' ? { terms: String(v.terms).split(',').map((t) => t.trim()).filter(Boolean) } : {}),
+    }, ...x[tab]],
+  }));
 
   return (
     <ListPage
       title="Underwriting Setup"
       description="What runs on an application, what it compares against, and what declines on sight"
       tabs={[
-        { value: 'templates', label: 'Templates', count: UW_TEMPLATES.length },
-        { value: 'groups', label: 'Parameter Groups', count: UW_GROUPS.length },
-        { value: 'keywords', label: 'Keyword Rules', count: UW_KEYWORDS.length },
+        { value: 'templates', label: 'Templates', count: UW_TEMPLATES.length + extra.templates.length },
+        { value: 'groups', label: 'Parameter Groups', count: UW_GROUPS.length + extra.groups.length },
+        { value: 'keywords', label: 'Keyword Rules', count: UW_KEYWORDS.length + extra.keywords.length },
       ]}
       tab={tab}
       onTabChange={setTab}
-      headerActions={<Button variant="primary" size="sm" icon="plus" onClick={() => toast.notify('New underwriting configuration.')}>New</Button>}
+      headerActions={<Button variant="primary" size="sm" icon="plus" onClick={() => setCreating(true)}>New</Button>}
     >
-      {tab === 'templates' && <TemplatesTab />}
-      {tab === 'groups' && <GroupsTab />}
-      {tab === 'keywords' && <KeywordsTab />}
+      {tab === 'templates' && <TemplatesTab added={extra.templates} />}
+      {tab === 'groups' && <GroupsTab added={extra.groups} />}
+      {tab === 'keywords' && <KeywordsTab added={extra.keywords} />}
+
+      <RecordFormModal
+        open={creating}
+        onClose={() => setCreating(false)}
+        title={tab === 'templates' ? 'template' : tab === 'groups' ? 'parameter group' : 'keyword rule'}
+        fields={NEW_FIELDS[tab]}
+        onSubmit={create}
+      />
     </ListPage>
   );
 }

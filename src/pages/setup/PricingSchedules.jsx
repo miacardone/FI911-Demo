@@ -4,7 +4,8 @@ import { ListPage } from '@/components/fi911/ListPage';
 import { LinkCell, Money, Muted, StatusBadge, TwoLine, menuColumn, moneyText } from '@/components/fi911/cells';
 import { Badge, Button } from '@/components/ui/Surface';
 import { Tooltip } from '@/components/ui/Overlay';
-import { PRICING_SCHEDULES, PRICING_TYPES } from '@/data/setup';
+import { PRICING_SCHEDULES, PRICING_TYPES, SPLIT_TYPES } from '@/data/setup';
+import { RecordFormModal } from '@/components/fi911/RecordFormModal';
 import { setupRoutes } from '@/data/navigation';
 import { useToast } from '@/context/ToastContext';
 import brand from '@/brand/brand.config';
@@ -33,6 +34,37 @@ export function PricingSchedules() {
   const toast = useToast();
   const [tab, setTab] = useState('all');
   const [rows, setRows] = useState(PRICING_SCHEDULES);
+  const [editing, setEditing] = useState(null);
+
+  /* Create and Edit share one dialog, so a schedule made here is identical in
+     shape to one that shipped with the demo. */
+  const FIELDS = [
+    { name: 'name', label: 'Schedule Name', required: true },
+    { name: 'processor', label: 'Processor', type: 'select', options: brand.processors, required: true },
+    { name: 'pricingType', label: 'Pricing Type', type: 'select', options: PRICING_TYPES, required: true },
+    { name: 'splitType', label: 'Split Type', type: 'select', options: SPLIT_TYPES },
+    { name: 'startMonth', label: 'Start Month', placeholder: 'Jan-2026' },
+    { name: 'profitPct', label: 'Profit %', type: 'number' },
+    { name: 'lossPct', label: 'Loss %', type: 'number' },
+    { name: 'description', label: 'Description', type: 'textarea' },
+  ];
+
+  const upsert = (v) => setRows((rs) => {
+    /* `editing` is {} when creating — truthy, so this has to test for an id.
+       Testing the object itself sent every create down the edit path, where it
+       matched no row and silently changed nothing. */
+    if (editing?.id) return rs.map((r) => (r.id === editing.id ? { ...r, ...v } : r));
+    return [{
+      id: `ps-new-${rs.length}`,
+      usersLinked: 0,
+      itemCount: 0,
+      created: brand.today.replace(/-/g, '/'),
+      updated: brand.today.replace(/-/g, '/'),
+      updatedBy: 'Mia Cardone',
+      status: 'Active',
+      ...v,
+    }, ...rs];
+  });
 
   const visible = useMemo(
     () => rows.filter((TABS.find((t) => t.value === tab) ?? TABS[0]).match),
@@ -43,6 +75,7 @@ export function PricingSchedules() {
   const columns = [
     menuColumn((r) => [
       { label: 'Edit rates', icon: 'edit', onSelect: () => navigate(setupRoutes.pricingScheduleDetail(r.id)) },
+      { label: 'Edit details', icon: 'sliders', onSelect: () => setEditing(r) },
       { label: 'Clone schedule', icon: 'copy', onSelect: () => toast.notify(`"${r.name}" cloned — the copy is inactive until you link an agent.`) },
       {
         label: r.status === 'Active' ? 'Deactivate' : 'Activate',
@@ -98,7 +131,7 @@ export function PricingSchedules() {
       headerActions={(
         <>
           <Button variant="secondary" size="sm" icon="upload" onClick={() => toast.notify('Import a rate card as CSV.')}>Import</Button>
-          <Button variant="primary" size="sm" icon="plus" onClick={() => toast.notify('New pricing schedule.')}>Create</Button>
+          <Button variant="primary" size="sm" icon="plus" onClick={() => setEditing({})}>Create</Button>
         </>
       )}
       columns={columns}
@@ -107,6 +140,16 @@ export function PricingSchedules() {
       exportName="pricing-schedules"
       onRowClick={(r) => navigate(setupRoutes.pricingScheduleDetail(r.id))}
       empty="No schedules in this view."
+      footer={(
+        <RecordFormModal
+          open={Boolean(editing)}
+          onClose={() => setEditing(null)}
+          title="pricing schedule"
+          fields={FIELDS}
+          initial={editing?.id ? editing : null}
+          onSubmit={upsert}
+        />
+      )}
     />
   );
 }

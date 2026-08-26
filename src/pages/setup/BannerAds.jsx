@@ -4,7 +4,9 @@ import { TabStrip } from '@/components/fi911/ListPage';
 import { RowMenu } from '@/components/fi911/cells';
 import { Tooltip } from '@/components/ui/Overlay';
 import Icon from '@/components/ui/Icon';
-import { BANNERS, BANNER_KINDS } from '@/data/setup';
+import { BANNERS, BANNER_KINDS, ROLES } from '@/data/setup';
+import { RecordFormModal } from '@/components/fi911/RecordFormModal';
+import brand from '@/brand/brand.config';
 import { useToast } from '@/context/ToastContext';
 
 /**
@@ -87,8 +89,26 @@ function BannerCard({ banner, onAction }) {
 export function BannerAds() {
   const toast = useToast();
   const [kind, setKind] = useState('thumbnail');
+  const [creating, setCreating] = useState(false);
+  const [added, setAdded] = useState([]);
 
-  const rows = useMemo(() => BANNERS.filter((b) => b.kind === kind), [kind]);
+  const rows = useMemo(
+    () => [...added, ...BANNERS].filter((b) => b.kind === kind),
+    [kind, added],
+  );
+
+  const create = (v) => setAdded((a) => [{
+    id: `ban-new-${a.length}`,
+    kind,
+    hue: (a.length * 47 + 190) % 360,
+    impressions: 0, clicks: 0, ctr: 0,
+    status: 'Scheduled',
+    ...v,
+    /* AFTER the spread: the form hands back a single role as a string and the
+       card maps over roles. Spreading last put the string back and took the
+       page down with it. */
+    roles: v.roles ? [v.roles] : ['Admin'],
+  }, ...a]);
 
   const live = BANNERS.filter((b) => b.status === 'Active');
   const impressions = BANNERS.reduce((s, b) => s + b.impressions, 0);
@@ -100,7 +120,7 @@ export function BannerAds() {
       <PageHeader
         title="Banner Ads"
         description="In-console announcements, and which roles actually see them"
-        actions={<Button variant="primary" size="sm" icon="plus" onClick={() => toast.notify('New banner.')}>New banner</Button>}
+        actions={<Button variant="primary" size="sm" icon="plus" onClick={() => setCreating(true)}>New banner</Button>}
       />
 
       <TabStrip
@@ -125,6 +145,19 @@ export function BannerAds() {
             </div>
           )}
       </div>
+
+      <RecordFormModal
+        open={creating}
+        onClose={() => setCreating(false)}
+        title="banner"
+        fields={[
+          { name: 'title', label: 'Title', required: true },
+          { name: 'roles', label: 'Visible To Role', type: 'select', options: ROLES.map((r) => r.name), required: true },
+          { name: 'startDate', label: 'Start Date', type: 'date', required: true },
+          { name: 'endDate', label: 'End Date', type: 'date' },
+        ]}
+        onSubmit={create}
+      />
     </>
   );
 }

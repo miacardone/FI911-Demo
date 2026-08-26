@@ -10,6 +10,8 @@ import {
   LANDING_PAGES, PROFILE_TYPES, ROLES, SETUP_USERS, USER_GROUPS, USER_TABS,
 } from '@/data/setup';
 import { PERMISSION_AREAS } from '@/data/navigation';
+import { RecordFormModal } from '@/components/fi911/RecordFormModal';
+import brand from '@/brand/brand.config';
 import { useToast } from '@/context/ToastContext';
 
 /**
@@ -80,12 +82,12 @@ function RoleDrawer({ role, onClose }) {
   );
 }
 
-function UsersTab() {
+function UsersTab({ added = [] }) {
   const toast = useToast();
   const [tab, setTab] = useState('all');
   const rows = useMemo(
-    () => SETUP_USERS.filter((USER_TABS.find((t) => t.value === tab) ?? USER_TABS[0]).match),
-    [tab],
+    () => [...added, ...SETUP_USERS].filter((USER_TABS.find((t) => t.value === tab) ?? USER_TABS[0]).match),
+    [tab, added],
   );
 
   const dormant = SETUP_USERS.filter((u) => u.dormant && u.status === 'Active');
@@ -156,7 +158,7 @@ function UsersTab() {
   );
 }
 
-function RolesTab() {
+function RolesTab({ added = [] }) {
   const toast = useToast();
   const [editing, setEditing] = useState(null);
 
@@ -187,7 +189,7 @@ function RolesTab() {
     <>
       <ListTable
         columns={columns}
-        rows={ROLES}
+        rows={[...added, ...ROLES]}
         searchPlaceholder="Search role name"
         exportName="roles"
         totals={['userCount']}
@@ -199,7 +201,7 @@ function RolesTab() {
   );
 }
 
-function GroupsTab() {
+function GroupsTab({ added = [] }) {
   const toast = useToast();
 
   const columns = [
@@ -225,7 +227,7 @@ function GroupsTab() {
   return (
     <ListTable
       columns={columns}
-      rows={USER_GROUPS}
+      rows={[...added, ...USER_GROUPS]}
       searchPlaceholder="Search group name"
       exportName="user-groups"
       totals={['users', 'merchants']}
@@ -234,31 +236,80 @@ function GroupsTab() {
   );
 }
 
+const NEW_FIELDS = {
+  users: [
+    { name: 'name', label: 'Full Name', required: true },
+    { name: 'email', label: 'Email', required: true },
+    { name: 'role', label: 'Role', type: 'select', options: ROLES.map((r) => r.name), required: true },
+    { name: 'phone', label: 'Phone' },
+    { name: 'group', label: 'Group', type: 'select', options: USER_GROUPS.map((g) => g.name) },
+  ],
+  roles: [
+    { name: 'name', label: 'Role Name', required: true },
+    { name: 'profileType', label: 'Profile Type', type: 'select', options: PROFILE_TYPES, required: true },
+    { name: 'homeLanding', label: 'Home Landing Page', type: 'select', options: LANDING_PAGES, required: true },
+    { name: 'setupLanding', label: 'Setup Landing Page', type: 'select', options: LANDING_PAGES },
+    { name: 'description', label: 'Description', type: 'textarea' },
+  ],
+  groups: [
+    { name: 'name', label: 'Group Name', required: true },
+    { name: 'type', label: 'Type', type: 'select', options: ['Group / Business Entity', 'Region / Channel-Department'], required: true },
+    { name: 'region', label: 'Region' },
+  ],
+};
+
 export function UsersAccess() {
   const toast = useToast();
   const [tab, setTab] = useState('users');
+  const [creating, setCreating] = useState(false);
+  const [extra, setExtra] = useState({ users: [], roles: [], groups: [] });
+
+  const create = (v) => setExtra((x) => ({
+    ...x,
+    [tab]: [{
+      id: `new-${tab}-${x[tab].length}`,
+      status: 'Active',
+      created: brand.today.replace(/-/g, '/'),
+      updated: brand.today.replace(/-/g, '/'),
+      startDate: brand.today.replace(/-/g, '/'),
+      lastActiveDays: 0, dormant: false, mfa: true,
+      linkedProfiles: 0, reportingUsers: 0, partner: '',
+      userCount: 0, permissions: 0, users: 0, merchants: 0,
+      profileType: v.profileType ?? 'Company Admin',
+      createdBy: 'Mia Cardone', updatedBy: 'Mia Cardone',
+      ...v,
+    }, ...x[tab]],
+  }));
 
   return (
     <ListPage
       title="Users & Access Control"
       description="Accounts, roles, groups and what each of them can reach"
       tabs={[
-        { value: 'users', label: 'Users', count: SETUP_USERS.length },
-        { value: 'roles', label: 'Roles', count: ROLES.length },
-        { value: 'groups', label: 'Groups', count: USER_GROUPS.length },
+        { value: 'users', label: 'Users', count: SETUP_USERS.length + extra.users.length },
+        { value: 'roles', label: 'Roles', count: ROLES.length + extra.roles.length },
+        { value: 'groups', label: 'Groups', count: USER_GROUPS.length + extra.groups.length },
       ]}
       tab={tab}
       onTabChange={setTab}
       headerActions={(
         <>
           <Button variant="secondary" size="sm" icon="download" onClick={() => toast.notify('Access review exported.')}>Export</Button>
-          <Button variant="primary" size="sm" icon="plus" onClick={() => toast.notify('New account.')}>New</Button>
+          <Button variant="primary" size="sm" icon="plus" onClick={() => setCreating(true)}>New</Button>
         </>
       )}
     >
-      {tab === 'users' && <UsersTab />}
-      {tab === 'roles' && <RolesTab />}
-      {tab === 'groups' && <GroupsTab />}
+      {tab === 'users' && <UsersTab added={extra.users} />}
+      {tab === 'roles' && <RolesTab added={extra.roles} />}
+      {tab === 'groups' && <GroupsTab added={extra.groups} />}
+
+      <RecordFormModal
+        open={creating}
+        onClose={() => setCreating(false)}
+        title={tab === 'users' ? 'user' : tab === 'roles' ? 'role' : 'group'}
+        fields={NEW_FIELDS[tab]}
+        onSubmit={create}
+      />
     </ListPage>
   );
 }

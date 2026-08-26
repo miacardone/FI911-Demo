@@ -377,6 +377,9 @@ export function ListPage({
   scope,
   onClearScope,
   children,
+  /** Rendered after the panel — modals and drawers a page owns. Passing them
+   *  as children would replace the table, which is the trap here. */
+  footer,
   ...tableProps
 }) {
   return (
@@ -389,6 +392,8 @@ export function ListPage({
       <div className="fi-panel">
         {children ?? <ListTable {...tableProps} />}
       </div>
+
+      {footer}
     </>
   );
 }

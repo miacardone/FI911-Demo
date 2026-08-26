@@ -80,8 +80,14 @@ export function TenantConfiguration() {
         title="Tenant Configuration"
         description="The single control file behind every screen in this console"
         actions={(
-          <Button variant="primary" size="sm" icon="check" onClick={() => toast.notify('Configuration saved.')}>
-            Save configuration
+          <Button
+            variant="primary"
+            size="sm"
+            icon="check"
+            disabled={!form.dirty}
+            onClick={() => { form.markSaved(); toast.notify('Tenant configuration saved.'); }}
+          >
+            {form.dirty ? 'Save configuration' : 'Saved'}
           </Button>
         )}
       />
@@ -97,7 +103,7 @@ export function TenantConfiguration() {
           </FieldGrid>
         </Section>
 
-        <Section title="Localisation">
+        <Section title="Localization">
           <FieldGrid columns={3}>
             <SelectField {...field('currency', 'Currency')} options={opts(['USD', 'EUR', 'GBP'])} />
             <SelectField {...field('locale', 'Locale')} options={opts(['en-US', 'en-GB', 'de-DE'])} />

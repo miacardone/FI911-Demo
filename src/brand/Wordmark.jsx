@@ -8,7 +8,7 @@ import { useBrand } from '@/brand/BrandProvider';
 export function Wordmark({ inverse = false, showText = true, size = 26, markOnly = false }) {
   const brand = useBrand();
   /* The collapsed rail is 62px wide — the full lockup would be illegible, so
-     it falls back to the badge, which is the recognisable part anyway. */
+     it falls back to the badge, which is the recognizable part anyway. */
   const src = markOnly
     ? (inverse ? (brand.logoMarkInverse ?? brand.logoMark ?? brand.logo) : (brand.logoMark ?? brand.logo))
     : (inverse ? (brand.logoInverse ?? brand.logo) : brand.logo);
