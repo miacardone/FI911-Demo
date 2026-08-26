@@ -19,11 +19,11 @@ import brand from '@/brand/brand.config';
 
 /* The header block every document carries, then a type-specific body. */
 const BODY = {
-  kyc: (doc) => ({
+  kyc: ({ holder, account }) => ({
     heading: 'Know Your Customer — Verification Pack',
     rows: [
-      ['Subject', doc.merchant],
-      ['Routing Number', doc.routingNumber],
+      ['Subject', holder],
+      [account?.length === 9 ? 'Routing Number' : 'Sort Code', account],
       ['Identity check', 'Passed — full match on name, DOB and address'],
       ['Sanctions screening', 'No match on any consolidated watch list'],
       ['Beneficial owners', '2 identified, both verified'],
@@ -31,11 +31,11 @@ const BODY = {
     ],
     note: 'Retained under KYC obligations. Access restricted to underwriting and risk.',
   }),
-  bank: (doc) => ({
+  bank: ({ holder, account }) => ({
     heading: 'Bank Statement — Settlement Account',
     rows: [
-      ['Account holder', doc.merchant],
-      ['Routing Number', doc.routingNumber],
+      ['Account holder', holder],
+      [account?.length === 9 ? 'Routing Number' : 'Sort Code', account],
       ['Statement period', '01 – 30 June 2026'],
       ['Opening balance', '$48,210.55'],
       ['Deposits', '$412,880.10'],
@@ -44,22 +44,22 @@ const BODY = {
     ],
     note: 'Supplied by the applicant in support of the processing agreement.',
   }),
-  mpa: (doc) => ({
+  mpa: ({ holder, account }) => ({
     heading: 'Merchant Processing Application',
     rows: [
-      ['Legal name', `${doc.merchant} LLC`],
-      ['DBA name', doc.merchant],
-      ['Routing Number', doc.routingNumber],
+      ['Legal name', `${holder} LLC`],
+      ['DBA name', holder],
+      [account?.length === 9 ? 'Routing Number' : 'Sort Code', account],
       ['Requested monthly volume', '$1,250,000.00'],
       ['Requested average ticket', '$185.00'],
       ['Requested high ticket', '$2,400.00'],
     ],
     note: 'Signed by the principal and countersigned by the acquirer.',
   }),
-  evidence: (doc) => ({
+  evidence: ({ holder }) => ({
     heading: 'Dispute Evidence — Compelling Evidence Pack',
     rows: [
-      ['Merchant', doc.merchant],
+      ['Merchant', holder],
       ['Reason code', '13.1 — Merchandise/Services Not Received'],
       ['Disputed amount', '$1,134.17'],
       ['Evidence supplied', 'Proof of delivery, AVS match, prior undisputed history'],
@@ -67,10 +67,10 @@ const BODY = {
     ],
     note: 'Assembled for representment. Retained for the life of the dispute plus 24 months.',
   }),
-  statement: (doc) => ({
+  statement: ({ holder }) => ({
     heading: 'Billing Statement',
     rows: [
-      ['Merchant', doc.merchant],
+      ['Merchant', holder],
       ['Billing period', 'July 2026'],
       ['Gross processing volume', '$1,184,534.00'],
       ['Discount and interchange', '$28,412.09'],
@@ -80,21 +80,21 @@ const BODY = {
     ],
     note: 'Issued monthly. Disputes on billing must be raised within 60 days.',
   }),
-  tax: (doc) => ({
+  tax: ({ holder }) => ({
     heading: 'Tax Certificate',
     rows: [
-      ['Entity', `${doc.merchant} LLC`],
+      ['Entity', `${holder} LLC`],
       ['Federal Tax ID', '84-7719022'],
       ['Filing status', 'Current — no outstanding federal liability'],
       ['Tax year', '2025'],
     ],
     note: 'Verified against the IRS TIN matching service at onboarding.',
   }),
-  contract: (doc) => ({
+  contract: ({ holder, account }) => ({
     heading: 'Merchant Processing Agreement — Executed',
     rows: [
-      ['Merchant', doc.merchant],
-      ['Routing Number', doc.routingNumber],
+      ['Merchant', holder],
+      [account?.length === 9 ? 'Routing Number' : 'Sort Code', account],
       ['Agreement term', '36 months from 2026/03/01'],
       ['Early termination fee', '$495.00'],
       ['Pricing schedule', 'Interchange Plus — 0.25% + $0.10'],
@@ -106,8 +106,15 @@ const BODY = {
 export function DocumentPreview({ doc, onClose, onDownload }) {
   if (!doc) return null;
 
+  /* Both consoles render through this component, and they name the account
+     holder differently — the acquiring console stores `merchant` against a
+     routing number, the alternative-payments one stores `participant`
+     against a sort code. Reading either keeps one implementation. */
+  const holder = doc.merchant ?? doc.participant;
+  const account = doc.routingNumber ?? doc.sortCode;
+
   const build = BODY[doc.typeId] ?? BODY.mpa;
-  const { heading, rows, note } = build(doc);
+  const { heading, rows, note } = build({ holder, account });
   const extension = doc.name.split('.').pop().toUpperCase();
 
   return (

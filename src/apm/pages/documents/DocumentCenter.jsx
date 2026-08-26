@@ -6,6 +6,9 @@ import { AdvancedSearchPanel, applyFilters } from '@/components/fi911/Filters';
 import { Muted, TwoLine, menuColumn } from '@/components/fi911/cells';
 import { DOCUMENTS, DOCUMENT_TYPES } from '@/apm/data/reports';
 import { INSTITUTIONS } from '@/apm/data/reference';
+import { Tooltip } from '@/components/ui/Overlay';
+import { DocumentPreview } from '@/components/fi911/DocumentPreview';
+import { downloadCsv } from '@/utils/export';
 import { useToast } from '@/context/ToastContext';
 
 /**
@@ -48,6 +51,24 @@ export function DocumentCenter() {
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [criteria, setCriteria] = useState({});
   const [applied, setApplied] = useState({});
+  const [preview, setPreview] = useState(null);
+
+  /* There is no real file behind a generated record, so "Download" hands over
+     the metadata the console actually holds rather than pretending to stream
+     a PDF it does not have. */
+  const download = (row) => {
+    downloadCsv(
+      [
+        { key: 'name', header: 'File' }, { key: 'type', header: 'Document Type' },
+        { key: 'participant', header: 'Participant' }, { key: 'sortCode', header: 'Sort Code' },
+        { key: 'uploadedBy', header: 'Uploaded By' }, { key: 'uploaded', header: 'Uploaded' },
+        { key: 'expires', header: 'Retention Expiry' },
+      ],
+      [row],
+      row.name.replace(/\.[^.]+$/, ''),
+    );
+    toast.notify(`${row.name} downloaded.`);
+  };
 
   const enriched = useMemo(
     () => docs.map((d) => ({ ...d, expires: stamp(expiryOf(d)), daysLeft: daysUntilExpiry(d) })),
@@ -73,7 +94,12 @@ export function DocumentCenter() {
       key: 'name', header: 'File', fw: 20, sortable: true,
       cell: (r) => (
         <span className="row row--tight row--nowrap">
-          <Icon name={r.icon} size={16} className="subtle" />
+          {/* The glyph is the document TYPE. Without a tooltip it is decoration
+              — a shield and a spreadsheet icon next to two filenames tell you
+              nothing about which is the KYC pack. */}
+          <Tooltip label={`${r.type} · ${r.name.split('.').pop().toUpperCase()} file`}>
+            <span className="doc-icon"><Icon name={r.icon} size={16} /></span>
+          </Tooltip>
           <TwoLine primary={r.name} secondary={`${r.sizeMb} MB`} />
         </span>
       ),
@@ -107,9 +133,21 @@ export function DocumentCenter() {
       text: (r) => (r.confidential ? 'Confidential' : 'Standard'),
     },
     menuColumn((row) => [
-      { label: 'Preview', icon: 'eye', onSelect: () => toast.notify(`Previewing ${row.name}`) },
-      { label: 'Download', icon: 'download', onSelect: () => toast.notify('Download started.') },
-      { label: 'Copy link', icon: 'link', onSelect: () => toast.notify('Link copied.') },
+      { label: 'Preview', icon: 'eye', onSelect: () => setPreview(row) },
+      { label: 'Download', icon: 'download', onSelect: () => download(row) },
+      {
+        label: 'Copy link',
+        icon: 'link',
+        onSelect: async () => {
+          const url = `${window.location.origin}/documents/${row.id}`;
+          try {
+            await navigator.clipboard.writeText(url);
+            toast.notify('Link copied to the clipboard.');
+          } catch {
+            toast.notify('Could not reach the clipboard.', 'danger');
+          }
+        },
+      },
       {
         label: 'Delete',
         icon: 'trash',
@@ -124,7 +162,7 @@ export function DocumentCenter() {
   return (
     <ListPage
       title="Document Center"
-      description="Every document held against a participant, with its retention position"
+      description="Every document held against a merchant, with its retention position"
       tabs={tabs}
       tab={tab}
       onTabChange={setTab}
@@ -148,6 +186,7 @@ export function DocumentCenter() {
         />
       )}
       leftExtra={<Button variant="primary" size="sm" icon="upload" onClick={() => toast.notify('Choose a file to upload.')}>Upload</Button>}
+      footer={<DocumentPreview doc={preview} onClose={() => setPreview(null)} onDownload={download} />}
       empty="No documents match these criteria."
     />
   );
