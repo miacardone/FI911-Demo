@@ -76,7 +76,20 @@ export function PricingSchedules() {
     menuColumn((r) => [
       { label: 'Edit rates', icon: 'edit', onSelect: () => navigate(setupRoutes.pricingScheduleDetail(r.id)) },
       { label: 'Edit details', icon: 'sliders', onSelect: () => setEditing(r) },
-      { label: 'Clone schedule', icon: 'copy', onSelect: () => toast.notify(`"${r.name}" cloned — the copy is inactive until you link an agent.`) },
+      {
+        label: 'Clone schedule',
+        icon: 'copy',
+        onSelect: () => {
+          setRows((rs) => {
+            const i = rs.findIndex((x) => x.id === r.id);
+            const copy = { ...r, id: `${r.id}-copy-${rs.length}`, name: `${r.name} (Copy)`, status: 'Inactive', agents: 0, merchants: 0 };
+            const next = [...rs];
+            next.splice(i + 1, 0, copy);
+            return next;
+          });
+          toast.notify(`"${r.name}" cloned — the copy is inactive until you link an agent.`);
+        },
+      },
       {
         label: r.status === 'Active' ? 'Deactivate' : 'Activate',
         icon: 'power',

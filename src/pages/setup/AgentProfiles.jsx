@@ -3,8 +3,13 @@ import { ListPage, ListTable } from '@/components/fi911/ListPage';
 import { LinkCell, Money, Muted, StatusBadge, TwoLine, menuColumn, moneyText, moneyTotal } from '@/components/fi911/cells';
 import { Badge, Button } from '@/components/ui/Surface';
 import { Tooltip } from '@/components/ui/Overlay';
-import { PAYOUT_PROFILES, PORTFOLIO_PROFILES } from '@/data/setup';
+import { useNavigate } from 'react-router-dom';
+import { PAYOUT_PROFILES, PORTFOLIO_PROFILES, PRICING_SCHEDULES } from '@/data/setup';
+import { routes } from '@/data/navigation';
 import { useToast } from '@/context/ToastContext';
+import { useRecords } from '@/hooks/useRecords';
+import { RecordFormModal } from '@/components/fi911/RecordFormModal';
+import brand from '@/brand/brand.config';
 
 /**
  * Setup > Residuals > Agent Profiles.
@@ -27,19 +32,28 @@ const PAYOUT_TABS = [
   { value: 'inactive', label: 'Inactive', match: (r) => r.status === 'Inactive' },
 ];
 
-function PayoutTab() {
+function PayoutTab({ store, onEdit }) {
   const toast = useToast();
+  const navigate = useNavigate();
   const [tab, setTab] = useState('all');
+  const all = store.rows;
   const rows = useMemo(
-    () => PAYOUT_PROFILES.filter((PAYOUT_TABS.find((t) => t.value === tab) ?? PAYOUT_TABS[0]).match),
-    [tab],
+    () => all.filter((PAYOUT_TABS.find((t) => t.value === tab) ?? PAYOUT_TABS[0]).match),
+    [tab, all],
   );
 
   const columns = [
     menuColumn((r) => [
-      { label: 'Edit profile', icon: 'edit', onSelect: () => toast.notify(`Editing ${r.agent} (${r.repCode}).`) },
-      { label: 'View payouts', icon: 'dollar', onSelect: () => toast.notify(`Payout history for ${r.repCode}.`) },
-      { label: 'Change status', icon: 'power', onSelect: () => toast.notify(`${r.repCode} status changed.`) },
+      { label: 'Edit profile', icon: 'edit', onSelect: () => onEdit(r) },
+      /* The payout history for an agent already has a screen; sending the
+         operator there beats describing it in a toast. */
+      { label: 'View payouts', icon: 'dollar', onSelect: () => navigate(routes.agentPayoutSummary) },
+      {
+        label: r.status === 'Active' ? 'Deactivate' : 'Activate',
+        icon: 'power',
+        tone: r.status === 'Active' ? 'danger' : undefined,
+        onSelect: () => toast.notify(`${r.repCode} is now ${store.toggleStatus(r).toLowerCase()}.`),
+      },
     ]),
     {
       key: 'agent', header: 'Agent', fw: 15, sortable: true,
@@ -94,13 +108,13 @@ function PayoutTab() {
   );
 }
 
-function PortfolioTab() {
-  const toast = useToast();
+function PortfolioTab({ store, onEdit }) {
+  const navigate = useNavigate();
 
   const columns = [
     menuColumn((r) => [
-      { label: 'Edit portfolio', icon: 'edit', onSelect: () => toast.notify(`Editing ${r.name}.`) },
-      { label: 'View merchants', icon: 'users', onSelect: () => toast.notify(`${r.merchants} merchants in ${r.name}.`) },
+      { label: 'Edit portfolio', icon: 'edit', onSelect: () => onEdit(r) },
+      { label: 'View merchants', icon: 'users', onSelect: () => navigate(routes.portfolioPayoutDetails) },
     ]),
     { key: 'name', header: 'Portfolio Name', fw: 26, sortable: true, cell: (r) => <TwoLine primary={r.name} secondary={r.processor} />, text: (r) => `${r.name} ${r.processor}` },
     {
@@ -124,7 +138,7 @@ function PortfolioTab() {
   return (
     <ListTable
       columns={columns}
-      rows={PORTFOLIO_PROFILES}
+      rows={store.rows}
       searchPlaceholder="Search portfolio name"
       exportName="portfolio-profiles"
       totals={['merchants', 'monthlyResidual']}
@@ -133,28 +147,74 @@ function PortfolioTab() {
   );
 }
 
+const FIELDS = {
+  payout: [
+    { name: 'agent', label: 'Agent', required: true },
+    { name: 'repCode', label: 'Rep Code', required: true },
+    { name: 'pricingSchedule', label: 'Pricing Schedule', type: 'select', options: PRICING_SCHEDULES.map((p) => p.name), required: true },
+    { name: 'processor', label: 'Processor', type: 'select', options: brand.processors },
+    { name: 'splitPct', label: 'Split %', type: 'number', required: true },
+    { name: 'startDate', label: 'Start Date' },
+  ],
+  portfolio: [
+    { name: 'name', label: 'Portfolio Name', required: true },
+    { name: 'processor', label: 'Processor', type: 'select', options: brand.processors, required: true },
+    { name: 'startDate', label: 'Start Date' },
+  ],
+};
+
 export function AgentProfiles() {
   const toast = useToast();
   const [tab, setTab] = useState('payout');
+
+  const payout = useRecords(PAYOUT_PROFILES, { key: 'id' });
+  const portfolio = useRecords(PORTFOLIO_PROFILES, { key: 'id' });
+  const store = tab === 'payout' ? payout : portfolio;
+
+  const [draft, setDraft] = useState(null);
+  const editing = draft && Object.keys(draft).length > 0 ? draft : null;
+
+  const submit = (v) => {
+    if (editing) { store.update(editing, v); return; }
+    store.create({
+      id: `new-${tab}-${store.rows.length}`,
+      status: 'Active', merchants: 0, monthlyResidual: 0, partner: '', vendorId: '',
+      created: brand.today.replace(/-/g, '/'),
+      updated: brand.today.replace(/-/g, '/'),
+      modified: brand.today.replace(/-/g, '/'),
+      ...v,
+    });
+  };
 
   return (
     <ListPage
       title="Agent Profiles"
       description="Who gets paid, out of which portfolio, at what split"
       tabs={[
-        { value: 'payout', label: 'Payout Profiles', count: PAYOUT_PROFILES.length },
-        { value: 'portfolio', label: 'Portfolio Profiles', count: PORTFOLIO_PROFILES.length },
+        { value: 'payout', label: 'Payout Profiles', count: payout.rows.length },
+        { value: 'portfolio', label: 'Portfolio Profiles', count: portfolio.rows.length },
       ]}
       tab={tab}
       onTabChange={setTab}
       headerActions={(
         <>
           <Button variant="secondary" size="sm" icon="upload" onClick={() => toast.notify('Import profiles as CSV.')}>Import</Button>
-          <Button variant="primary" size="sm" icon="plus" onClick={() => toast.notify('New profile.')}>New</Button>
+          <Button variant="primary" size="sm" icon="plus" onClick={() => setDraft({})}>New</Button>
         </>
       )}
     >
-      {tab === 'payout' ? <PayoutTab /> : <PortfolioTab />}
+      {tab === 'payout'
+        ? <PayoutTab store={payout} onEdit={setDraft} />
+        : <PortfolioTab store={portfolio} onEdit={setDraft} />}
+
+      <RecordFormModal
+        open={Boolean(draft)}
+        onClose={() => setDraft(null)}
+        title={tab === 'payout' ? 'payout profile' : 'portfolio profile'}
+        fields={FIELDS[tab]}
+        initial={editing}
+        onSubmit={submit}
+      />
     </ListPage>
   );
 }

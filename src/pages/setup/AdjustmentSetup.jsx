@@ -4,7 +4,11 @@ import { Money, Muted, StatusBadge, TwoLine, menuColumn, moneyText, moneyTotal }
 import { Badge, Button, Kpi } from '@/components/ui/Surface';
 import { Tooltip } from '@/components/ui/Overlay';
 import { ADJUSTMENT_SETUP } from '@/data/setup';
+import { AGENTS } from '@/data/people';
 import { useToast } from '@/context/ToastContext';
+import { useRecords } from '@/hooks/useRecords';
+import { RecordFormModal } from '@/components/fi911/RecordFormModal';
+import brand from '@/brand/brand.config';
 
 /**
  * Setup > Residuals > Adjustment Setup.
@@ -37,25 +41,55 @@ function Signed({ value }) {
   );
 }
 
+const ADJUSTMENT_FIELDS = [
+  { name: 'name', label: 'Adjustment Name', required: true },
+  { name: 'agent', label: 'Agent', type: 'select', options: AGENTS, required: true },
+  { name: 'value', label: 'Value', type: 'number', required: true, placeholder: 'Negative debits the payout' },
+  { name: 'processor', label: 'Processor', type: 'select', options: brand.processors },
+  { name: 'startMonth', label: 'Start Month' },
+  { name: 'endMonth', label: 'End Month' },
+  { name: 'description', label: 'Description', type: 'textarea' },
+];
+
 export function AdjustmentSetup() {
   const toast = useToast();
   const [tab, setTab] = useState('all');
+  const store = useRecords(ADJUSTMENT_SETUP, { key: 'id' });
+  const all = store.rows;
+
+  const [draft, setDraft] = useState(null);
+  const editing = draft && Object.keys(draft).length > 0 ? draft : null;
 
   const rows = useMemo(
-    () => ADJUSTMENT_SETUP.filter((TABS.find((t) => t.value === tab) ?? TABS[0]).match),
-    [tab],
+    () => all.filter((TABS.find((t) => t.value === tab) ?? TABS[0]).match),
+    [tab, all],
   );
-  const tabs = TABS.map((t) => ({ ...t, count: ADJUSTMENT_SETUP.filter(t.match).length }));
+  const tabs = TABS.map((t) => ({ ...t, count: all.filter(t.match).length }));
 
-  const debits = ADJUSTMENT_SETUP.filter((r) => r.value < 0 && r.status === 'Active');
-  const credits = ADJUSTMENT_SETUP.filter((r) => r.value > 0 && r.status === 'Active');
+  const debits = all.filter((r) => r.value < 0 && r.status === 'Active');
+  const credits = all.filter((r) => r.value > 0 && r.status === 'Active');
   const sum = (list) => Math.round(list.reduce((s, r) => s + Math.abs(r.value), 0) * 100) / 100;
 
   const columns = [
     menuColumn((r) => [
-      { label: 'Edit adjustment', icon: 'edit', onSelect: () => toast.notify(`Editing "${r.name}".`) },
-      { label: 'End this month', icon: 'clock', onSelect: () => toast.notify(`"${r.name}" will not apply after this cycle.`) },
-      { label: 'Change status', icon: 'power', onSelect: () => toast.notify(`"${r.name}" status changed.`) },
+      { label: 'Edit adjustment', icon: 'edit', onSelect: () => setDraft(r) },
+      r.recurring && {
+        label: 'End this month',
+        icon: 'clock',
+        /* Stops the recurrence by moving the end month to the current cycle,
+           rather than announcing that it will stop. */
+        onSelect: () => {
+          const thisMonth = brand.today.slice(0, 7).replace('-', '/');
+          store.update(r, { endMonth: thisMonth, recurring: false, description: `${r.name} — ends ${thisMonth}` });
+          toast.notify(`"${r.name}" will not apply after ${thisMonth}.`);
+        },
+      },
+      {
+        label: r.status === 'Active' ? 'Deactivate' : 'Activate',
+        icon: 'power',
+        tone: r.status === 'Active' ? 'danger' : undefined,
+        onSelect: () => toast.notify(`"${r.name}" is now ${store.toggleStatus(r).toLowerCase()}.`),
+      },
     ]),
     {
       key: 'name', header: 'Adjustment', fw: 20, sortable: true,
@@ -92,7 +126,7 @@ export function AdjustmentSetup() {
       headerActions={(
         <>
           <Button variant="secondary" size="sm" icon="upload" onClick={() => toast.notify('Import adjustments as CSV.')}>Import</Button>
-          <Button variant="primary" size="sm" icon="plus" onClick={() => toast.notify('New adjustment.')}>Create</Button>
+          <Button variant="primary" size="sm" icon="plus" onClick={() => setDraft({})}>Create</Button>
         </>
       )}
     >
@@ -100,7 +134,7 @@ export function AdjustmentSetup() {
         <Kpi label="Active debits" value={moneyText(sum(debits))} meta={`${debits.length} deductions against payouts`} invert />
         <Kpi label="Active credits" value={moneyText(sum(credits))} meta={`${credits.length} additions to payouts`} />
         <Kpi label="Net effect" value={moneyText(sum(credits) - sum(debits))} meta="Applied to this cycle" />
-        <Kpi label="Recurring" value={ADJUSTMENT_SETUP.filter((r) => r.recurring && r.status === 'Active').length} meta="Repeat every month until their end date" />
+        <Kpi label="Recurring" value={all.filter((r) => r.recurring && r.status === 'Active').length} meta="Repeat every month until their end date" />
       </div>
 
       <ListTable
@@ -111,6 +145,24 @@ export function AdjustmentSetup() {
         exportName="adjustment-setup"
         totals={['value']}
         empty="No adjustments in this view."
+      />
+
+      <RecordFormModal
+        open={Boolean(draft)}
+        onClose={() => setDraft(null)}
+        title="adjustment"
+        fields={ADJUSTMENT_FIELDS}
+        initial={editing}
+        onSubmit={(v) => {
+          const value = Number(v.value) || 0;
+          if (editing) { store.update(editing, { ...v, value }); return; }
+          store.create({
+            id: `new-adj-${store.rows.length}`,
+            status: 'Active', recurring: true, repCode: '', merchant: '', mid: '',
+            ...v,
+            value,
+          });
+        }}
       />
     </ListPage>
   );
