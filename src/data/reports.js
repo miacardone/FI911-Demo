@@ -135,7 +135,7 @@ export function dwellByStage(rows = PRODUCTIVITY) {
 const DOC_TYPES = [
   { id: 'mpa', label: 'Merchant Application', icon: 'file' },
   { id: 'kyc', label: 'KYC Pack', icon: 'shieldCheck' },
-  { id: 'bank', label: 'Bank Statement', icon: 'pound' },
+  { id: 'bank', label: 'Bank Statement', icon: 'dollar' },
   { id: 'tax', label: 'Tax Certificate', icon: 'checklist' },
   { id: 'contract', label: 'Signed Contract', icon: 'edit' },
   { id: 'evidence', label: 'Dispute Evidence', icon: 'alert' },

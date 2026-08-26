@@ -83,6 +83,9 @@ const PATHS = {
 
   /* --- Fi911 additions ------------------------------------------------- */
   pound: ['M8 12h6M15 5.5A3.5 3.5 0 0 0 9 8v6c0 2-1 3.5-2 4.5h11'],
+  /* The console prices, settles and pays out in USD; a sterling glyph on the
+     Residuals rail was left over from the reference. */
+  dollar: ['M12 3v18', 'M16 7.5A3.5 3.5 0 0 0 12.5 5h-1a3.5 3.5 0 1 0 0 7h1a3.5 3.5 0 1 1 0 7h-1A3.5 3.5 0 0 1 8 16.5'],
   menu: ['M4 7h16M4 12h16M4 17h16'],
   dots: ['M12 6h.01M12 12h.01M12 18h.01'],
   paperclip: ['M20 11.5l-8 8a5 5 0 0 1-7-7l8-8a3.4 3.4 0 0 1 4.8 4.8l-8 8a1.8 1.8 0 0 1-2.5-2.5l7.3-7.3'],

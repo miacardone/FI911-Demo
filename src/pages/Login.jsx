@@ -10,7 +10,7 @@ import { routes } from '@/data/navigation';
 
 const POINTS = [
   { icon: 'users', title: 'The whole merchant lifecycle', body: 'Invitation to live merchant in one funnel, with underwriting and onboarding in between.' },
-  { icon: 'pound', title: 'Residuals that reconcile', body: 'Splits, adjustments and payouts traced from the ledger down to the merchant line item.' },
+  { icon: 'dollar', title: 'Residuals that reconcile', body: 'Splits, adjustments and payouts traced from the ledger down to the merchant line item.' },
   { icon: 'shield', title: 'Risk and disputes together', body: 'Alerts, held volume and claim outcomes against the same merchant book.' },
 ];
 

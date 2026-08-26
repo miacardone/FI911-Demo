@@ -129,7 +129,7 @@ export function SetupHome() {
       ],
     },
     {
-      icon: 'pound',
+      icon: 'dollar',
       title: 'Pricing Schedules',
       description: 'Item rates, splits and the profit/loss share behind every payout',
       to: setupRoutes.pricingSchedules,

@@ -143,7 +143,7 @@ export const nav = [
   {
     label: 'Residuals',
     path: '/residuals',
-    icon: 'pound',
+    icon: 'dollar',
     crumb: 'Residuals',
     children: [
       /* Ordered by the residual HIERARCHY, top level first: the whole
@@ -272,7 +272,7 @@ export const setupNav = [
   {
     label: 'Residuals',
     path: '/setup/residuals',
-    icon: 'pound',
+    icon: 'dollar',
     crumb: 'Residuals',
     children: [
       { label: 'Pricing Schedules', path: setupRoutes.pricingSchedules, permission: 'Pricing Schedules', area: 'Setup', crumb: 'Pricing Schedules' },

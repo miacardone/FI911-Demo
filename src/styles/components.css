@@ -2712,3 +2712,10 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
   border-radius: var(--r-sm);
   font-size: var(--fs-small); line-height: 1.55; color: var(--c-ink);
 }
+
+/* Document preview — the file-type glyph and the rendered page. */
+.doc-icon { display: inline-flex; color: var(--c-ink-muted); cursor: help; flex: none; }
+.doc-meta { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; font-size: var(--fs-micro); color: var(--c-ink-muted); }
+.doc-meta__item { display: inline-flex; align-items: center; gap: 5px; }
+.doc-frame { border: 1px solid var(--c-line); border-radius: var(--r-md); overflow: hidden; background: var(--c-surface-sunken); }
+.doc-frame .doc-page { max-width: none; margin: var(--s-3) auto; box-shadow: var(--shadow-raised); }

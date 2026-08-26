@@ -38,7 +38,7 @@ function PayoutTab() {
   const columns = [
     menuColumn((r) => [
       { label: 'Edit profile', icon: 'edit', onSelect: () => toast.notify(`Editing ${r.agent} (${r.repCode}).`) },
-      { label: 'View payouts', icon: 'pound', onSelect: () => toast.notify(`Payout history for ${r.repCode}.`) },
+      { label: 'View payouts', icon: 'dollar', onSelect: () => toast.notify(`Payout history for ${r.repCode}.`) },
       { label: 'Change status', icon: 'power', onSelect: () => toast.notify(`${r.repCode} status changed.`) },
     ]),
     {

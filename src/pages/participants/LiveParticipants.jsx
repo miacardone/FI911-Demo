@@ -112,7 +112,7 @@ export function LiveParticipants() {
       { label: 'Notes', icon: 'message', onSelect: () => setModal({ kind: 'notes', row }) },
       { label: 'Transactions', icon: 'calendar', onSelect: () => navigate(routes.settlements) },
       { label: 'Statements', icon: 'file', onSelect: () => setModal({ kind: 'statements', row }) },
-      { label: 'Residuals', icon: 'pound', onSelect: () => navigate(routes.portfolioPayoutDetails) },
+      { label: 'Residuals', icon: 'dollar', onSelect: () => navigate(routes.portfolioPayoutDetails) },
       { label: 'Ticketing', icon: 'inbox', onSelect: () => navigate(routes.ert) },
       { label: 'Merchant Agreement', icon: 'checklist', onSelect: () => navigate(routes.liveParticipantDetail(row.id)) },
       { label: 'Merchant Merchants', icon: 'users', onSelect: () => navigate(routes.participantMerchants(row.id)) },
