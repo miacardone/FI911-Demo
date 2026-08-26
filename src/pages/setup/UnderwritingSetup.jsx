@@ -8,6 +8,8 @@ import { PARAMETER_TYPES, RISK_CATEGORIES, TEMPLATE_LEVELS, UW_GROUPS, UW_KEYWOR
 import { RecordFormModal } from '@/components/fi911/RecordFormModal';
 import brand from '@/brand/brand.config';
 import { useToast } from '@/context/ToastContext';
+import { useRecords } from '@/hooks/useRecords';
+import { CURRENT_USER } from '@/data/people';
 
 /**
  * Setup > Merchants > Underwriting Setup.
@@ -48,19 +50,29 @@ function Usage({ count, lastUsed, noun = 'merchant' }) {
   );
 }
 
-function TemplatesTab({ added = [] }) {
+function TemplatesTab({ store, onEdit }) {
   const toast = useToast();
   const [tab, setTab] = useState('all');
+  const all = store.rows;
   const rows = useMemo(
-    () => [...added, ...UW_TEMPLATES].filter((TEMPLATE_TABS.find((t) => t.value === tab) ?? TEMPLATE_TABS[0]).match),
-    [tab, added],
+    () => all.filter((TEMPLATE_TABS.find((t) => t.value === tab) ?? TEMPLATE_TABS[0]).match),
+    [tab, all],
   );
 
   const columns = [
     menuColumn((r) => [
-      { label: 'Edit template', icon: 'edit', onSelect: () => toast.notify(`Editing "${r.name}".`) },
-      { label: 'Clone template', icon: 'copy', onSelect: () => toast.notify(`"${r.name}" cloned.`) },
-      { label: 'Change status', icon: 'power', onSelect: () => toast.notify(`"${r.name}" status changed.`) },
+      { label: 'Edit template', icon: 'edit', onSelect: () => onEdit(r) },
+      {
+        label: 'Clone template',
+        icon: 'copy',
+        onSelect: () => { store.clone(r, { patch: { isDefault: false, linkedMerchants: 0, lastApplied: '' } }); toast.notify(`"${r.name}" cloned. The copy is inactive until you activate it.`); },
+      },
+      {
+        label: r.status === 'Active' ? 'Deactivate' : 'Activate',
+        icon: 'power',
+        tone: r.status === 'Active' ? 'danger' : undefined,
+        onSelect: () => toast.notify(`"${r.name}" is now ${store.toggleStatus(r).toLowerCase()}.`),
+      },
     ]),
     { key: 'name', header: 'Template', fw: 22, sortable: true, cell: (r) => <TwoLine primary={r.name} secondary={`${r.level} level · ${r.appliesTo}`} />, text: (r) => `${r.name} ${r.appliesTo}` },
     {
@@ -107,7 +119,9 @@ function TemplatesTab({ added = [] }) {
               className={`wq-tab ${tab === t.value ? 'is-active' : ''}`.trim()}
               onClick={() => setTab(t.value)}
             >
-              {t.label}<span className="wq-tab__count">{UW_TEMPLATES.filter(t.match).length}</span>
+              {/* Counted off the live rows, so a clone or a status change moves
+                  the number the moment it happens. */}
+              {t.label}<span className="wq-tab__count">{all.filter(t.match).length}</span>
             </button>
           ))}
         </div>
@@ -117,13 +131,18 @@ function TemplatesTab({ added = [] }) {
   );
 }
 
-function GroupsTab({ added = [] }) {
+function GroupsTab({ store, onEdit }) {
   const toast = useToast();
 
   const columns = [
     menuColumn((r) => [
-      { label: 'Edit group', icon: 'edit', onSelect: () => toast.notify(`Editing "${r.name}" (${r.members} members).`) },
-      { label: 'Change status', icon: 'power', onSelect: () => toast.notify(`"${r.name}" status changed.`) },
+      { label: 'Edit group', icon: 'edit', onSelect: () => onEdit(r) },
+      {
+        label: r.status === 'Active' ? 'Deactivate' : 'Activate',
+        icon: 'power',
+        tone: r.status === 'Active' ? 'danger' : undefined,
+        onSelect: () => toast.notify(`"${r.name}" is now ${store.toggleStatus(r).toLowerCase()}.`),
+      },
     ]),
     { key: 'name', header: 'Group', fw: 20, sortable: true },
     { key: 'processor', header: 'Processor', fw: 10, align: 'center', sortable: true },
@@ -146,7 +165,7 @@ function GroupsTab({ added = [] }) {
   return (
     <ListTable
       columns={columns}
-      rows={[...added, ...UW_GROUPS]}
+      rows={store.rows}
       searchPlaceholder="Search group name"
       exportName="uw-groups"
       totals={['members']}
@@ -155,13 +174,18 @@ function GroupsTab({ added = [] }) {
   );
 }
 
-function KeywordsTab({ added = [] }) {
+function KeywordsTab({ store, onEdit }) {
   const toast = useToast();
 
   const columns = [
     menuColumn((r) => [
-      { label: 'Edit rule', icon: 'edit', onSelect: () => toast.notify(`Editing "${r.name}".`) },
-      { label: 'View matches', icon: 'search', onSelect: () => toast.notify(`${r.matchesLast30} applications matched in the last 30 days.`) },
+      { label: 'Edit rule', icon: 'edit', onSelect: () => onEdit(r) },
+      {
+        label: r.status === 'Active' ? 'Deactivate' : 'Activate',
+        icon: 'power',
+        tone: r.status === 'Active' ? 'danger' : undefined,
+        onSelect: () => toast.notify(`"${r.name}" is now ${store.toggleStatus(r).toLowerCase()}.`),
+      },
     ]),
     { key: 'name', header: 'Keyword Rule', fw: 20, sortable: true },
     {
@@ -193,7 +217,7 @@ function KeywordsTab({ added = [] }) {
   return (
     <ListTable
       columns={columns}
-      rows={[...added, ...UW_KEYWORDS]}
+      rows={store.rows}
       searchPlaceholder="Search rule or term"
       exportName="uw-keywords"
       totals={['matchesLast30']}
@@ -226,49 +250,71 @@ const NEW_FIELDS = {
 };
 
 export function UnderwritingSetup() {
-  const toast = useToast();
   const [tab, setTab] = useState('templates');
-  const [creating, setCreating] = useState(false);
-  const [extra, setExtra] = useState({ templates: [], groups: [], keywords: [] });
+  /* One store per tab. The seed arrays are module constants, so they cannot be
+     edited in place — holding them in state is what lets Edit, Clone and
+     Change status do anything at all. */
+  const templates = useRecords(UW_TEMPLATES, { key: 'id' });
+  const groups = useRecords(UW_GROUPS, { key: 'id' });
+  const keywords = useRecords(UW_KEYWORDS, { key: 'id' });
 
-  const create = (v) => setExtra((x) => ({
-    ...x,
-    [tab]: [{
-      id: `new-${tab}-${x[tab].length}`,
+  const store = tab === 'templates' ? templates : tab === 'groups' ? groups : keywords;
+
+  /* `null` closes the dialog; a row opens it as Edit; `{}` opens it as New.
+     Not a boolean plus a row — `setEditing({})` being truthy is exactly the
+     bug that once made Create take the Edit path and change nothing. */
+  const [draft, setDraft] = useState(null);
+  const editing = draft && Object.keys(draft).length > 0 ? draft : null;
+
+  const titleFor = { templates: 'template', groups: 'parameter group', keywords: 'keyword rule' }[tab];
+
+  /* Terms live as an array on the row but edit as a comma-separated string. */
+  const toForm = (row) => (row && Array.isArray(row.terms) ? { ...row, terms: row.terms.join(', ') } : row);
+  const fromForm = (v) => (tab === 'keywords' && v.terms !== undefined
+    ? { ...v, terms: String(v.terms).split(',').map((t) => t.trim()).filter(Boolean) }
+    : v);
+
+  const submit = (v) => {
+    if (editing) {
+      store.update(editing, fromForm(v));
+      return;
+    }
+    store.create({
+      id: `new-${tab}-${store.rows.length}`,
       status: 'Active',
       updated: brand.today.replace(/-/g, '/'),
       created: brand.today.replace(/-/g, '/'),
-      createdBy: 'Mia Cardone',
+      createdBy: CURRENT_USER.name,
       linkedMerchants: 0, lastApplied: '', isDefault: false,
       usedByTemplates: 0, matchesLast30: 0,
-      ...v,
-      ...(tab === 'keywords' ? { terms: String(v.terms).split(',').map((t) => t.trim()).filter(Boolean) } : {}),
-    }, ...x[tab]],
-  }));
+      ...fromForm(v),
+    });
+  };
 
   return (
     <ListPage
       title="Underwriting Setup"
       description="What runs on an application, what it compares against, and what declines on sight"
       tabs={[
-        { value: 'templates', label: 'Templates', count: UW_TEMPLATES.length + extra.templates.length },
-        { value: 'groups', label: 'Parameter Groups', count: UW_GROUPS.length + extra.groups.length },
-        { value: 'keywords', label: 'Keyword Rules', count: UW_KEYWORDS.length + extra.keywords.length },
+        { value: 'templates', label: 'Templates', count: templates.rows.length },
+        { value: 'groups', label: 'Parameter Groups', count: groups.rows.length },
+        { value: 'keywords', label: 'Keyword Rules', count: keywords.rows.length },
       ]}
       tab={tab}
       onTabChange={setTab}
-      headerActions={<Button variant="primary" size="sm" icon="plus" onClick={() => setCreating(true)}>New</Button>}
+      headerActions={<Button variant="primary" size="sm" icon="plus" onClick={() => setDraft({})}>New</Button>}
     >
-      {tab === 'templates' && <TemplatesTab added={extra.templates} />}
-      {tab === 'groups' && <GroupsTab added={extra.groups} />}
-      {tab === 'keywords' && <KeywordsTab added={extra.keywords} />}
+      {tab === 'templates' && <TemplatesTab store={templates} onEdit={setDraft} />}
+      {tab === 'groups' && <GroupsTab store={groups} onEdit={setDraft} />}
+      {tab === 'keywords' && <KeywordsTab store={keywords} onEdit={setDraft} />}
 
       <RecordFormModal
-        open={creating}
-        onClose={() => setCreating(false)}
-        title={tab === 'templates' ? 'template' : tab === 'groups' ? 'parameter group' : 'keyword rule'}
+        open={Boolean(draft)}
+        onClose={() => setDraft(null)}
+        title={titleFor}
         fields={NEW_FIELDS[tab]}
-        onSubmit={create}
+        initial={toForm(editing)}
+        onSubmit={submit}
       />
     </ListPage>
   );
