@@ -43,8 +43,8 @@ export function PayoutDetails() {
   ];
 
   const incomeColumns = [
-    { key: 'residualMonth', header: 'Residual ...', fw: 9, sortable: true },
-    { key: 'payoutMonth', header: 'Payout M...', fw: 9, sortable: true },
+    { key: 'residualMonth', header: 'Residual Month', fw: 9, sortable: true },
+    { key: 'payoutMonth', header: 'Payout Month', fw: 9, sortable: true },
     { key: 'agent', header: 'Agent', fw: 12, sortable: true },
     {
       key: 'merchant', header: 'Merchants', fw: 13, sortable: true,

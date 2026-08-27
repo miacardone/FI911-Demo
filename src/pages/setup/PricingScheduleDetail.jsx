@@ -210,7 +210,11 @@ export function PricingScheduleDetail() {
                 >
                   {c.label}
                   <span className="rate-cat__count">{c.count}</span>
-                  {count > 0 && <span className="rate-cat__edited" title={`${count} edited`}>{count}</span>}
+                  {count > 0 && (
+              <Tooltip label={`${count} rate${count === 1 ? '' : 's'} changed but not yet saved`}>
+                <span className="rate-cat__edited">{count}</span>
+              </Tooltip>
+            )}
                 </button>
               );
             })}

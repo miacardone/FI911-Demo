@@ -50,7 +50,7 @@ export function Underwriting() {
     { key: 'monthlyVolume', header: 'Monthly Volume', fw: 10, align: 'right', sortable: true, cell: (r) => <Money value={r.monthlyVolume} />, text: (r) => moneyText(r.monthlyVolume), totalCell: moneyTotal },
     { key: 'agent', header: 'Agent', fw: 11, sortable: true },
     { hiddenByDefault: true, key: 'assignedTo', header: 'Assigned To', fw: 11, sortable: true, cell: (r) => (r.assignedTo ? r.assignedTo : <Muted>-</Muted>) },
-    { key: 'risk', header: 'Risk Prof...', fw: 8, sortable: true, cell: (r) => <RiskBadge tier={r.risk} />, text: (r) => r.risk },
+    { key: 'risk', header: 'Risk Profile', fw: 8, sortable: true, cell: (r) => <RiskBadge tier={r.risk} />, text: (r) => r.risk },
     { hiddenByDefault: true, key: 'contact', header: 'Contact', fw: 10, sortable: true },
     { hiddenByDefault: true, key: 'phone', header: 'Phone', fw: 9 },
     { hiddenByDefault: true, key: 'email', header: 'Email', fw: 15 },

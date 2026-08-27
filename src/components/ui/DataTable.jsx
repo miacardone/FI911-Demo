@@ -349,7 +349,7 @@ export function DataTable({
                 <button
                   type="button"
                   className="dt__sort-btn"
-                  style={{ justifyContent: justify, width: '100%' }}
+                  style={{ justifyContent: justify }}
                   onClick={() => onSort(c.key)}
                 >
                   <span className="truncate">{c.header}</span>
@@ -360,7 +360,7 @@ export function DataTable({
                   />
                 </button>
               ) : (
-                <span className="truncate" style={{ justifyContent: justify, width: '100%' }}>{c.header}</span>
+                <span className="truncate" style={{ justifyContent: justify }}>{c.header}</span>
               );
 
               // Fit mode truncates headers, so they always get a tooltip; a
@@ -394,8 +394,16 @@ export function DataTable({
                   onDragLeave={draggableCol ? () => setDragOverCol((p) => (p?.key === c.key ? null : p)) : undefined}
                   onDragEnd={draggableCol ? clearColDrag : undefined}
                 >
-                  {draggableCol && <Icon name="drag" size={13} className="dt__th-handle" aria-hidden />}
-                  {headerTooltip ? <Tooltip label={headerTooltip}>{header}</Tooltip> : header}
+                  {/* Handle and label share one flex row. They used to be
+                      siblings with the label hard-set to width:100%, so the
+                      handle's width pushed the sort caret past the cell edge
+                      and the arrows read as clipped. */}
+                  <span className="dt__th-inner">
+                    {draggableCol && <Icon name="drag" size={13} className="dt__th-handle" aria-hidden />}
+                    {headerTooltip
+                      ? <Tooltip label={headerTooltip} className="dt__th-label">{header}</Tooltip>
+                      : header}
+                  </span>
                 </th>
               );
             })}
@@ -473,17 +481,18 @@ export function DataTable({
                   )}
 
                   {columns.map((c) => {
-                    const plain = c.text ? c.text(row) : row[c.key];
-                    /* Custom renderers bring their own hover (badges explain
-                       their status, alert codes their meaning), so a native
-                       title on the cell as well would double up. */
-                    const title = c.cell && plain != null && typeof plain !== 'object' ? String(plain) : undefined;
+                    /* No native `title` here. It used to be set precisely WHEN
+                       a custom renderer existed, which is backwards: those
+                       renderers already carry their own Tooltip (badges explain
+                       their status, alert codes their meaning), so the cell got
+                       a slow browser tooltip stacked on a styled one. Plain
+                       cells get theirs from TruncatedText below. One tooltip
+                       system, everywhere. */
                     return (
                       <td
                         key={c.key}
                         style={{ textAlign: alignOf(c) }}
                         className={cellClass(c, c.mono ? 'mono' : undefined)}
-                        title={title}
                       >
                         {c.cell
                           ? c.cell(row)

@@ -8,8 +8,11 @@ import { DOCUMENTS, DOCUMENT_TYPES } from '@/apm/data/reports';
 import { INSTITUTIONS } from '@/apm/data/reference';
 import { Tooltip } from '@/components/ui/Overlay';
 import { DocumentPreview } from '@/components/fi911/DocumentPreview';
+import { UploadModal } from '@/components/fi911/UploadModal';
 import { downloadCsv } from '@/utils/export';
 import { ImportButton } from '@/components/fi911/ImportButton';
+import { CURRENT_USER } from '@/data/people';
+import brand from '@/apm/brand.config';
 import { useToast } from '@/context/ToastContext';
 
 /**
@@ -53,10 +56,37 @@ export function DocumentCenter() {
   const [criteria, setCriteria] = useState({});
   const [applied, setApplied] = useState({});
   const [preview, setPreview] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   /* There is no real file behind a generated record, so "Download" hands over
      the metadata the console actually holds rather than pretending to stream
      a PDF it does not have. */
+  /* Staged files land in the grid as real rows, carrying the name and size
+     that came off the file. Retention is inherited from the document type,
+     which is how every other row in this grid gets its expiry. */
+  const receiveFiles = (files, typeId) => {
+    const meta = DOCUMENT_TYPES.find((t) => t.id === typeId) ?? DOCUMENT_TYPES[0];
+    const owner = INSTITUTIONS[0];
+    setDocs((ds) => [
+      ...files.map((f, i) => ({
+        id: `doc-up-${ds.length + i}`,
+        name: f.name,
+        typeId: meta.id,
+        type: meta.label,
+        icon: meta.icon,
+        participant: owner.name,
+        sortCode: owner.sortCode,
+        uploadedBy: CURRENT_USER.name,
+        uploaded: brand.today.replace(/-/g, '/'),
+        sizeMb: Math.max(0.1, Math.round((f.sizeBytes / (1024 * 1024)) * 10) / 10),
+        retentionYears: 5,
+        confidential: false,
+      })),
+      ...ds,
+    ]);
+    toast.notify(files.length === 1 ? `${files[0].name} uploaded.` : `${files.length} documents uploaded.`);
+  };
+
   const download = (row) => {
     downloadCsv(
       [
@@ -187,7 +217,12 @@ export function DocumentCenter() {
         />
       )}
       leftExtra={<ImportButton label="Upload" noun="documents" />}
-      footer={<DocumentPreview doc={preview} onClose={() => setPreview(null)} onDownload={download} />}
+      footer={(
+        <>
+          <DocumentPreview doc={preview} onClose={() => setPreview(null)} onDownload={download} />
+          <UploadModal open={uploading} onClose={() => setUploading(false)} onUpload={receiveFiles} />
+        </>
+      )}
       empty="No documents match these criteria."
     />
   );

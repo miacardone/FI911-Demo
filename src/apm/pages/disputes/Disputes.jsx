@@ -90,17 +90,17 @@ export function Disputes() {
   ];
 
   const detailColumns = [
-    { key: 'caseNumber', header: 'Case Numb...', fw: 10, sortable: true, cell: (r) => <LinkCell to={routes.disputeDetail(r.caseNumber)}>{r.caseNumber}</LinkCell> },
+    { key: 'caseNumber', header: 'Case Number', fw: 10, sortable: true, cell: (r) => <LinkCell to={routes.disputeDetail(r.caseNumber)}>{r.caseNumber}</LinkCell> },
     { key: 'participant', header: 'Participant Name', fw: 14, sortable: true },
     { key: 'bankName', header: 'Bank Name', fw: 12, sortable: true },
     { key: 'sortCode', header: 'Sort Code', fw: 8, sortable: true },
-    { key: 'accountNumber', header: 'Account Num...', fw: 10 },
+    { key: 'accountNumber', header: 'Account Number', fw: 10 },
     { key: 'trn', header: 'TRN', fw: 14 },
     { key: 'reasonCategory', header: 'Reason Category', fw: 14, sortable: true },
     { key: 'postDate', header: 'Post Date', fw: 9, sortable: true },
-    { key: 'typeReference', header: 'Type Reference Nu...', fw: 11 },
-    { key: 'gatewayMatch', header: 'Gateway Mat...', fw: 8, align: 'center', cell: (r) => <GatewayMatch matched={r.gatewayMatch} />, text: (r) => (r.gatewayMatch ? 'matched' : 'no match') },
-    { key: 'disputeAmount', header: 'Dispute A...', fw: 9, align: 'right', sortable: true, sortValue: (r) => r.disputeAmount, text: (r) => moneyText(r.disputeAmount), cell: (r) => <Money value={r.disputeAmount} /> },
+    { key: 'typeReference', header: 'Type Reference Number', fw: 11 },
+    { key: 'gatewayMatch', header: 'Gateway Match', fw: 8, align: 'center', cell: (r) => <GatewayMatch matched={r.gatewayMatch} />, text: (r) => (r.gatewayMatch ? 'matched' : 'no match') },
+    { key: 'disputeAmount', header: 'Dispute Amount', fw: 9, align: 'right', sortable: true, sortValue: (r) => r.disputeAmount, text: (r) => moneyText(r.disputeAmount), cell: (r) => <Money value={r.disputeAmount} /> },
     { key: 'status', header: 'Status', fw: 9, sortable: true, cell: (r) => <StatusBadge value={r.status} /> },
     { key: 'cycle', header: 'Cycle', fw: 11, sortable: true },
     { key: 'dueDate', header: 'Due Date', fw: 9, sortable: true },

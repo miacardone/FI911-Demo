@@ -8,6 +8,7 @@ import { LinkCell, Muted, PriorityArrow, StatusBadge, SummaryRow, TwoLine, menuC
 import { ERT_NOTIFICATIONS, ERT_STATUSES, ertTabs, filterErt, nextErtId } from '@/data/ert';
 import { ChangeStatusModal } from '@/components/fi911/RecordModals';
 import { useToast } from '@/context/ToastContext';
+import { priorityMeta } from '@/domain/statuses';
 import brand from '@/brand/brand.config';
 
 /**
@@ -51,22 +52,41 @@ function ViewTicketModal({ ticket, onClose, onChangeStatus }) {
       <div className="stack">
         <div className="ticket__head">
           <StatusBadge value={ticket.status} />
-          <PriorityArrow value={ticket.priority} />
+          {/* The priority arrow was a bare glyph with nothing naming it. */}
+          <span className="ticket__priority">
+            <PriorityArrow value={ticket.priority} />
+            {priorityMeta(ticket.priority).label} priority
+          </span>
           {overdue && <Badge tone="danger" dot>Overdue</Badge>}
         </div>
 
-        <div className="fi-summary">
-          <SummaryRow label="Type">{ticket.type}</SummaryRow>
-          <SummaryRow label="Sender">{ticket.sender}</SummaryRow>
-          <SummaryRow label="Recipient">{ticket.recipient} ({ticket.recipientCode})</SummaryRow>
-          <SummaryRow label="Assignee">{ticket.assignee || <Muted>Unassigned</Muted>}</SummaryRow>
-          <SummaryRow label="Created">{ticket.created}</SummaryRow>
-          <SummaryRow label="Due">{ticket.due}</SummaryRow>
-          <SummaryRow label="Closed">{ticket.closed || <Muted>Still open</Muted>}</SummaryRow>
+        {/* Same tile grid as the risk case drawer — two record dialogs in one
+            console should not present their facts two different ways. */}
+        <div className="case__stats">
+          <span className="case__stat"><span className="case__label">Type</span><strong>{ticket.type}</strong></span>
+          <span className="case__stat"><span className="case__label">Sender</span><strong>{ticket.sender}</strong></span>
+          <span className="case__stat">
+            <span className="case__label">Recipient</span>
+            <strong>{ticket.recipient}</strong>
+            <span className="case__sub">{ticket.recipientCode}</span>
+          </span>
+          <span className="case__stat">
+            <span className="case__label">Assignee</span>
+            <strong>{ticket.assignee || <Muted>Unassigned</Muted>}</strong>
+          </span>
+          <span className="case__stat"><span className="case__label">Created</span><strong>{ticket.created}</strong></span>
+          <span className="case__stat">
+            <span className="case__label">Due</span>
+            <strong className={overdue ? 'money--neg' : undefined}>{ticket.due}</strong>
+          </span>
+          <span className="case__stat fi-fields__full">
+            <span className="case__label">Closed</span>
+            <strong>{ticket.closed || <Muted>Still open</Muted>}</strong>
+          </span>
         </div>
 
-        <div>
-          <span className="t-section-label">Description</span>
+        <div className="case__block">
+          <span className="case__block-title">Description</span>
           <p className="ticket__body">{ticket.description || <Muted>No description was supplied.</Muted>}</p>
         </div>
       </div>

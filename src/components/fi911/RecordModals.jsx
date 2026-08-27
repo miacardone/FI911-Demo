@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Surface';
 import { SelectField, TextAreaField, TextField } from '@/components/ui/Form';
 import { RowMenu } from '@/components/fi911/cells';
 import { downloadAttachment } from '@/utils/export';
+import { FileDropzone } from '@/components/ui/FileDropzone';
 import { useToast } from '@/context/ToastContext';
 import { CURRENT_USER, initialsFor } from '@/data/people';
 import { todayStamp } from '@/utils/format';
@@ -102,6 +103,21 @@ export function AttachmentsModal({ open, onClose, attachments = [], onChange, ti
 
   const commit = (next) => { setItems(next); onChange?.(next); };
 
+  /* Dropped files skip the manual form entirely — the name, size and type
+     come off the file itself, so there is nothing left to type. */
+  const takeFiles = (picked) => {
+    const next = [...items, ...picked.map((f, i) => ({
+      id: `att-${Date.now()}-${i}`,
+      name: f.name,
+      description: '',
+      type: ATTACHMENT_TYPES[0],
+      date: todayStamp(),
+      size: f.size,
+    }))];
+    commit(next);
+    toast.notify(picked.length === 1 ? `${picked[0].name} attached.` : `${picked.length} files attached.`);
+  };
+
   const add = () => {
     if (!draft.name.trim()) return;
     const next = [...items, {
@@ -110,7 +126,7 @@ export function AttachmentsModal({ open, onClose, attachments = [], onChange, ti
       description: draft.description.trim(),
       type: draft.type,
       date: todayStamp(),
-      size: '0.4 MB',
+      size: '—',
     }];
     commit(next);
     setAdding(false);
@@ -120,8 +136,11 @@ export function AttachmentsModal({ open, onClose, attachments = [], onChange, ti
 
   return (
     <Modal open={open} onClose={onClose} title={title} size="lg">
+      <FileDropzone onFiles={takeFiles} />
+
       <div className="fi-modal__bar">
-        <Button variant="primary" size="sm" icon="plus" onClick={() => setAdding((v) => !v)}>Add Attachment</Button>
+        <span className="subtle small">…or record a file you already hold:</span>
+        <Button variant="secondary" size="sm" icon="plus" onClick={() => setAdding((v) => !v)}>Add manually</Button>
       </div>
 
       {adding && (
@@ -189,6 +208,21 @@ export function NotesModal({ open, onClose, notes = [], onChange, title = 'View 
   useEffect(() => {
     if (open) { setItems(notes); setAdding(false); setDraft({ type: NOTE_TYPES[0], description: '' }); }
   }, [open, notes]);
+
+  /* Dropped files skip the manual form entirely — the name, size and type
+     come off the file itself, so there is nothing left to type. */
+  const takeFiles = (picked) => {
+    const next = [...items, ...picked.map((f, i) => ({
+      id: `att-${Date.now()}-${i}`,
+      name: f.name,
+      description: '',
+      type: ATTACHMENT_TYPES[0],
+      date: todayStamp(),
+      size: f.size,
+    }))];
+    commit(next);
+    toast.notify(picked.length === 1 ? `${picked[0].name} attached.` : `${picked.length} files attached.`);
+  };
 
   const add = () => {
     if (!draft.description.trim()) return;

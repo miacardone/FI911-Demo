@@ -113,9 +113,11 @@ export function RiskTriangle({ tier }) {
     : { icon: 'triangleDown', cls: 'risk--low', label: 'Low risk' };
 
   return (
-    <span className={`risk ${meta.cls}`} title={meta.label}>
-      <Icon name={meta.icon} size={13} title={meta.label} />
-    </span>
+    <Tooltip label={meta.label}>
+      <span className={`risk ${meta.cls}`}>
+        <Icon name={meta.icon} size={13} />
+      </span>
+    </Tooltip>
   );
 }
 
@@ -128,7 +130,11 @@ export function RiskBadge({ tier }) {
 
 export function TaggedFlag({ on }) {
   if (!on) return null;
-  return <span className="tagged-flag" title="Tagged"><Icon name="flag" size={13} title="Tagged" /></span>;
+  return (
+    <Tooltip label="Tagged for review">
+      <span className="tagged-flag"><Icon name="flag" size={13} /></span>
+    </Tooltip>
+  );
 }
 
 /* ---------- Priority ---------- *
@@ -137,9 +143,11 @@ export function TaggedFlag({ on }) {
 export function PriorityArrow({ value }) {
   const meta = priorityMeta(value);
   return (
-    <span className={`priority priority--${meta.tone}`} title={`${meta.label} priority`}>
-      <Icon name={meta.direction === 'up' ? 'arrowUp' : 'arrowDown'} size={14} strokeWidth={2.4} title={`${meta.label} priority`} />
-    </span>
+    <Tooltip label={`${meta.label} priority`}>
+      <span className={`priority priority--${meta.tone}`}>
+        <Icon name={meta.direction === 'up' ? 'arrowUp' : 'arrowDown'} size={14} strokeWidth={2.4} />
+      </span>
+    </Tooltip>
   );
 }
 
@@ -239,10 +247,13 @@ export function NotApplicable() {
 }
 
 export function GatewayMatch({ matched }) {
+  const label = matched ? 'Gateway matched' : 'No gateway match';
   return (
-    <span className={matched ? 'gw gw--yes' : 'gw gw--no'} title={matched ? 'Gateway matched' : 'No gateway match'}>
-      <Icon name="thumbsDown" size={14} title={matched ? 'Gateway matched' : 'No gateway match'} />
-    </span>
+    <Tooltip label={label}>
+      <span className={matched ? 'gw gw--yes' : 'gw gw--no'}>
+        <Icon name="thumbsDown" size={14} />
+      </span>
+    </Tooltip>
   );
 }
 

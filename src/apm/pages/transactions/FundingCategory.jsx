@@ -21,7 +21,7 @@ const detailColumns = [
   twoLine('partner', 'Partner', (r) => r.partner, (r) => r.partnerCode, 14),
   text('fundingCategory', 'Funding Category', 13),
   {
-    key: 'accountNumber', header: 'Account Number / Sort C...', fw: 12, sortable: true,
+    key: 'accountNumber', header: 'Account Number / Sort Code', fw: 12, sortable: true,
     cell: (r) => (
       <span className="cell-2l">
         <span className="cell-2l__main">{r.accountNumber}</span>

@@ -5,6 +5,7 @@ import { ColumnToggle, DataTable, DensityToggle, ExportButtons } from '@/compone
 import { useToast } from '@/context/ToastContext';
 import { useAutoPageSize } from '@/hooks/useAutoPageSize';
 import { usePreferences } from '@/context/PreferencesContext';
+import { AdvancedSearchPanel, applyFilters } from '@/components/fi911/Filters';
 import { withColumnHelp } from '@/domain/columnHelp';
 
 /**
@@ -266,12 +267,47 @@ export function ListTable({
     .join(' ')
     .toLowerCase();
 
+  /* ---- Advanced search, derived ----
+     Most grids never declared one, so field-level search existed on some
+     screens and not others with nothing about the data explaining why. The
+     fields are inferred from the columns instead: a page that declares its own
+     `onAdvanced` keeps it, and everything else gets one for free — including
+     any grid added later. */
+  /* Same test DataTable uses to decide a column is numeric — kept local
+     rather than imported, since that one is a closure inside the table. */
+  const isNumeric = (c) => c.numeric ?? (c.align === 'right' || Boolean(c.totalCell) || Boolean(c.mono));
+
+  const autoFields = useMemo(() => (onAdvanced ? [] : columns
+    .filter((c) => c.key && c.key !== '__menu' && c.header && c.filterable !== false)
+    .map((c) => {
+      /* A column with few distinct values is a choice, not free text —
+         picking "Closed" from a list beats typing it and guessing the casing. */
+      const values = [...new Set(rows.map((r) => (c.text ? c.text(r) : r[c.key])).filter((v) => v != null && v !== ''))];
+      const short = values.length > 1 && values.length <= 12 && values.every((v) => String(v).length <= 28);
+      return {
+        name: c.key,
+        label: typeof c.header === 'string' ? c.header : c.key,
+        type: short ? 'select' : isNumeric(c) ? 'number' : 'text',
+        options: short ? values.map((v) => ({ value: String(v), label: String(v) })) : undefined,
+        /* Match the RENDERED text, exactly as the quick search does, so a
+           filter for "Bank" hits a badge rendered from a `bank` id. */
+        match: (row, v) => String(c.text ? c.text(row) : row[c.key] ?? '')
+          .toLowerCase()
+          .includes(String(v).toLowerCase()),
+      };
+    })), [columns, rows, onAdvanced]);
+
+  const [autoOpen, setAutoOpen] = useState(false);
+  const [autoDraft, setAutoDraft] = useState({});
+  const [autoApplied, setAutoApplied] = useState({});
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return rows;
-    return rows.filter((r) => searchText(r).includes(q));
+    const byField = autoFields.length ? applyFilters(rows, autoFields, autoApplied) : rows;
+    if (!q) return byField;
+    return byField.filter((r) => searchText(r).includes(q));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows, search, columns]);
+  }, [rows, search, columns, autoFields, autoApplied]);
 
   const sorted = useMemo(() => {
     if (!sort) return filtered;
@@ -320,8 +356,8 @@ export function ListTable({
           search={search}
           onSearchChange={onSearchChange}
           searchPlaceholder={searchPlaceholder}
-          onAdvanced={onAdvanced}
-          advancedOpen={advancedOpen}
+          onAdvanced={onAdvanced ?? (autoFields.length ? () => setAutoOpen((v) => !v) : undefined)}
+          advancedOpen={onAdvanced ? advancedOpen : autoOpen}
           leftExtra={leftExtra}
           rightExtra={rightExtra}
           density={density}
@@ -334,7 +370,17 @@ export function ListTable({
         />
       )}
 
-      {advancedOpen && advanced}
+      {onAdvanced
+        ? (advancedOpen && advanced)
+        : (autoOpen && (
+          <AdvancedSearchPanel
+            fields={autoFields}
+            values={autoDraft}
+            onChange={setAutoDraft}
+            onSearch={() => { setAutoApplied(autoDraft); setAutoOpen(false); }}
+            onClear={() => { setAutoDraft({}); setAutoApplied({}); }}
+          />
+        ))}
       {note && <p className="fi-note">{note}</p>}
 
       <div ref={bodyRef}>

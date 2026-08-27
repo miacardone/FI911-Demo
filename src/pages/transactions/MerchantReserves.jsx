@@ -13,7 +13,7 @@ const columns = [
   text('isoId', 'ISO ID', 10),
   text('merchant', 'Merchant', 16),
   text('partner', 'Partner', 14),
-  { key: 'rate', header: 'Reserve R...', fw: 8, align: 'right', sortable: true, cell: (r) => `${r.rate.toFixed(1)}%` },
+  { key: 'rate', header: 'Reserve Rate', fw: 8, align: 'right', sortable: true, cell: (r) => `${r.rate.toFixed(1)}%` },
   status('reserveStatus', 'Reserve St...', 9),
   status('payStatus', 'Pay Status', 9),
   text('contractDate', 'Contract D...', 9),

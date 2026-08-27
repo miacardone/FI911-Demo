@@ -1,6 +1,7 @@
 import { Fragment, createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Icon from '@/components/ui/Icon';
+import { Tooltip } from '@/components/ui/Overlay';
 import { Badge, Button } from '@/components/ui/Surface';
 import { CheckboxRow, RadioRow, SelectField, TextAreaField, TextField, ToggleField } from '@/components/ui/Form';
 import { useToast } from '@/context/ToastContext';
@@ -304,11 +305,13 @@ export function DetailPage({
   const navigate = useNavigate();
   const toast = useToast();
   const [step, setStep] = useState(0);
-  /* The record summary is reference: useful when you arrive, in the way once
-     you are working a step. It was 220px of permanently-on chrome above a
-     632px viewport, so it starts collapsed on a wizard and open on a plain
-     detail page, where there is nothing else competing for the height. */
-  const [summaryOpen, setSummaryOpen] = useState(!steps);
+  /* The record summary is reference an operator wants WHILE answering the
+     step, not before it. Stacked above the form it was 220px of chrome pushing
+     the question off a 632px viewport, so it had to collapse — and collapsed,
+     the facts you needed were a click away at exactly the moment you needed
+     them. Beside the form it costs no vertical space at all, so it can stay
+     open. Compacting it is now about width, not about reaching the form. */
+  const [summaryOpen, setSummaryOpen] = useState(true);
 
   const goToStep = (i) => {
     setStep(i);
@@ -375,48 +378,59 @@ export function DetailPage({
         <div className="fi-detail__actions">
           {!steps && <ExpandAllButton />}
           {actions}
+          {/* The native `title` attribute was the only hover affordance here,
+              which is a second-long delay and a different look from every
+              other tooltip in the console. */}
           {headerIcons.map((it) => (
-            <button key={it.label} type="button" className="fi-detail__icon" onClick={it.onSelect} aria-label={it.label} title={it.label}>
-              <Icon name={it.icon} size={17} />
-            </button>
+            <Tooltip key={it.label} label={it.hint ?? it.label}>
+              <button type="button" className="fi-detail__icon" onClick={it.onSelect} aria-label={it.label}>
+                <Icon name={it.icon} size={17} />
+              </button>
+            </Tooltip>
           ))}
         </div>
       </header>
 
-      {summary && (
-        <div className={`fi-detail__summary ${summaryOpen ? 'is-open' : ''}`.trim()}>
-          <button
-            type="button"
-            className="fi-detail__summary-toggle"
-            onClick={() => setSummaryOpen((v) => !v)}
-            aria-expanded={summaryOpen}
-          >
-            <Icon name="chevron" size={14} className={summaryOpen ? 'is-open' : ''} />
-            {summaryOpen ? 'Hide record details' : 'Show record details'}
-          </button>
-          {summaryOpen && summary}
-        </div>
-      )}
+      {/* Summary beside the work, not above it. */}
+      <div className={`fi-detail__split ${summary ? '' : 'fi-detail__split--nosummary'} ${summaryOpen ? '' : 'is-compact'}`.trim()}>
+        {summary && (
+          <aside className="fi-detail__aside" aria-label="Record details">
+            <button
+              type="button"
+              className="fi-detail__aside-toggle"
+              onClick={() => setSummaryOpen((v) => !v)}
+              aria-expanded={summaryOpen}
+              title={summaryOpen ? 'Collapse record details' : 'Expand record details'}
+            >
+              <Icon name="chevron" size={14} className={summaryOpen ? 'is-open' : ''} />
+              {summaryOpen && <span>Record details</span>}
+            </button>
+            {summaryOpen && <div className="fi-detail__aside-body">{summary}</div>}
+          </aside>
+        )}
 
-      {steps ? (
-        <>
-          {values
-            ? (
-              <StepProgress
-                steps={steps}
-                values={values}
-                current={step}
-                onSelect={goToStep}
-                onJumpToField={jumpToField}
-              />
-            )
-            : <WizardSteps steps={steps} current={step} onSelect={goToStep} />}
-          <div className="fi-detail__body">{steps[step]?.render()}</div>
-          <WizardNav steps={steps} current={step} onChange={goToStep} onFinish={finish} finishDirty={dirty} />
-        </>
-      ) : (
-        <div className="fi-detail__body">{children}</div>
-      )}
+        <div className="fi-detail__main">
+          {steps ? (
+            <>
+              {values
+                ? (
+                  <StepProgress
+                    steps={steps}
+                    values={values}
+                    current={step}
+                    onSelect={goToStep}
+                    onJumpToField={jumpToField}
+                  />
+                )
+                : <WizardSteps steps={steps} current={step} onSelect={goToStep} />}
+              <div className="fi-detail__body">{steps[step]?.render()}</div>
+              <WizardNav steps={steps} current={step} onChange={goToStep} onFinish={finish} finishDirty={dirty} />
+            </>
+          ) : (
+            <div className="fi-detail__body">{children}</div>
+          )}
+        </div>
+      </div>
 
       {dirty && (
         <footer className="fi-detail__foot">

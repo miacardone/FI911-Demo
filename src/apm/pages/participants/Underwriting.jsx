@@ -47,7 +47,7 @@ export function Underwriting() {
     { key: 'type', header: 'Type', fw: 6, sortable: true, cell: (r) => <TypeBadge value={r.type} /> },
     { key: 'agent', header: 'Agent', fw: 11, sortable: true },
     { key: 'assignedTo', header: 'Assigned To', fw: 11, sortable: true, cell: (r) => (r.assignedTo ? r.assignedTo : <Muted>-</Muted>) },
-    { key: 'risk', header: 'Risk Prof...', fw: 8, sortable: true, cell: (r) => <RiskBadge tier={r.risk} />, text: (r) => r.risk },
+    { key: 'risk', header: 'Risk Profile', fw: 8, sortable: true, cell: (r) => <RiskBadge tier={r.risk} />, text: (r) => r.risk },
     { key: 'contact', header: 'Contact', fw: 10, sortable: true },
     { key: 'phone', header: 'Phone', fw: 9 },
     { key: 'email', header: 'Email', fw: 15 },

@@ -57,18 +57,18 @@ export function AlertAction() {
 
   const txnColumns = [
     { key: 'midStatus', header: 'MID Status', fw: 8, sortable: true, cell: (r) => <StatusBadge value={r.midStatus} /> },
-    { key: 'transactionDate', header: 'Transacti...', fw: 9, sortable: true },
+    { key: 'transactionDate', header: 'Transaction Date', fw: 9, sortable: true },
     { key: 'merchant', header: 'Merchant', fw: 16, sortable: true, cell: (r) => <LinkCell onClick={() => navigate(routes.merchantRiskProfile)}>{r.merchant}</LinkCell> },
     { key: 'processor', header: 'Processor', fw: 10, sortable: true },
     { key: 'mcc', header: 'MCC', fw: 6, sortable: true },
     { key: 'batchId', header: 'BatchID', fw: 8, sortable: true },
-    { key: 'transactionId', header: 'Transacti...', fw: 10, sortable: true },
+    { key: 'transactionId', header: 'Transaction ID', fw: 10, sortable: true },
     { key: 'amount', header: 'Amount', fw: 9, align: 'right', sortable: true, sortValue: (r) => r.amount, text: (r) => moneyText(r.amount), cell: (r) => <Money value={r.amount} /> },
     { key: 'cardType', header: 'Card Type', fw: 10, sortable: true, cell: (r) => <CardBrand scheme={r.cardType} />, text: (r) => r.cardType },
     { key: 'authCode', header: 'Auth Code', fw: 8, sortable: true },
-    { key: 'response', header: 'Respons...', fw: 7, sortable: true },
+    { key: 'response', header: 'Response', fw: 7, sortable: true },
     { key: 'riskScore', header: 'Risk Score', fw: 8, align: 'right', sortable: true, cell: (r) => <span className="risk-score">{r.riskScore}</span> },
-    { key: 'flagged', header: 'Flagg...', fw: 6, align: 'right', sortable: true, cell: (r) => <span className="flag-count">{r.flagged}</span> },
+    { key: 'flagged', header: 'Flagged', fw: 6, align: 'right', sortable: true, cell: (r) => <span className="flag-count">{r.flagged}</span> },
   ];
 
   return (

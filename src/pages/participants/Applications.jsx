@@ -52,7 +52,7 @@ export function Applications() {
     { hiddenByDefault: true, key: 'phone', header: 'Phone', fw: 10 },
     { hiddenByDefault: true, key: 'email', header: 'Email', fw: 16 },
     { hiddenByDefault: true, key: 'created', header: 'Creation Date', fw: 9, sortable: true },
-    { key: 'statusChanged', header: 'Status Change D...', fw: 9, sortable: true },
+    { key: 'statusChanged', header: 'Status Change Date', fw: 9, sortable: true },
     { key: 'status', header: 'Status', fw: 10, sortable: true, cell: (r) => <StatusBadge value={r.status} /> },
     menuColumn((row) => [
       { label: 'View', icon: 'eye', onSelect: () => navigate(routes.applicationDetail(row.id)) },

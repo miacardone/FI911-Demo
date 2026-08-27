@@ -18,15 +18,14 @@
 /** Keyed by column `key`. */
 const BY_KEY = {
   /* Identity */
-  participant: 'The bank or PSP this record belongs to',
-  merchant: 'The trading business beneath the participant',
+  merchant: 'The trading business that processes under this partner',
   accountName: 'Account holder and their account number',
-  agent: 'Partner representative who introduced this participant',
-  agentName: 'Partner representative who introduced this participant',
+  agent: 'Partner representative who introduced this merchant',
+  agentName: 'Partner representative who introduced this merchant',
   assignedTo: 'Fi911 operator currently responsible for this record',
   assignee: 'Operator this notification is assigned to',
-  contact: "The participant's own named contact",
-  contactName: "The participant's own named contact",
+  contact: "The merchant's own named contact",
+  contactName: "The merchant's own named contact",
   partner: 'Acquiring partner or portfolio the record settles through',
   processor: 'Payment processor handling this traffic',
   isoId: 'Independent Sales Organization identifier',
@@ -34,7 +33,7 @@ const BY_KEY = {
   institutionId: 'Financial institution identifier',
   mid: 'Merchant ID — the merchant’s account number with the processor',
   terminalId: 'Physical or virtual terminal the transaction ran through',
-  portfolio: 'Pricing portfolio the participant is assigned to',
+  portfolio: 'Pricing portfolio the merchant is assigned to',
   groupName: 'Reporting group this merchant rolls up into',
   region: 'Region, channel or department that owns the relationship',
 
@@ -66,7 +65,7 @@ const BY_KEY = {
   outcome: 'How the dispute was ultimately resolved',
   cycle: 'Stage the dispute has reached in the escalation chain',
   priority: 'Urgency — arrow up is high, down is low',
-  risk: 'Assessed risk tier for this participant',
+  risk: 'Assessed risk tier for this merchant',
   riskScore: 'Model score from 0–100; higher is riskier',
   tagged: 'Flagged for manual review',
   gatewayMatch: 'Whether the dispute matched a gateway transaction record',
@@ -115,7 +114,7 @@ const BY_KEY = {
   interchange: 'Interchange cost paid to the issuing bank',
   netAmount: 'Amount remaining after interchange',
   qualification: 'Interchange band the transaction qualified into',
-  settlement: 'Amount settled to the participant for the month',
+  settlement: 'Amount settled to the merchant for the month',
   reserve: 'Funds withheld against future chargeback exposure',
   rate: 'Percentage of settlement withheld as reserve',
   transactions: 'Number of transactions in scope',
@@ -145,7 +144,7 @@ const BY_KEY = {
   reasonCategory: 'Why the cardholder disputed the transaction',
   fundingCategory: 'What this funding line was for',
   sender: 'Who raised the notification',
-  recipient: 'Desk or participant the notification was routed to',
+  recipient: 'Desk or merchant the notification was routed to',
   splits: 'Number of ways the income was split',
   splitTo: 'Party receiving the split',
   splitFrom: 'Party the split came from',
@@ -153,7 +152,6 @@ const BY_KEY = {
   parameter: 'Which measure is being trended',
   period: 'Basis the period is measured on',
   profiles: 'Number of residual profiles held by this agent',
-  participants: 'Number of participants under this agent',
 };
 
 /** Fallback keyed by header text, for columns whose key is generic. */
@@ -214,7 +212,7 @@ const STATUS_HELP = {
   'new lead': 'Captured from an enquiry; no contact made yet.',
   'wip lead': 'Being worked — contact made, application not yet submitted.',
   'in progress': 'Actively being worked by the assigned owner.',
-  'pending': 'Waiting on someone outside this team — usually the participant.',
+  'pending': 'Waiting on someone outside this team — usually the merchant.',
   'open': 'Live and unresolved.',
   'assigned': 'Has an owner and is queued for work.',
   'submitted to underwriting': 'Handed to the underwriting desk for a decision.',
