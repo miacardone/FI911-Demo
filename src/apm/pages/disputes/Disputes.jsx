@@ -196,22 +196,10 @@ export function Disputes() {
             exportName="chargeback-ratios"
             totals={['transactions', 'chargebacks', 'txnValue', 'cbValue']}
             note="Measured per card scheme, because the thresholds are set per scheme. Worst breaches first."
-            leftExtra={(
-              <div className="wq-tabs" role="tablist" aria-label="Programme tier">
-                {RATIO_TABS.map((t) => (
-                  <button
-                    key={t.value}
-                    type="button"
-                    role="tab"
-                    aria-selected={ratioTab === t.value}
-                    className={`wq-tab ${ratioTab === t.value ? 'is-active' : ''}`.trim()}
-                    onClick={() => setRatioTab(t.value)}
-                  >
-                    {t.label}<span className="wq-tab__count">{CHARGEBACK_RATIOS.filter(t.match).length}</span>
-                  </button>
-                ))}
-              </div>
-            )}
+            viewTabs={RATIO_TABS.map((t) => ({ ...t, count: CHARGEBACK_RATIOS.filter(t.match).length }))}
+            viewTab={ratioTab}
+            onViewTabChange={setRatioTab}
+            viewTabsLabel="Programme tier"
             empty="No merchant/scheme pairs in this tier."
           />
         </>

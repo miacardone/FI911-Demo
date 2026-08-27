@@ -189,6 +189,10 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 .page-head__title { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .page-head__row { display: flex; align-items: center; gap: 6px; }
 .page-head__desc { color: var(--c-ink-muted); font-size: var(--fs-small); }
+.page-head__meta {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  margin-top: 4px; font-size: var(--fs-small); color: var(--c-ink-muted);
+}
 .page-head__actions { display: flex; align-items: center; gap: var(--s-2); flex-shrink: 0; }
 
 .info-btn { display: inline-flex; border: 0; background: transparent; color: var(--c-ink-subtle); cursor: pointer; padding: 0; }

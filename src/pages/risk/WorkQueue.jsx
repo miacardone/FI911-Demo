@@ -297,22 +297,10 @@ function BatchTab({ onViewFlagged }) {
       searchPlaceholder="Search batch ID or file name"
       exportName="batch-file-processing"
       totals={['txnCount', 'txnVolume', 'flaggedCount']}
-      leftExtra={(
-        <div className="wq-tabs" role="tablist" aria-label="Batch view">
-          {tabs.map((t) => (
-            <button
-              key={t.value}
-              type="button"
-              role="tab"
-              aria-selected={tab === t.value}
-              className={`wq-tab ${tab === t.value ? 'is-active' : ''}`.trim()}
-              onClick={() => setTab(t.value)}
-            >
-              {t.label}<span className="wq-tab__count">{t.count}</span>
-            </button>
-          ))}
-        </div>
-      )}
+      viewTabs={tabs}
+      viewTab={tab}
+      onViewTabChange={setTab}
+      viewTabsLabel="Batch view"
       empty="No import runs match this view."
     />
   );

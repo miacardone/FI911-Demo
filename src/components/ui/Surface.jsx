@@ -87,7 +87,13 @@ export function PageHeader({ title, description, meta, actions }) {
             </Tooltip>
           )}
         </div>
-        {meta ?? (description && <p className="page-head__desc">{description}</p>)}
+        {/* Description AND meta. `meta ?? description` meant a page that
+            wanted a status badge silently lost its subtitle — the merchant
+            profile's "MID … · partner · flagged" line never rendered. Meta
+            gets its own flex row so badges sit inline and wrap as a group
+            instead of stacking one per line. */}
+        {description && <p className="page-head__desc">{description}</p>}
+        {meta && <div className="page-head__meta">{meta}</div>}
       </div>
       {actions && <div className="page-head__actions">{actions}</div>}
     </header>
