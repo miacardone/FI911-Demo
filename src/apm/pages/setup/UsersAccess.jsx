@@ -158,19 +158,10 @@ function UsersTab({ store, onEdit }) {
         rows={rows}
         searchPlaceholder="Search name, email or role"
         exportName="users"
-        leftExtra={(
-          <div className="wq-tabs" role="tablist" aria-label="User view">
-            {USER_TABS.map((t) => (
-              <button
-                key={t.value} type="button" role="tab" aria-selected={tab === t.value}
-                className={`wq-tab ${tab === t.value ? 'is-active' : ''}`.trim()}
-                onClick={() => setTab(t.value)}
-              >
-                {t.label}<span className="wq-tab__count">{SETUP_USERS.filter(t.match).length}</span>
-              </button>
-            ))}
-          </div>
-        )}
+      viewTabs={USER_TABS.map((t) => ({ ...t, count: SETUP_USERS.filter(t.match).length }))}
+      viewTab={tab}
+      onViewTabChange={setTab}
+      viewTabsLabel="User view"
         empty="No users in this view."
       />
     </>

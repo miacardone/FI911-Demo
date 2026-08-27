@@ -326,13 +326,24 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 
 .tooltip {
   position: fixed; z-index: var(--z-tooltip);
-  max-width: 260px; padding: 6px 9px;
+  max-width: 260px; padding: 7px 10px;
   border-radius: var(--r-sm);
   background: var(--c-nav-rail); color: #fff;
   font-size: var(--fs-micro); font-weight: 500; line-height: 1.45;
   box-shadow: var(--shadow-popover);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   pointer-events: none; white-space: normal;
+  animation: tooltip-in var(--dur-fast) var(--ease);
 }
+@keyframes tooltip-in { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: none; } }
+
+/* A Tooltip wraps its child in an inline-flex span. In a centred cell that
+   span shrink-wraps the icon and sits wherever the text-align happens to put
+   it, so a triangle under a centred heading drifted off centre. Inheriting
+   the cell's alignment puts it back under its own column name. */
+.dt tbody td > .tooltip-anchor,
+.dt tbody td .tooltip-anchor { justify-content: inherit; }
+.dt tbody td[style*="center"] > span { margin-inline: auto; }
 .tooltip--wide { max-width: 320px; padding: 10px 12px; line-height: 1.55; }
 .tooltip__title { font-weight: 700; display: block; margin-bottom: 2px; }
 
@@ -480,6 +491,7 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 }
 .dt__sort-btn:hover { color: var(--c-ink); }
 .dt__sort-btn .dt__caret { flex: none; margin-left: 1px; }
+
 /* A flex item will not shrink below its content width without this, so the
    label held its full size and pushed the sort caret out past the cell edge —
    the arrows looked clipped on any header long enough to need truncating.
@@ -2936,3 +2948,13 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
   border: 1px solid var(--c-line); border-radius: var(--r-sm);
 }
 .case__stats > .fi-fields__full { grid-column: 1 / -1; }
+
+/* Tabs on the left, the ordering note on the right — one row. The note used
+   to sit on its own line under the toolbar, and the tabs were wherever each
+   page happened to drop them inside leftExtra. */
+.fi-subbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--s-3); flex-wrap: wrap; margin-top: var(--s-2);
+}
+.fi-subbar__note { margin: 0; text-align: right; }
+@media (max-width: 760px) { .fi-subbar__note { text-align: left; } }

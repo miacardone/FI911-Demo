@@ -206,6 +206,13 @@ export function ListTable({
   onAdvanced,
   advancedOpen,
   advanced,
+  /** The view tabs that sit above the grid: `[{ value, label, count }]`.
+      Ten pages hand-rolled this same strip inside `leftExtra`, which is how
+      it ended up in a different place on each of them. */
+  viewTabs,
+  viewTab,
+  onViewTabChange,
+  viewTabsLabel = 'View',
   leftExtra,
   rightExtra,
   onRowClick,
@@ -381,7 +388,30 @@ export function ListTable({
             onClear={() => { setAutoDraft({}); setAutoApplied({}); }}
           />
         ))}
-      {note && <p className="fi-note">{note}</p>}
+      {/* Tabs left, the ordering note right — one row, so the note stops
+          floating on a line of its own under the toolbar. */}
+      {(viewTabs?.length || note) && (
+        <div className="fi-subbar">
+          {viewTabs?.length ? (
+            <div className="wq-tabs" role="tablist" aria-label={viewTabsLabel}>
+              {viewTabs.map((t) => (
+                <button
+                  key={t.value}
+                  type="button"
+                  role="tab"
+                  aria-selected={viewTab === t.value}
+                  className={`wq-tab ${viewTab === t.value ? 'is-active' : ''}`.trim()}
+                  onClick={() => onViewTabChange?.(t.value)}
+                >
+                  {t.label}
+                  {t.count != null && <span className="wq-tab__count">{t.count}</span>}
+                </button>
+              ))}
+            </div>
+          ) : <span />}
+          {note && <p className="fi-note fi-subbar__note">{note}</p>}
+        </div>
+      )}
 
       <div ref={bodyRef}>
         <DataTable

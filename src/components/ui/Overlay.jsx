@@ -17,7 +17,10 @@ import Icon from '@/components/ui/Icon';
  */
 
 const OFFSET = 8;
-const OPEN_DELAY = 400;
+/* 400ms was long enough that a hover felt unresponsive and then startling —
+   people had moved on by the time it appeared. Short enough now to feel
+   attached to the pointer, long enough not to fire while sweeping a grid. */
+const OPEN_DELAY = 120;
 
 function place(rect, side) {
   switch (side) {

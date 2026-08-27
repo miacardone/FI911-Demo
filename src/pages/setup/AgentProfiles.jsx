@@ -91,19 +91,10 @@ function PayoutTab({ store, onEdit }) {
       searchPlaceholder="Search agent or rep code"
       exportName="payout-profiles"
       totals={['merchants']}
-      leftExtra={(
-        <div className="wq-tabs" role="tablist" aria-label="Payout profile view">
-          {PAYOUT_TABS.map((t) => (
-            <button
-              key={t.value} type="button" role="tab" aria-selected={tab === t.value}
-              className={`wq-tab ${tab === t.value ? 'is-active' : ''}`.trim()}
-              onClick={() => setTab(t.value)}
-            >
-              {t.label}<span className="wq-tab__count">{PAYOUT_PROFILES.filter(t.match).length}</span>
-            </button>
-          ))}
-        </div>
-      )}
+      viewTabs={PAYOUT_TABS.map((t) => ({ ...t, count: PAYOUT_PROFILES.filter(t.match).length }))}
+      viewTab={tab}
+      onViewTabChange={setTab}
+      viewTabsLabel="Payout profile view"
       empty="No payout profiles in this view."
     />
   );

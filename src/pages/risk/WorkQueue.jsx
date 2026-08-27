@@ -188,30 +188,17 @@ function FlaggedTab() {
             onClear={() => { setCriteria({}); setApplied({}); }}
           />
         )}
+        viewTabs={tabs}
+        viewTab={tab}
+        onViewTabChange={setTab}
+        viewTabsLabel="Queue view"
         leftExtra={(
-          <>
-            <div className="wq-tabs" role="tablist" aria-label="Queue view">
-              {tabs.map((t) => (
-                <button
-                  key={t.value}
-                  type="button"
-                  role="tab"
-                  aria-selected={tab === t.value}
-                  className={`wq-tab ${tab === t.value ? 'is-active' : ''}`.trim()}
-                  onClick={() => setTab(t.value)}
-                >
-                  {t.label}<span className="wq-tab__count">{t.count}</span>
-                </button>
-              ))}
-            </div>
-
-            <label className="wq-assign">
-              <span className="wq-assign__label">Assignment</span>
-              <select className="field__control field__control--sm" value={assignment} onChange={(e) => setAssignment(e.target.value)}>
-                {assignmentOptions(base).map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
-            </label>
-          </>
+          <label className="wq-assign">
+            <span className="wq-assign__label">Assignment</span>
+            <select className="field__control field__control--sm" value={assignment} onChange={(e) => setAssignment(e.target.value)}>
+              {assignmentOptions(base).map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+            </select>
+          </label>
         )}
         rightExtra={legend.button}
         empty="No merchants match this view."

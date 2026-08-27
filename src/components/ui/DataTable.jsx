@@ -345,7 +345,14 @@ export function DataTable({
               const active = sort?.key === c.key;
               const draggableCol = i >= pinnedCount;
               const justify = c.align === 'right' ? 'flex-end' : c.align === 'center' ? 'center' : 'flex-start';
-              const header = c.sortable && onSort ? (
+              /* Sortable unless a column opts out. It used to be opt-IN, so
+                 whether you could sort by Risk Alerts or CB Alerts came down
+                 to whether anyone had remembered to add the flag — nothing
+                 about the data explained the difference. Actions and the
+                 select column are excluded because there is nothing in them
+                 to order by. */
+              const canSort = onSort && c.key && c.key !== '__menu' && c.sortable !== false;
+              const header = canSort ? (
                 <button
                   type="button"
                   className="dt__sort-btn"

@@ -111,21 +111,10 @@ function TemplatesTab({ store, onEdit }) {
       searchPlaceholder="Search template name"
       exportName="uw-templates"
       totals={['rules', 'linkedMerchants']}
-      leftExtra={(
-        <div className="wq-tabs" role="tablist" aria-label="Template view">
-          {TEMPLATE_TABS.map((t) => (
-            <button
-              key={t.value} type="button" role="tab" aria-selected={tab === t.value}
-              className={`wq-tab ${tab === t.value ? 'is-active' : ''}`.trim()}
-              onClick={() => setTab(t.value)}
-            >
-              {/* Counted off the live rows, so a clone or a status change moves
-                  the number the moment it happens. */}
-              {t.label}<span className="wq-tab__count">{all.filter(t.match).length}</span>
-            </button>
-          ))}
-        </div>
-      )}
+      viewTabs={TEMPLATE_TABS.map((t) => ({ ...t, count: all.filter(t.match).length }))}
+      viewTab={tab}
+      onViewTabChange={setTab}
+      viewTabsLabel="Template view"
       empty="No templates in this view."
     />
   );
