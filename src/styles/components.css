@@ -3072,3 +3072,37 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 .pfunnel__stage.is-empty { background: var(--c-surface-sunken); }
 .pfunnel__stage.is-empty strong { color: var(--c-ink-subtle); }
 .splittable__total td { border-top: 1px solid var(--c-line-strong); padding-top: 7px; }
+
+/* Breach lifecycle — the steps, and who holds each one. */
+.lifecycle { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.lifecycle__step {
+  display: flex; align-items: center; gap: var(--s-2);
+  padding: 6px 0; position: relative; cursor: help;
+}
+.lifecycle__step:not(:last-child)::before {
+  content: ''; position: absolute; left: 10px; top: 26px; bottom: -6px;
+  width: 1px; background: var(--c-line);
+}
+.lifecycle__dot {
+  flex: none; width: 21px; height: 21px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: var(--fs-nano); font-weight: 700;
+  background: var(--c-surface-sunken); color: var(--c-ink-subtle);
+  border: 1px solid var(--c-line); z-index: 1;
+}
+.lifecycle__step.is-done .lifecycle__dot { background: var(--c-success-tint); color: var(--c-success); border-color: var(--c-success-tint); }
+.lifecycle__step.is-current .lifecycle__dot { background: var(--c-primary); color: #fff; border-color: var(--c-primary); }
+.lifecycle__body { display: flex; align-items: baseline; gap: var(--s-2); min-width: 0; flex: 1; }
+.lifecycle__label { font-size: var(--fs-small); color: var(--c-ink-muted); }
+.lifecycle__step.is-current .lifecycle__label { color: var(--c-ink); font-weight: 600; }
+.lifecycle__owner { margin-left: auto; font-size: var(--fs-nano); color: var(--c-ink-subtle); text-transform: uppercase; letter-spacing: .05em; }
+
+/* What happens on its own if nobody acts. */
+.consequence {
+  display: grid; gap: 2px; padding: var(--s-3);
+  border-radius: var(--r-md); border: 1px solid var(--c-warning-tint);
+  background: var(--c-warning-tint); color: var(--c-warning);
+}
+.consequence strong { font-size: var(--fs-body); color: inherit; }
+.consequence__note { font-size: var(--fs-micro); opacity: .85; }
+.consequence.is-live { border-color: var(--c-danger-tint); background: var(--c-danger-tint); color: var(--c-danger); }

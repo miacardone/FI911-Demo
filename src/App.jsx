@@ -73,6 +73,7 @@ import AdjustmentSetup from '@/pages/setup/AdjustmentSetup';
 import ResidualCalculation from '@/pages/setup/ResidualCalculation';
 import FeePrograms from '@/pages/setup/FeePrograms';
 import Partners from '@/pages/partners/Partners';
+import Compliance from '@/pages/risk/Compliance';
 import MerchantMapping from '@/pages/setup/MerchantMapping';
 import UnderwritingSetup from '@/pages/setup/UnderwritingSetup';
 import UsersAccess from '@/pages/setup/UsersAccess';
@@ -150,6 +151,7 @@ export function App() {
                   <Route path="work-queue/:mid" element={<WorkQueueMerchant />} />
                   <Route path="action-history" element={<ActionHistory />} />
                   <Route path="unactioned-queue" element={<UnactionedQueue />} />
+                  <Route path="compliance" element={<Compliance />} />
                 </Route>
 
                 <Route path="transactions">

@@ -57,6 +57,7 @@ export const routes = {
   workQueueMerchant: (mid = ':mid') => `/risk/work-queue/${mid}`,
   actionHistory: '/risk/action-history',
   unactionedQueue: '/risk/unactioned-queue',
+  compliance: '/risk/compliance',
 
   /* Transactions */
   achListings: '/transactions/ach-listings',
@@ -190,6 +191,7 @@ export const nav = [
       /* What there is to work, what was missed, what was decided. */
       { label: 'Work Queue', path: routes.workQueue, permission: 'Work Queue', area: 'Risk', crumb: 'Work Queue' },
       { label: 'Unactioned Queue', path: routes.unactionedQueue, permission: 'Unactioned Queue', area: 'Risk', crumb: 'Unactioned Queue' },
+      { label: 'Compliance', path: routes.compliance, permission: 'Compliance', area: 'Risk Management', crumb: 'Compliance' },
       { label: 'Action History', path: routes.actionHistory, permission: 'Action History', area: 'Risk', crumb: 'Action History' },
     ],
   },
