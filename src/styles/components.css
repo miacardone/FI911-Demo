@@ -7,7 +7,21 @@
 
 .shell { display: flex; height: 100vh; overflow: hidden; }
 .shell__main { display: flex; flex: 1; flex-direction: column; overflow: hidden; min-width: 0; }
-.shell__content { flex: 1; overflow-y: auto; padding: var(--s-4) var(--s-5) var(--s-5); min-width: 0; background: var(--c-canvas); }
+/* A SIZE CONTAINER, not just a scroll box.
+   Every layout inside the console sizes against the space it actually has
+   rather than against the viewport. The two are not the same number: the rail
+   takes ~230px, and collapsing it hands that back without the viewport moving
+   at all. Keyed to the viewport, a 1280px laptop ran two-column layouts in a
+   1050px content area while the 1080px rules sat there never firing, and
+   collapsing the rail changed nothing. Keyed to the container, the same
+   content width always produces the same layout — which is what makes the
+   console look the same across different laptops. */
+.shell__content {
+  flex: 1; overflow-y: auto; padding: var(--s-4) var(--s-5) var(--s-5);
+  min-width: 0; background: var(--c-canvas);
+  container-type: inline-size;
+  container-name: content;
+}
 .shell__content--flush { padding: 0; }
 
 /* ---------- Nav rail ----------
@@ -825,8 +839,8 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 /* ---------- Work case ---------- */
 
 .workcase { display: grid; grid-template-columns: 288px minmax(0, 1fr) 348px; gap: var(--s-3); align-items: start; }
-@media (max-width: 1400px) { .workcase { grid-template-columns: 260px minmax(0, 1fr); } .workcase__right { grid-column: 1 / -1; } }
-@media (max-width: 960px) { .workcase { grid-template-columns: minmax(0, 1fr); } .workcase__right { grid-column: auto; } }
+@container content (max-width: 1150px) { .workcase { grid-template-columns: 260px minmax(0, 1fr); } .workcase__right { grid-column: 1 / -1; } }
+@container content (max-width: 760px) { .workcase { grid-template-columns: minmax(0, 1fr); } .workcase__right { grid-column: auto; } }
 
 .breadcrumb { display: flex; align-items: center; gap: var(--s-2); flex-wrap: wrap; padding-bottom: var(--s-3); font-size: var(--fs-small); color: var(--c-ink-muted); }
 .breadcrumb__sep { color: var(--c-ink-subtle); }
@@ -970,7 +984,7 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 /* ---------- Permissions ---------- */
 
 .perm-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-2); }
-@media (max-width: 1180px) { .perm-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@container content (max-width: 950px) { .perm-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 760px) { .perm-grid { grid-template-columns: 1fr; } }
 
 .perm-row {
@@ -1417,7 +1431,7 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 .fi-summary__row { display: flex; gap: var(--s-3); align-items: baseline; font-size: var(--fs-small); }
 .fi-summary__label { color: var(--c-ink-muted); min-width: 150px; text-align: right; flex: none; }
 .fi-summary__value { color: var(--c-ink); font-weight: 600; }
-@media (max-width: 860px) { .fi-summary { grid-template-columns: 1fr; } .fi-summary__label { text-align: left; min-width: 130px; } }
+@container content (max-width: 680px) { .fi-summary { grid-template-columns: 1fr; } .fi-summary__label { text-align: left; min-width: 130px; } }
 
 /* ---------- Rate / fee tables (Pricing, Fee Schedule) ---------- */
 
@@ -1559,9 +1573,9 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
    white space at the end of the row the moment the data changed. */
 .dash-grid--auto { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
 .dash-grid--6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-@media (max-width: 1240px) { .dash-grid--5, .dash-grid--6 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-@media (max-width: 980px)  { .dash-grid--2, .dash-grid--3 { grid-template-columns: 1fr; } .dash-grid--5, .dash-grid--6 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 620px)  { .dash-grid--5, .dash-grid--6 { grid-template-columns: 1fr; } }
+@container content (max-width: 1010px) { .dash-grid--5, .dash-grid--6 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@container content (max-width: 780px) { .dash-grid--2, .dash-grid--3 { grid-template-columns: 1fr; } .dash-grid--5, .dash-grid--6 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@container content (max-width: 500px) { .dash-grid--5, .dash-grid--6 { grid-template-columns: 1fr; } }
 
 .dash-figure { font-size: 1.9rem; font-weight: 700; line-height: 1.1; color: var(--c-ink); }
 .dash-figure__hint { font-size: var(--fs-small); color: var(--c-ink-muted); margin-bottom: var(--s-3); }
@@ -1579,7 +1593,7 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
   display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--s-3); margin-bottom: var(--s-5);
 }
-@media (max-width: 980px) { .risk-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@container content (max-width: 780px) { .risk-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 620px) { .risk-kpis { grid-template-columns: 1fr; } }
 
 .risk-kpi {
@@ -2116,8 +2130,8 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 }
 .queue-kpis .kpi { padding: var(--s-3) var(--s-4); gap: 2px; }
 .queue-kpis .kpi__value { font-size: 1.125rem; }
-@media (max-width: 1180px) { .queue-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 620px) { .queue-kpis { grid-template-columns: 1fr; } }
+@container content (max-width: 950px) { .queue-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@container content (max-width: 500px) { .queue-kpis { grid-template-columns: 1fr; } }
 
 /* ---------- Setup mode rail ----------
    Same rail, marked so you always know which mode you are in. The exit item
@@ -2597,7 +2611,7 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
   align-items: start;
 }
 .profile-grid__wide { grid-column: 1 / -1; }
-@media (max-width: 1080px) {
+@container content (max-width: 860px) {
   .profile-grid { grid-template-columns: 1fr; }
 }
 
@@ -2935,7 +2949,7 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 
 /* Below tablet the rail would leave the form unusably narrow, so it goes back
    to stacking — collapsed, since vertical space is the scarce thing again. */
-@media (max-width: 1080px) {
+@container content (max-width: 860px) {
   .fi-detail__split,
   .fi-detail__split.is-compact { grid-template-columns: minmax(0, 1fr); }
   .fi-detail__aside { position: static; }
@@ -2983,3 +2997,64 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 }
 .vcheck--ok { background: var(--c-success-tint); color: var(--c-success); border-color: var(--c-success-tint); }
 .vcheck--no { background: var(--c-warning-tint); color: var(--c-warning); border-color: var(--c-warning-tint); }
+
+/* ---- Fee programs ---- */
+.fee-basis { display: inline-flex; flex-direction: column; gap: 0; line-height: 1.25; cursor: help; }
+.fee-basis__unit { font-size: var(--fs-nano); color: var(--c-ink-subtle); }
+
+/* Revenue over loss, same scale, stacked — the asymmetry is the point, and
+   two bars compare far faster than two percentages in adjacent columns. */
+.splitbars { display: inline-flex; flex-direction: column; gap: 3px; width: 100%; min-width: 96px; cursor: help; }
+.splitbars__row { display: flex; align-items: center; gap: 5px; }
+.splitbars__tag { font-size: var(--fs-nano); color: var(--c-ink-subtle); width: 26px; text-align: right; flex: none; }
+.splitbars__track { flex: 1; display: flex; height: 7px; border-radius: var(--r-pill); overflow: hidden; background: var(--c-surface-sunken); border: 1px solid var(--c-line); }
+.splitbars__seg { display: block; height: 100%; }
+.splitbars__seg--bank { background: var(--c-primary); }
+.splitbars__seg--partner { background: var(--c-accent); }
+.splitbars__seg--agent { background: var(--c-ink-subtle); }
+
+/* Wizard */
+.feewiz__steps { display: flex; gap: var(--s-2); flex-wrap: wrap; }
+.feewiz__step {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 11px; border-radius: var(--r-pill);
+  border: 1px solid var(--c-line); background: var(--c-surface);
+  font: inherit; font-size: var(--fs-micro); font-weight: 600; color: var(--c-ink-muted);
+  cursor: default;
+}
+.feewiz__step.is-done { cursor: pointer; color: var(--c-primary-deep); border-color: var(--c-primary-tint); background: var(--c-primary-wash); }
+.feewiz__step.is-active { color: #fff; background: var(--c-primary); border-color: var(--c-primary); }
+.feewiz__num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 17px; height: 17px; border-radius: 50%;
+  background: var(--c-surface-sunken); color: var(--c-ink-muted); font-size: var(--fs-nano);
+}
+.feewiz__step.is-active .feewiz__num { background: rgba(255,255,255,0.22); color: #fff; }
+.feewiz__step.is-done .feewiz__num { background: var(--c-primary-tint); color: var(--c-primary-deep); }
+
+.feewiz__projection {
+  display: flex; flex-wrap: wrap; gap: var(--s-4);
+  padding: var(--s-3); border-radius: var(--r-md);
+  background: var(--c-surface-sunken); border: 1px solid var(--c-line);
+}
+.feewiz__proj-item { display: grid; gap: 2px; min-width: 0; }
+.feewiz__proj-item strong { font-size: var(--fs-body); font-variant-numeric: tabular-nums; }
+.feewiz__proj-item--year { margin-left: auto; cursor: help; }
+
+.splitgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4); }
+.splitgrid__col { display: grid; gap: var(--s-2); align-content: start; }
+.splitgrid__total { font-size: var(--fs-micro); font-weight: 700; }
+.splitgrid__total.is-ok { color: var(--c-success); }
+.splitgrid__total.is-bad { color: var(--c-danger); }
+@media (max-width: 720px) { .splitgrid { grid-template-columns: minmax(0, 1fr); } }
+
+.fi-warn {
+  display: flex; align-items: flex-start; gap: 7px; margin: 0;
+  padding: 8px var(--s-3); border-radius: var(--r-sm);
+  background: var(--c-warning-tint); color: var(--c-warning);
+  font-size: var(--fs-small); line-height: 1.5;
+}
+.fi-warn svg { flex: none; margin-top: 2px; }
+
+.splittable__num { text-align: right; white-space: nowrap; }
+.splittable__pct { display: block; font-size: var(--fs-nano); color: var(--c-ink-subtle); }

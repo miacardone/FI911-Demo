@@ -71,6 +71,7 @@ import PortfolioSetup from '@/pages/setup/PortfolioSetup';
 import ResidualApproval from '@/pages/setup/ResidualApproval';
 import AdjustmentSetup from '@/pages/setup/AdjustmentSetup';
 import ResidualCalculation from '@/pages/setup/ResidualCalculation';
+import FeePrograms from '@/pages/setup/FeePrograms';
 import MerchantMapping from '@/pages/setup/MerchantMapping';
 import UnderwritingSetup from '@/pages/setup/UnderwritingSetup';
 import UsersAccess from '@/pages/setup/UsersAccess';
@@ -178,6 +179,7 @@ export function App() {
                   <Route path="residual-approval" element={<ResidualApproval />} />
                   <Route path="adjustments" element={<AdjustmentSetup />} />
                   <Route path="residual-calculation" element={<ResidualCalculation />} />
+                  <Route path="fee-programs" element={<FeePrograms />} />
                   <Route path="merchant-mapping" element={<MerchantMapping />} />
                   <Route path="underwriting" element={<UnderwritingSetup />} />
                   {/* Rules Setup is the same screen as Risk > Rules. Config and
