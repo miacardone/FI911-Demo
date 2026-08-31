@@ -3058,3 +3058,17 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 
 .splittable__num { text-align: right; white-space: nowrap; }
 .splittable__pct { display: block; font-size: var(--fs-nano); color: var(--c-ink-subtle); }
+
+/* Partner pipeline — their funnel, counted off the real merchant lists. */
+.pfunnel { display: flex; gap: var(--s-2); flex-wrap: wrap; }
+.pfunnel__stage {
+  display: grid; gap: 1px; flex: 1 1 84px; min-width: 0; cursor: help;
+  padding: var(--s-2) var(--s-3); text-align: center;
+  border: 1px solid var(--c-line); border-radius: var(--r-sm);
+  background: var(--c-surface);
+}
+.pfunnel__stage strong { font-size: 1.125rem; font-variant-numeric: tabular-nums; }
+.pfunnel__stage span { font-size: var(--fs-nano); color: var(--c-ink-subtle); text-transform: uppercase; letter-spacing: .05em; }
+.pfunnel__stage.is-empty { background: var(--c-surface-sunken); }
+.pfunnel__stage.is-empty strong { color: var(--c-ink-subtle); }
+.splittable__total td { border-top: 1px solid var(--c-line-strong); padding-top: 7px; }

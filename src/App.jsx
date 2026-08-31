@@ -72,6 +72,7 @@ import ResidualApproval from '@/pages/setup/ResidualApproval';
 import AdjustmentSetup from '@/pages/setup/AdjustmentSetup';
 import ResidualCalculation from '@/pages/setup/ResidualCalculation';
 import FeePrograms from '@/pages/setup/FeePrograms';
+import Partners from '@/pages/partners/Partners';
 import MerchantMapping from '@/pages/setup/MerchantMapping';
 import UnderwritingSetup from '@/pages/setup/UnderwritingSetup';
 import UsersAccess from '@/pages/setup/UsersAccess';
@@ -170,6 +171,7 @@ export function App() {
                 {apmRoutes}
 
                 <Route path="document-center" element={<DocumentCenter />} />
+                <Route path="partners" element={<Partners />} />
                 <Route path="setup">
                   <Route index element={<SetupHome />} />
                   <Route path="pricing-schedules" element={<PricingSchedules />} />

@@ -71,6 +71,7 @@ export const routes = {
 
   /* Admin */
   documentCenter: '/document-center',
+  partners: '/partners',
   setup: '/setup',
 
   /** Eric's archived console — a frozen earlier product, kept demonstrable. */
@@ -216,6 +217,14 @@ export const nav = [
     children: [
       { label: 'Statements', path: routes.statements, permission: 'Statements', area: 'Billing', crumb: 'Statements' },
     ],
+  },
+  {
+    label: 'Partners',
+    path: routes.partners,
+    icon: 'users',
+    permission: 'Partners',
+    area: 'Administration',
+    crumb: 'Partners',
   },
   {
     label: 'Document Center',
