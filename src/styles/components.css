@@ -2962,3 +2962,24 @@ a.crumbbar__link:hover { color: var(--c-crumbbar-ink-active); text-decoration: n
 }
 .fi-subbar__note { margin: 0; text-align: right; }
 @media (max-width: 760px) { .fi-subbar__note { text-align: left; } }
+
+/* Intake route — how the merchant reached the book. */
+.intake {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 7px; border-radius: var(--r-pill);
+  font-size: var(--fs-nano); font-weight: 600; white-space: nowrap;
+  border: 1px solid transparent;
+}
+.intake--bank { background: var(--c-primary-wash); color: var(--c-primary-deep); border-color: var(--c-primary-tint); }
+.intake--self { background: var(--c-accent-tint); color: var(--c-accent-deep); border-color: var(--c-accent-tint); }
+
+/* Verification checks on the intake panel. */
+.vchecks { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+.vcheck {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 9px; border-radius: var(--r-pill);
+  font-size: var(--fs-micro); font-weight: 600; cursor: help;
+  border: 1px solid transparent;
+}
+.vcheck--ok { background: var(--c-success-tint); color: var(--c-success); border-color: var(--c-success-tint); }
+.vcheck--no { background: var(--c-warning-tint); color: var(--c-warning); border-color: var(--c-warning-tint); }

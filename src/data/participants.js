@@ -43,6 +43,21 @@ import brand from '@/brand/brand.config';
 export function merchantFacts(name, { boarded = false } = {}) {
   const d = createDraw(name.split('').reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7));
   const mcc = d.pick(brand.mccs);
+
+  /* HOW THE MERCHANT GOT HERE — the same record, two intake paths.
+     `bank` means the acquiring bank (or one of its partners) boarded them:
+     an agent owns the relationship and an underwriter keys the application
+     from documents the merchant hands over. `self` means the merchant signed
+     itself up through the web form: nobody owns the relationship, the figures
+     are self-declared until verified, and identity has to be proven
+     electronically rather than by a person looking at a passport.
+
+     This is not cosmetic. It changes which fields exist, which are trusted,
+     and how much underwriting work a record needs — so it belongs on the
+     record rather than being inferred from whether `agent` happens to be set. */
+  const intake = d.weighted([['bank', 7], ['self', 3]]);
+  const selfServed = intake === 'self';
+
   return {
     dbaName: name,
     legalName: `${name.replace(/ (LLC|Inc|Co|Ltd)$/, '')} LLC`,
@@ -54,8 +69,48 @@ export function merchantFacts(name, { boarded = false } = {}) {
     monthlyVolume: d.money(4_800, 420_000),
     averageTicket: d.money(18, 640),
     riskTier: d.weighted([['low', 6], ['medium', 3], ['high', 1]]),
+
+    intake,
+    intakeLabel: selfServed ? 'Self-service' : 'Bank-boarded',
+    /* Where a self-service signup came from. Blank for bank-boarded, because
+       the answer there is "an agent", which the agent column already says. */
+    signupSource: selfServed ? d.pick(['Web signup', 'Partner referral link', 'Mobile app', 'Embedded checkout']) : '',
+    /* Self-declared until someone checks it. A bank-boarded application has
+       had bank statements read against it; a self-service one has not, which
+       is exactly the distinction underwriting needs to see. */
+    volumeVerified: !selfServed,
+    /* Self-service proves identity electronically; bank-boarded does it with
+       a person and a document. */
+    identityMethod: selfServed ? d.pick(['Electronic KYC', 'Open banking match', 'Micro-deposit']) : 'Documentary review',
+    emailVerified: selfServed ? d.bool(0.85) : true,
+    bankVerified: selfServed ? d.bool(0.6) : true,
+    /* How many of the standard document set are on file. A self-service
+       merchant typically uploads fewer, which is the follow-up work. */
+    documentsOnFile: selfServed ? d.int(1, 3) : d.int(4, 6),
   };
 }
+
+/** The two intake routes, for filters and pickers. */
+export const INTAKE_ROUTES = [
+  { id: 'bank', label: 'Bank-boarded', help: 'Boarded by the acquiring bank or one of its partners. An agent owns the relationship and underwriting keys the application from documents.' },
+  { id: 'self', label: 'Self-service', help: 'The merchant signed itself up. Figures are self-declared until verified and identity is proven electronically.' },
+];
+
+export const intakeMeta = (id) => INTAKE_ROUTES.find((r) => r.id === id) ?? INTAKE_ROUTES[0];
+
+/**
+ * Build a funnel row: derived merchant facts, then the row's own fields.
+ *
+ * A self-service signup has no agent by definition — nobody introduced them.
+ * The seed rows all name one, so it is cleared here rather than in eight
+ * places; leaving it would have the Source column say "Self-service" while
+ * the Agent column named the person who supposedly brought them in.
+ */
+const funnelRow = (r, opts) => {
+  const facts = merchantFacts(r.merchant, opts);
+  const row = { ...facts, ...r };
+  return facts.intake === 'self' ? { ...row, agent: '' } : row;
+};
 
 /* ------------------------------------------------------------------ *
  * Status catalogues — label → lifecycle bucket
@@ -167,7 +222,7 @@ const INVITATIONS_ROWS = [
 ]
 
 /** Each row plus its derived merchant attributes. */
-export const INVITATIONS = INVITATIONS_ROWS.map((r) => ({ ...merchantFacts(r.merchant, { boarded: false }), ...r }));
+export const INVITATIONS = INVITATIONS_ROWS.map((r) => funnelRow(r, { boarded: false }));
 
 /* ------------------------------------------------------------------ *
  * Stage 2 — Applications
@@ -227,7 +282,7 @@ const APPLICATIONS_ROWS = [
 ]
 
 /** Each row plus its derived merchant attributes. */
-export const APPLICATIONS = APPLICATIONS_ROWS.map((r) => ({ ...merchantFacts(r.merchant, { boarded: false }), ...r }));
+export const APPLICATIONS = APPLICATIONS_ROWS.map((r) => funnelRow(r, { boarded: false }));
 
 /* ------------------------------------------------------------------ *
  * Stage 3 — Underwriting
@@ -255,7 +310,7 @@ const UNDERWRITING_ROWS = [
 ]
 
 /** Each row plus its derived merchant attributes. */
-export const UNDERWRITING = UNDERWRITING_ROWS.map((r) => ({ ...merchantFacts(r.merchant, { boarded: true }), ...r }));
+export const UNDERWRITING = UNDERWRITING_ROWS.map((r) => funnelRow(r, { boarded: true }));
 
 /* ------------------------------------------------------------------ *
  * Stage 4 — Onboarding
@@ -275,7 +330,7 @@ const ONBOARDING_ROWS = [
 ]
 
 /** Each row plus its derived merchant attributes. */
-export const ONBOARDING = ONBOARDING_ROWS.map((r) => ({ ...merchantFacts(r.merchant, { boarded: true }), ...r }));
+export const ONBOARDING = ONBOARDING_ROWS.map((r) => funnelRow(r, { boarded: true }));
 
 /* ------------------------------------------------------------------ *
  * Stage 5 — Live Participants
@@ -296,7 +351,7 @@ const LIVE_PARTICIPANTS_ROWS = [
 ]
 
 /** Each row plus its derived merchant attributes. */
-export const LIVE_PARTICIPANTS = LIVE_PARTICIPANTS_ROWS.map((r) => ({ ...merchantFacts(r.merchant, { boarded: true }), ...r }));
+export const LIVE_PARTICIPANTS = LIVE_PARTICIPANTS_ROWS.map((r) => funnelRow(r, { boarded: true }));
 
 /* ------------------------------------------------------------------ *
  * Tabs

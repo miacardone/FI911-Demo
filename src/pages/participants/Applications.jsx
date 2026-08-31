@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ListPage } from '@/components/fi911/ListPage';
 import { AdvancedSearchPanel, applyFilters } from '@/components/fi911/Filters';
 import { AttachmentsModal, ChangeStatusModal, NotesModal } from '@/components/fi911/RecordModals';
-import { LinkCell, MccCell, Money, Muted, StatusBadge, TypeBadge, menuColumn, moneyText, moneyTotal } from '@/components/fi911/cells';
+import { IntakeBadge, LinkCell, MccCell, Money, Muted, StatusBadge, TypeBadge, menuColumn, moneyText, moneyTotal } from '@/components/fi911/cells';
 import {
   APPLICATIONS, APPLICATION_STATUS, attachmentsFor, filterStage, notesFor, stageTabs, statusOptionsFor,
 } from '@/data/participants';
@@ -46,7 +46,14 @@ export function Applications() {
     { key: 'merchantType', header: 'Merchant Type', fw: 9, align: 'center', sortable: true, cell: (r) => <TypeBadge value={r.merchantType} /> },
     { key: 'processor', header: 'Processor', fw: 9, align: 'center', sortable: true },
     { key: 'monthlyVolume', header: 'Monthly Volume', fw: 10, align: 'right', sortable: true, cell: (r) => <Money value={r.monthlyVolume} />, text: (r) => moneyText(r.monthlyVolume), totalCell: moneyTotal },
-    { key: 'agent', header: 'Agent Name', fw: 11, sortable: true },
+    { key: 'agent', header: 'Agent Name', fw: 11, sortable: true,
+      cell: (r) => (r.agent ? r.agent : <Muted>Direct signup</Muted>) },
+    {
+      key: 'intake', header: 'Source', fw: 9, align: 'center', sortable: true,
+      cell: (r) => <IntakeBadge value={r.intake} verified={r.volumeVerified} />,
+      text: (r) => r.intakeLabel,
+      description: 'How this merchant reached the book — boarded by the bank or a partner, or signed up itself',
+    },
     { hiddenByDefault: true, key: 'assignedTo', header: 'Assigned To', fw: 11, sortable: true, cell: (r) => (r.assignedTo ? r.assignedTo : <Muted>-</Muted>) },
     { hiddenByDefault: true, key: 'contact', header: 'Contact Name', fw: 11, sortable: true },
     { hiddenByDefault: true, key: 'phone', header: 'Phone', fw: 10 },

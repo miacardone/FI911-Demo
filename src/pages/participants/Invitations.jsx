@@ -6,7 +6,7 @@ import { SelectField, TextField } from '@/components/ui/Form';
 import { ListPage } from '@/components/fi911/ListPage';
 import { AdvancedSearchPanel, applyFilters } from '@/components/fi911/Filters';
 import { AttachmentsModal, ChangeStatusModal, NotesModal } from '@/components/fi911/RecordModals';
-import { LinkCell, MccCell, Money, Muted, StatusBadge, TypeBadge, menuColumn, moneyText, moneyTotal } from '@/components/fi911/cells';
+import { IntakeBadge, LinkCell, MccCell, Money, Muted, StatusBadge, TypeBadge, menuColumn, moneyText, moneyTotal } from '@/components/fi911/cells';
 import { FieldGrid, Section } from '@/components/fi911/DetailPage';
 import {
   INVITATIONS, INVITATION_STATUS, attachmentsFor, filterStage, notesFor, stageTabs, statusOptionsFor,
@@ -164,7 +164,14 @@ export function Invitations() {
       sortable: true,
       cell: (r) => <LinkCell to={routes.invitationDetail(r.id)}>{r.merchant}</LinkCell>,
     },
-    { key: 'agent', header: 'Agent', fw: 11, sortable: true },
+    { key: 'agent', header: 'Agent', fw: 11, sortable: true,
+      cell: (r) => (r.agent ? r.agent : <Muted>Direct signup</Muted>) },
+    {
+      key: 'intake', header: 'Source', fw: 9, align: 'center', sortable: true,
+      cell: (r) => <IntakeBadge value={r.intake} verified={r.volumeVerified} />,
+      text: (r) => r.intakeLabel,
+      description: 'How this merchant reached the book — boarded by the bank or a partner, or signed up itself',
+    },
     {
       key: 'assignedTo',
       header: 'Assigned To',

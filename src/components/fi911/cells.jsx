@@ -270,3 +270,27 @@ export function SummaryRow({ label, children }) {
     </div>
   );
 }
+
+/**
+ * How the merchant got here — bank-boarded or self-service.
+ *
+ * Worth a badge rather than a plain word because it changes how much of the
+ * record can be trusted: a self-service application's figures are the
+ * merchant's own until underwriting verifies them.
+ */
+export function IntakeBadge({ value, verified }) {
+  const self = value === 'self';
+  return (
+    <Tooltip
+      label={self
+        ? 'Self-service signup — figures are self-declared until verified, identity proven electronically'
+        : 'Boarded by the bank or a partner — an agent owns the relationship and underwriting keyed the application'}
+    >
+      <span className={`intake intake--${self ? 'self' : 'bank'}`}>
+        <Icon name={self ? 'globe' : 'users'} size={12} />
+        {self ? 'Self-service' : 'Bank-boarded'}
+        {self && verified === false && <Icon name="alert" size={11} className="warn" />}
+      </span>
+    </Tooltip>
+  );
+}

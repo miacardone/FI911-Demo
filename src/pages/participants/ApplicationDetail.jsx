@@ -8,6 +8,7 @@ import {
   PaymentTerminalsSection, PricingSection, ShippingMethodSection, TransactionInformationSection,
 } from '@/components/fi911/AgreementSections';
 import { AttachmentsModal, ChangeStatusModal, NotesModal } from '@/components/fi911/RecordModals';
+import { IntakeVerification } from '@/components/fi911/IntakeVerification';
 import { useDetailCrumb } from '@/components/layout/AppLayout';
 import { APPLICATIONS, APPLICATION_STATUS, attachmentsFor, notesFor, statusOptionsFor } from '@/data/participants';
 import { routes } from '@/data/navigation';
@@ -138,6 +139,11 @@ export function ApplicationDetail() {
               'contact', 'phone', 'email', 'taxId', 'businessType', 'businessDescription',
               'physicalAddress', 'physicalCity', 'physicalZip', 'mailingAddress', 'mailingCity', 'mailingZip'],
             render: () => <BusinessInformationSection form={form} variant="application" />,
+          },
+          {
+            label: 'Verification',
+            required: [],
+            render: () => <IntakeVerification record={record} />,
           },
           {
             label: 'Addresses',
